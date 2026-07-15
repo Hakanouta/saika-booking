@@ -270,7 +270,15 @@ const STORAGE_KEY = 'saika_photo_projects';
 const SETTINGS_KEY = 'saika_photo_settings';
 
 function loadProjects(){
-  try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[]}catch(e){return[]}
+  let arr;
+  try{arr=JSON.parse(localStorage.getItem(STORAGE_KEY))||[]}catch(e){arr=[]}
+  // 迁移：为历史上缺少 id 的项目补一个（修复建档后无法删除/打开的问题）
+  let fixed=false;
+  if(Array.isArray(arr)){
+    arr.forEach(p=>{ if(p && !p.id){ p.id=genId(); fixed=true; } });
+    if(fixed) saveProjects(arr);
+  }
+  return arr;
 }
 function saveProjects(data){
   localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
@@ -659,6 +667,7 @@ function renderProjects(main){
           <div style="display:flex;gap:6px;margin-top:8px">
             <button class="btn btn-primary btn-sm" style="flex:1;font-size:12px;padding:7px 10px" onclick='createProjectFromBooking(${bjson})'>💰 确认价格并建档</button>
             <button class="btn btn-secondary btn-sm" style="font-size:12px;padding:7px 10px" onclick='importBooking(${djson})'>✏️ 补充</button>
+            <button class="btn btn-secondary btn-sm" style="font-size:12px;padding:7px 10px" onclick='dismissBooking(${bjson})'>🗑️ 忽略</button>
           </div>
         </div>`;
       }).join('')}
@@ -949,6 +958,7 @@ function openModal(id, prefill){
 
 function createEmptyProject(){
   return {
+    id:genId(),
     status:'待确认',
     clientName:'',contact:'',demandType:'COS',deliverable:'照片',
     totalPrice:0,deposit:0,finalPayment:0,
@@ -1397,14 +1407,19 @@ async function createProjectFromBooking(b){
   await deleteBooking(b.filename);
   toast('✅ 已建档：'+(p.clientName||'未命名')+'（待收定金 '+fmtMoney(est.deposit)+'）');
   render();
-  openModal(p.id);
 }
 async function deleteBooking(filename){
   if(!filename)return;
   try{
-    await fetch(API_BASE+'/api/booking-delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename})});
+    // 用 text/plain 发送，避免触发浏览器 CORS 预检（Render 边缘 OPTIONS 不回 Allow-Methods/Headers）
+    await fetch(API_BASE+'/api/booking-delete',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({filename})});
     await loadPendingBookings();
   }catch(e){console.error(e)}
+}
+async function dismissBooking(b){
+  if(!confirm('忽略该预约？此操作会从待办列表移除，但不会建档（数据仍保留在云端提交记录中）。'))return;
+  await deleteBooking(b.filename);
+  toast('已忽略该预约');
 }
 
 // ========== DROPDOWN ==========
