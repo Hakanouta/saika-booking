@@ -1316,7 +1316,11 @@ function deleteProject(){
 // 改进：首次带 ?api= 打开后写入 localStorage，之后只开 localhost 也会自动连云端
 const _apiParam = new URLSearchParams(location.search).get('api');
 if(_apiParam){ try{ localStorage.setItem('SAIKA_API_BASE', _apiParam); }catch(e){} }
-const API_BASE = _apiParam || (function(){ try{ return localStorage.getItem('SAIKA_API_BASE')||''; }catch(e){ return ''; } })();
+let API_BASE = _apiParam || (function(){ try{ return localStorage.getItem('SAIKA_API_BASE')||''; }catch(e){ return ''; } })();
+// 本机打开且未指定任何后端时，自动连接云端收件箱（免去手敲 ?api=）
+if(!API_BASE && (location.hostname==='localhost' || location.hostname==='127.0.0.1')){
+  API_BASE='https://saika-booking.onrender.com';
+}
 
 let pendingBookings=[];
 async function loadPendingBookings(){
