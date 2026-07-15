@@ -1430,9 +1430,9 @@ function toggleDropdown(e,id){
   dropdownVisible=id;
   const el=e.target.closest('button');
   const dd=document.createElement('div');dd.className='dropdown';dd.id='dd-'+id;
-  dd.innerHTML=`<button onclick="openModal('${id}');closeDropdown()">✏️ 编辑</button>
-    <button onclick="duplicateProject('${id}')">📋 复制</button>
-    <button class="danger" onclick="confirmDelete('${id}')">🗑️ 删除</button>`;
+  dd.innerHTML=`<button onclick="event.stopPropagation();openModal('${id}');closeDropdown()">✏️ 编辑</button>
+    <button onclick="event.stopPropagation();duplicateProject('${id}')">📋 复制</button>
+    <button class="danger" onclick="event.stopPropagation();confirmDelete('${id}')">🗑️ 删除</button>`;
   el.parentElement.appendChild(dd);
   document.addEventListener('click',closeDropdown,{once:true});
 }
