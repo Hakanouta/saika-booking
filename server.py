@@ -89,7 +89,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=APP_DIR, **kwargs)
 
     def end_headers(self):
-        # CORS 头交由 Render 代理统一添加，避免重复头导致 Safari 拒绝跨域响应
+        # 仅在此处统一添加一次 CORS 头，避免重复导致 Safari 拒绝跨域响应
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         super().end_headers()
 
     def do_OPTIONS(self):
@@ -509,6 +512,7 @@ body{{font-family:-apple-system,"PingFang SC",sans-serif;background:#FAFAFA;colo
         self.wfile.write(body)
 
     def end_headers(self):
+        self.send_header('Access-Control-Allow-Origin', '*')
         super().end_headers()
 
     def log_message(self, format, *args):
