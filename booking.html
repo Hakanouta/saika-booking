@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>SAIKA · 彩華 | 预约登记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FBF8F3;
+  --card:#FFFFFF;
+  --text:#3D3020;
+  --text2:#6B5D4D;
+  --text3:#9B8B7A;
+  --accent:#C9A87C;
+  --accent-dark:#A6855B;
+  --border:#E8DFD0;
+  --btn-bg:#5A4A3A;
+  --btn-hover:#4A3A2A;
+  --success:#7BA88E;
+  --radius:12px;
+  --radius-sm:8px;
+}
+body{font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* Header */
+.header{background:linear-gradient(135deg,#F5EEE0 0%,#FBF8F3 50%,#F0E8D8 100%);padding:36px 20px 28px;text-align:center;border-bottom:2px solid var(--accent);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:var(--accent);opacity:.08;border-radius:50%}
+.header::after{content:'';position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;background:var(--accent);opacity:.06;border-radius:50%}
+.logo{font-size:26px;font-weight:900;letter-spacing:4px;color:var(--text);position:relative}
+.sub{font-size:12px;color:var(--text3);letter-spacing:2px;margin-top:6px;text-transform:uppercase;position:relative}
+.welcome{font-size:14px;color:var(--text2);margin-top:14px;max-width:360px;margin-left:auto;margin-right:auto;line-height:1.7;position:relative}
+
+.container{max-width:520px;margin:0 auto;padding:16px 16px 40px}
+
+/* Section title */
+.section-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title .emoji{font-size:18px}
+
+/* Workflow Timeline */
+.workflow{background:var(--card);border-radius:var(--radius);padding:20px 12px 16px;margin-bottom:18px;box-shadow:0 1px 4px rgba(93,74,58,0.06)}
+.timeline{display:flex;align-items:flex-start;justify-content:space-between;overflow-x:auto;padding:4px 0;gap:0;scrollbar-width:none;-ms-overflow-style:none}
+.timeline::-webkit-scrollbar{display:none}
+.step{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:56px;position:relative}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(201,168,124,0.3)}
+.step-label{font-size:10px;color:var(--text2);margin-top:6px;text-align:center;line-height:1.3;white-space:nowrap}
+.step-line{position:absolute;top:16px;left:calc(100% + 2px);width:24px;height:2px;background:var(--border)}
+.step:last-child .step-line{display:none}
+
+/* Pricing Cards */
+.pricing-section{margin-bottom:18px}
+.price-card{background:var(--card);border-radius:var(--radius);margin-bottom:10px;box-shadow:0 1px 4px rgba(93,74,58,0.06);overflow:hidden}
+.price-header{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.price-header:hover{background:#FAFAF7}
+.price-name{font-size:15px;font-weight:700;color:var(--text)}
+.price-summary{font-size:13px;color:var(--accent-dark);font-weight:600}
+.price-arrow{color:var(--text3);transition:transform .25s;font-size:12px}
+.price-card.open .price-arrow{transform:rotate(180deg)}
+.price-body{max-height:0;overflow:hidden;transition:max-height .35s ease;padding:0 16px}
+.price-card.open .price-body{max-height:400px;padding:12px 16px 14px}
+.price-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.price-row:last-child{border:none}
+.price-label{color:var(--text2)}
+.price-value{color:var(--text);font-weight:600}
+.price-note{font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6;padding:8px;background:#FAFAF7;border-radius:6px}
+
+/* Form */
+.form-section{background:var(--card);border-radius:var(--radius);padding:20px 16px;margin-bottom:18px;box-shadow:0 1px 4px rgba(93,74,58,0.06)}
+.form-group{margin-bottom:16px}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+.form-label .hint{font-weight:400;color:var(--text3);font-size:11px;margin-left:4px}
+.form-input,.form-textarea,.form-select{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--text);background:#FAFAF7;font-family:inherit;outline:none;transition:border-color .2s}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--accent);background:#fff}
+.form-input::placeholder{color:var(--text3)}
+.form-textarea{resize:vertical;min-height:72px}
+.radio-group{display:flex;gap:10px;flex-wrap:wrap}
+.radio-item{position:relative}
+.radio-item input{position:absolute;opacity:0;width:0;height:0}
+.radio-label{display:inline-block;padding:8px 16px;border:1.5px solid var(--border);border-radius:20px;font-size:13px;color:var(--text2);cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.radio-item input:checked+.radio-label{border-color:var(--accent);background:var(--accent);color:#fff;font-weight:600}
+.radio-label:active{transform:scale(.96)}
+
+/* Notes */
+.notes{background:linear-gradient(135deg,#FFF9F0,#FFFAF5);border-radius:var(--radius);padding:16px;margin-bottom:18px;border:1px solid #F0E0CC}
+.notes-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px}
+.note-list{list-style:none}
+.note-list li{font-size:12px;color:var(--text2);padding:4px 0;padding-left:18px;position:relative;line-height:1.6}
+.note-list li::before{content:'·';position:absolute;left:4px;color:var(--accent);font-weight:900;font-size:16px}
+
+/* Submit */
+.submit-btn{width:100%;padding:15px;background:var(--btn-bg);color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all .25s;font-family:inherit;-webkit-tap-highlight-color:transparent;box-shadow:0 3px 12px rgba(90,74,58,0.2)}
+.submit-btn:hover{background:var(--btn-hover);transform:translateY(-1px);box-shadow:0 4px 16px rgba(90,74,58,0.25)}
+.submit-btn:active{transform:scale(.98)}
+
+/* Thank you state */
+.thank-you{display:none;text-align:center;padding:40px 20px}
+.thank-you.show{display:block}
+.thank-icon{font-size:48px;margin-bottom:12px}
+.thank-you h2{font-size:20px;color:var(--text);margin-bottom:8px}
+.thank-you p{font-size:14px;color:var(--text2);line-height:1.7}
+
+/* Footer */
+.footer{text-align:center;padding:20px;color:var(--text3);font-size:11px;line-height:1.8}
+.footer a{color:var(--accent-dark);text-decoration:none}
+
+/* Animations */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.form-section,.pricing-section,.workflow,.notes{animation:fadeInUp .45s ease both}
+.pricing-section:nth-child(3){animation-delay:.08s}
+.form-section{animation-delay:.12s}
+.notes{animation-delay:.16s}
+
+/* Loading overlay */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(250,248,243,.85);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.loading-overlay.show{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:var(--text2)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">SAIKA · 彩華</div>
+  <div class="sub">PHOTOGRAPHY BOOKING</div>
+  <p class="welcome">你好呀～感谢选择彩華！<br>花一点点时间填写下面的小表单，<br>我就能更好地为你准备拍摄啦 ✨</p>
+</div>
+
+<div class="container">
+
+<!-- 流程展示 -->
+<div class="workflow">
+  <div class="section-title"><span class="emoji">📋</span> 拍摄流程</div>
+  <div class="timeline" id="timeline">
+    <!-- JS render -->
+  </div>
+</div>
+
+<!-- 价目表 -->
+<div class="pricing-section">
+  <div class="section-title"><span class="emoji">💰</span> 服务项目 & 收费</div>
+
+  <div class="price-card" data-price="photo">
+    <div class="price-header" onclick="togglePrice(this)">
+      <span class="price-name">📸 正片约拍</span>
+      <span class="price-summary">240元/时 两小时起约 · 含9图调色</span>
+      <span class="price-arrow">▼</span>
+    </div>
+    <div class="price-body">
+      <div class="price-row"><span class="price-label">单人正片</span><span class="price-value">240元 / 小时 · 2小时起 · 9图调色</span></div>
+      <div class="price-row"><span class="price-label">双人正片</span><span class="price-value">400元 / 小时 · 2小时起 · 9图调色</span></div>
+      <div class="price-row"><span class="price-label">加配摄助</span><span class="price-value">+50元 / 小时</span></div>
+      <div class="price-note">💡 摄助可帮忙架灯、整理造型、吹发丝、拍花絮等，能大幅提升效率和出片效果哦～</div>
+    </div>
+  </div>
+
+  <div class="price-card" data-price="video">
+    <div class="price-header" onclick="togglePrice(this)">
+      <span class="price-name">🎬 视频约拍</span>
+      <span class="price-summary">350元/时 起 · 交付原片素材</span>
+      <span class="price-arrow">▼</span>
+    </div>
+    <div class="price-body">
+      <div class="price-row"><span class="price-label">单人视频</span><span class="price-value">350元 / 小时 · 2小时起</span></div>
+      <div class="price-row"><span class="price-label">多人视频</span><span class="price-value">500元 / 小时 · 2小时起</span></div>
+      <div class="price-row"><span class="price-label">加配摄助</span><span class="price-value">+50元 / 小时</span></div>
+      <div class="price-note">💡 以上价格包含交付拍摄时长内的全部原片素材（不含调色、精修、剪辑等后期）。调色和剪辑另有合作老师可以介绍哦～</div>
+      <div class="price-note">💡 视频约拍建议加配摄助，整体效率更高～</div>
+    </div>
+  </div>
+
+  <div class="price-card" data-price="event">
+    <div class="price-header" onclick="togglePrice(this)">
+      <span class="price-name">🌸 漫展场照</span>
+      <span class="price-summary">120元/4图 起 · 自然光/亮调/暗调</span>
+      <span class="price-arrow">▼</span>
+    </div>
+    <div class="price-body">
+      <div class="price-row"><span class="price-label">单人场照（4图）</span><span class="price-value">120元 · 拍摄+调色</span></div>
+      <div class="price-row"><span class="price-label">单人场照（6图）</span><span class="price-value">180元 · 拍摄+调色</span></div>
+      <div class="price-row"><span class="price-label">双人场照</span><span class="price-value">单人价 × 1.5</span></div>
+      <div class="price-note">💡 场照类型为自然光拍摄，看情况随机掉落视频彩蛋～ 场照选图方式：小图底图预览后挑选喜欢的编号即可。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 预约表单 -->
+<div class="form-section" id="formArea">
+  <div class="section-title"><span class="emoji">✏️</span> 预约登记</div>
+
+  <div class="form-group">
+    <label class="form-label">你的称呼 / CN</label>
+    <input class="form-input" id="clientName" placeholder="怎么称呼你好呢～" maxlength="20">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">想拍什么？</label>
+    <div class="radio-group">
+      <label class="radio-item"><input type="radio" name="shootType" value="photo" checked onchange="onTypeChange()"><span class="radio-label">📸 正片约拍</span></label>
+      <label class="radio-item"><input type="radio" name="shootType" value="video" onchange="onTypeChange()"><span class="radio-label">🎬 视频约拍</span></label>
+      <label class="radio-item"><input type="radio" name="shootType" value="event" onchange="onTypeChange()"><span class="radio-label">🌸 漫展场照</span></label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">这是哪种类型呀？ <span class="hint">选一下方便我提前准备</span></label>
+    <div class="radio-group">
+      <label class="radio-item"><input type="radio" name="category" value="cosplay" checked onchange="onCategoryChange()"><span class="radio-label">🎭 Cosplay</span></label>
+      <label class="radio-item"><input type="radio" name="category" value="sankeng" onchange="onCategoryChange()"><span class="radio-label">🌸 三坑</span></label>
+      <label class="radio-item"><input type="radio" name="category" value="daily" onchange="onCategoryChange()"><span class="radio-label">☀️ 日常</span></label>
+    </div>
+  </div>
+
+  <div class="form-group" id="charGroup" style="display:none">
+    <label class="form-label">角色名</label>
+    <input class="form-input" id="character" placeholder="要出什么角色呀～" maxlength="30">
+  </div>
+
+  <div class="form-group" id="ipGroup" style="display:none">
+    <label class="form-label">IP 出处</label>
+    <input class="form-input" id="ipSource" placeholder="原神 / FGO / V家 / 原创等等" maxlength="30">
+  </div>
+
+  <div class="form-group" id="clothGroup">
+    <label class="form-label">服装风格 <span class="hint">lolita / 汉服 / jk / 其他</span></label>
+    <input class="form-input" id="clothStyle" placeholder="比如：lolita 甜系 / 汉服 明制 / jk 等等" maxlength="30">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">人数</label>
+    <div class="radio-group">
+      <label class="radio-item"><input type="radio" name="personCount" value="single" checked><span class="radio-label">单人</span></label>
+      <label class="radio-item"><input type="radio" name="personCount" value="double"><span class="radio-label">双人</span></label>
+    </div>
+  </div>
+
+  <div class="form-group" id="durationGroup">
+    <label class="form-label" id="durationLabel">期望拍摄时长 <span class="hint">正片/视频填小时，场照填张数</span></label>
+    <input class="form-input" id="duration" placeholder="例如：2小时 或 4图" maxlength="15">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">希望什么时候拍？ <span class="hint">大概日期就行，后续再确认</span></label>
+    <input class="form-input" id="preferredDate" placeholder="2026-07-20 或 下个月周末" maxlength="20">
+  </div>
+
+  <div class="form-group" id="assistantGroup">
+    <label class="form-label">需要摄助吗？</label>
+    <div class="radio-group">
+      <label class="radio-item"><input type="radio" name="needAssistant" value="no" checked><span class="radio-label">不需要</span></label>
+      <label class="radio-item"><input type="radio" name="needAssistant" value="yes"><span class="radio-label">需要 (+50元/时)</span></label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">其他想说的 <span class="hint">特殊要求、参考图风格都可以写，也可以直接微信沟通哦～</span></label>
+    <textarea class="form-textarea" id="notes" placeholder="有什么想告诉我的都行～" maxlength="300"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">最终成片可以在平台展示吗？ <span class="hint">默认可以，用于作品集展示</span></label>
+    <div class="radio-group">
+      <label class="radio-item"><input type="radio" name="allowDisplay" value="yes" checked><span class="radio-label">✨ 可以展示</span></label>
+      <label class="radio-item"><input type="radio" name="allowDisplay" value="no"><span class="radio-label">🔒 请勿公开</span></label>
+    </div>
+  </div>
+</div>
+
+<!-- 温馨提示 -->
+<div class="notes">
+  <div class="notes-title">⚠️ 小贴士</div>
+  <ul class="note-list">
+    <li>正片和视频约拍请<strong>至少提前半个月</strong>确定档期哦</li>
+    <li>预约需支付 <strong>50%定金</strong> 锁档期；提前7天以上可改期一次</li>
+    <li>距拍摄日7天内无法修改时间，临时跑单仅退一半定金</li>
+    <li>实际时长按超15分钟算半小时，超40分钟算一小时</li>
+    <li>拍摄前会简单沟通角色、脚本和拍摄需求</li>
+    <li><strong>坐标深圳</strong>，其他地区需要报销来回路费</li>
+    <li>主周末接单，工作日晚7点后也可约（钞能力可协商😉）</li>
+    <li>本人妹摄，亲和力强擅长动作引导，不用担心不会摆动作～</li>
+  </ul>
+</div>
+
+<button class="submit-btn" onclick="submitBooking()" id="submitBtn">📤 提交预约</button>
+
+<!-- 提交成功 -->
+<div class="thank-you" id="thankYou">
+  <div class="thank-icon">🌸</div>
+  <h2>提交成功啦！</h2>
+  <p>已经收到你的预约信息了～<br>我会尽快通过微信联系你确认档期和细节<br><br>期待和你一起创作美美的照片 ✨</p>
+</div>
+
+</div>
+
+<div class="footer">
+  SAIKA · 彩華 Photography<br>
+  坐标深圳 · 主周末接单
+</div>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text">正在提交...</div>
+</div>
+
+<script>
+// ========== Workflow Timeline ==========
+const workflowSteps = [
+  {num:'1', label:'口头预约'},
+  {num:'2', label:'付定金\n锁档期'},
+  {num:'3', label:'沟通\n细节'},
+  {num:'4', label:'到场\n拍摄'},
+  {num:'5', label:'支付\n尾款'},
+  {num:'6', label:'选图/\n底片'},
+  {num:'7', label:'调色\n返成片'}
+];
+
+(function renderTimeline(){
+  const el=document.getElementById('timeline');
+  el.innerHTML=workflowSteps.map((s,i)=>`<div class="step"><div class="step-num">${s.num}</div><div class="step-label">${s.label.replace(/\n/g,'<br>')}</div>${i<workflowSteps.length-1?'<div class="step-line"></div>':''}</div>`).join('');
+})();
+// 初始化字段显隐（cosplay 为默认类型）
+onCategoryChange();
+onTypeChange();
+
+// ========== Price Toggle ==========
+function togglePrice(header){
+  const card=header.parentElement;
+  card.classList.toggle('open');
+}
+
+// ========== Type Change ==========
+function onTypeChange(){
+  const type=document.querySelector('input[name="shootType"]:checked').value;
+  const durLabel=document.getElementById('durationLabel');
+  const durInput=document.getElementById('duration');
+  const assistGroup=document.getElementById('assistantGroup');
+
+  if(type==='event'){
+    durLabel.innerHTML='想要几张？ <span class="hint">可选4图或6图 · 后续选图时也可以加图</span>';
+    durInput.placeholder='4图 或 6图';
+    assistGroup.style.display='none';
+  }else{
+    durLabel.innerHTML='期望拍摄时长 <span class="hint">最低2小时起步哦 · 后续选图时也可以加图</span>';
+    durInput.placeholder='例如：2小时 或 3小时';
+    assistGroup.style.display='';
+  }
+}
+
+// ========== Category Change ==========
+function onCategoryChange(){
+  const cat=document.querySelector('input[name="category"]:checked').value;
+  const charGroup=document.getElementById('charGroup');
+  const ipGroup=document.getElementById('ipGroup');
+  const clothGroup=document.getElementById('clothGroup');
+  if(cat==='cosplay'){
+    charGroup.style.display='';
+    ipGroup.style.display='';
+    clothGroup.style.display='none';
+  }else{
+    charGroup.style.display='none';
+    ipGroup.style.display='none';
+    clothGroup.style.display='';
+  }
+}
+
+// ========== Submit ==========
+// 提交目标：默认同源(本地服务器)；部署到公网静态页时可在链接后加 ?api=https://你的云后端地址
+const API_BASE = new URLSearchParams(location.search).get('api') || window.API_BASE || '';
+
+async function submitBooking(){
+  const clientName=document.getElementById('clientName').value.trim();
+  const character=document.getElementById('character').value.trim();
+  const ipSource=document.getElementById('ipSource').value.trim();
+  const clothStyle=document.getElementById('clothStyle').value.trim();
+  const duration=document.getElementById('duration').value.trim();
+  const preferredDate=document.getElementById('preferredDate').value.trim();
+  const notes=document.getElementById('notes').value.trim();
+  const shootType=document.querySelector('input[name="shootType"]:checked')?.value||'';
+  const category=document.querySelector('input[name="category"]:checked')?.value||'';
+  const personCount=document.querySelector('input[name="personCount"]:checked')?.value||'';
+  const needAssistant=document.querySelector('input[name="needAssistant"]:checked')?.value||'';
+  const allowDisplay=document.querySelector('input[name="allowDisplay"]:checked')?.value||'';
+
+  if(!clientName){alert('请填写你的称呼/CN哦～');document.getElementById('clientName').focus();return;}
+  if(!duration){alert('请填写想要几张 / 拍摄时长哦～');document.getElementById('duration').focus();return;}
+  if(!preferredDate){alert('请填写希望拍摄的日期哦～');document.getElementById('preferredDate').focus();return;}
+  if(category==='cosplay'){
+    if(!character){alert('请填写要出的角色名～');document.getElementById('character').focus();return;}
+    if(!ipSource){alert('请填写 IP 出处～');document.getElementById('ipSource').focus();return;}
+  }else{
+    if(!clothStyle){alert('请填写一下服装风格哦～');document.getElementById('clothStyle').focus();return;}
+  }
+
+  // Show loading
+  document.getElementById('loading').classList.add('show');
+  document.getElementById('submitBtn').disabled=true;
+
+  try{
+    const data={
+      clientName,character,ipSource,clothStyle,category,
+      shootType,personCount,duration,preferredDate,
+      needAssistant,notes,allowDisplay,
+      submittedAt:new Date().toISOString()
+    };
+
+    const resp=await fetch(API_BASE+'/api/booking-submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data)
+    });
+
+    const result=await resp.json();
+
+    if(result.ok){
+      document.getElementById('formArea').style.display='none';
+      document.querySelector('.pricing-section').style.display='none';
+      document.querySelector('.workflow').style.display='none';
+      document.querySelector('.notes').style.display='none';
+      document.getElementById('submitBtn').style.display='none';
+      document.getElementById('thankYou').classList.add('show');
+      window.scrollTo({top:0,behavior:'smooth'});
+    }else{
+      alert('提交失败：'+(result.error||'未知错误'));
+    }
+  }catch(e){
+    console.error(e);
+    alert('网络好像有点问题，请稍后再试或者直接加微信告诉我～');
+  }finally{
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('submitBtn').disabled=false;
+  }
+}
+</script>
+</body>
+</html>

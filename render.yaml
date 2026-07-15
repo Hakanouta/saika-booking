@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: saika-booking
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python3 server.py"
+    envVars:
+      - key: PORT
+        # Render 会自动注入真实端口，这里只是占位，无需修改
+        value: "10000"

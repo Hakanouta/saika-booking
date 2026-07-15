@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>彩華摄影档案</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FAFAFA;--card:#FFFFFF;--text:#1A1A1A;--text2:#6B6B6B;--text3:#999;
+  --border:#E8E8E8;--accent:#1A1A1A;--accent-hover:#333;--tag-bg:#F3F3F3;
+  --green:#2D8659;--green-bg:#EDF7F0;--amber:#D4732A;--amber-bg:#FDF3E8;
+  --red:#C0392B;--red-bg:#FDECEA;--blue:#2563EB;--blue-bg:#EFF4FF;
+  --radius:8px;--transition:.15s ease;--shadow:0 1px 3px rgba(0,0,0,.06);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+#app{display:flex;min-height:100vh}
+/* Sidebar */
+.sidebar{width:220px;background:var(--card);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:10}
+.sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar-logo h1{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.sidebar-logo p{font-size:11px;color:var(--text3);margin-top:2px;letter-spacing:1px}
+.sidebar-nav{flex:1;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;color:var(--text2);cursor:pointer;transition:var(--transition);border:none;background:none;width:100%;text-align:left;font-family:inherit;font-weight:500}
+.nav-item:hover{color:var(--text);background:var(--tag-bg)}
+.nav-item.active{color:var(--accent);background:var(--tag-bg);font-weight:600}
+.nav-item .icon{font-size:15px;width:20px;text-align:center}
+.nav-item .badge{font-size:10px;background:var(--accent);color:#fff;border-radius:10px;padding:1px 7px;margin-left:auto;font-weight:600}
+.sidebar-stats{padding:14px 20px;border-top:1px solid var(--border);margin-top:auto}
+.stat-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:5px}
+.stat-row span:last-child{color:var(--text);font-weight:700;font-size:13px}
+/* Main */
+.main{flex:1;margin-left:220px;padding:28px 36px;max-width:1100px}
+.main-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.main-header h2{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.header-actions{display:flex;gap:8px}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;font-size:12px;font-weight:600;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;transition:var(--transition);font-family:inherit;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-secondary{background:var(--card);color:var(--text);border-color:var(--border)}
+.btn-secondary:hover{background:var(--tag-bg)}
+.btn-ghost{background:transparent;color:var(--text2);border:none;padding:6px 10px}
+.btn-ghost:hover{color:var(--text)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-danger{color:var(--red);border-color:var(--red);background:transparent}
+.btn-danger:hover{background:var(--red);color:#fff}
+/* Dashboard cards */
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.dash-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+.dash-card .dc-icon{font-size:22px;margin-bottom:8px}
+.dash-card .dc-value{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.dash-card .dc-label{font-size:11px;color:var(--text3);margin-top:2px}
+.dash-card .dc-sub{font-size:11px;color:var(--text2);margin-top:4px}
+.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.dash-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+.dash-panel h3{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.dash-panel h3 .count{font-size:11px;color:var(--text3);font-weight:400}
+/* List items */
+.list-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.list-item:last-child{border-bottom:none}
+.list-item .li-date{font-size:11px;color:var(--text3);width:50px;flex-shrink:0}
+.list-item .li-name{font-weight:600;flex-shrink:0}
+.list-item .li-desc{color:var(--text2);font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list-item .li-tag{font-size:10px;padding:2px 6px;border-radius:4px;flex-shrink:0}
+/* Tags */
+.tag{font-size:11px;padding:2px 7px;border-radius:4px;background:var(--tag-bg);color:var(--text2);white-space:nowrap}
+.tag-green{color:var(--green);background:var(--green-bg)}
+.tag-amber{color:var(--amber);background:var(--amber-bg)}
+.tag-red{color:var(--red);background:var(--red-bg)}
+.tag-blue{color:var(--blue);background:var(--blue-bg)}
+.tag-accent{background:var(--accent);color:#fff}
+/* Calendar */
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.cal-header h3{font-size:18px;font-weight:700}
+.cal-nav{display:flex;gap:6px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-weekday{text-align:center;font-size:11px;color:var(--text3);padding:6px 0;font-weight:600}
+.cal-day{aspect-ratio:1;border:1px solid var(--border);border-radius:6px;padding:6px;font-size:12px;cursor:pointer;transition:var(--transition);position:relative;min-height:64px;background:var(--card)}
+.cal-day:hover{border-color:var(--accent)}
+.cal-day.other{opacity:.35}
+.cal-day.today{border-color:var(--accent);border-width:2px}
+.cal-day.has-event{background:var(--blue-bg);border-color:var(--blue)}
+.cal-day .cd-num{font-weight:600}
+.cal-day .cd-events{margin-top:2px;display:flex;flex-direction:column;gap:1px}
+.cal-day .cd-event{font-size:9px;color:var(--blue);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:1px 3px;background:rgba(37,99,235,.1);border-radius:2px}
+.cal-day-detail{margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+.cal-day-detail h4{font-size:14px;font-weight:700;margin-bottom:10px}
+/* Project cards */
+.project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.project-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:var(--transition);cursor:pointer;position:relative}
+.project-card:hover{border-color:#ccc;box-shadow:var(--shadow)}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.card-title{font-size:15px;font-weight:700;line-height:1.3}
+.card-subtitle{font-size:12px;color:var(--text2);margin-top:2px}
+.card-menu{font-size:16px;color:var(--text3);cursor:pointer;padding:2px 6px;border-radius:4px;border:none;background:none}
+.card-menu:hover{background:var(--tag-bg);color:var(--text)}
+.card-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.card-wf{margin-bottom:10px}
+.wf-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.wf-stages{display:flex;align-items:center;gap:3px}
+.wf-dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0}
+.wf-dot.done{background:var(--green)}
+.wf-dot.active{background:var(--amber)}
+.wf-line{flex:1;height:1px;background:var(--border);min-width:12px}
+.wf-line.done{background:var(--green)}
+.card-fin{display:flex;justify-content:space-between;font-size:12px;padding-top:8px;border-top:1px solid var(--border)}
+.card-fin .fin-label{color:var(--text3)}
+.card-fin .fin-value{font-weight:600}
+.card-fin .fin-paid{color:var(--green)}
+.card-fin .fin-unpaid{color:var(--amber)}
+/* Toolbar */
+.toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.search-box{flex:1;min-width:180px;max-width:320px;position:relative}
+.search-box input{width:100%;padding:8px 12px 8px 32px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);font-family:inherit;outline:none;transition:var(--transition)}
+.search-box input:focus{border-color:var(--accent)}
+.search-box .si{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px}
+.filter-group{display:flex;gap:4px;flex-wrap:wrap}
+.filter-chip{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--text2);cursor:pointer;transition:var(--transition);font-family:inherit}
+.filter-chip:hover{border-color:var(--accent);color:var(--text)}
+.filter-chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding-top:30px;overflow-y:auto;backdrop-filter:blur(2px)}
+.modal{background:var(--card);border-radius:10px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.12);margin-bottom:30px}
+.modal-lg{max-width:860px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card);z-index:1}
+.modal-header h3{font-size:17px;font-weight:700}
+.modal-body{padding:22px 24px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:14px 24px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--card)}
+.close-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:none;background:var(--tag-bg);border-radius:50%;cursor:pointer;font-size:16px;color:var(--text2);transition:var(--transition)}
+.close-btn:hover{background:var(--border);color:var(--text)}
+/* Form */
+.form-section{margin-bottom:20px}
+.form-section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.form-row.cols-3{grid-template-columns:1fr 1fr 1fr}
+.form-row.cols-1{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:3px}
+.form-group label{font-size:11px;font-weight:600;color:var(--text2)}
+.form-group input,.form-group select,.form-group textarea{padding:7px 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;outline:none;background:var(--card);transition:var(--transition)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-group textarea{resize:vertical;min-height:50px}
+.form-group .hint{font-size:10px;color:var(--text3)}
+/* Workflow form */
+.wf-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.wf-row .wf-name{width:60px;font-size:11px;color:var(--text2);flex-shrink:0;font-weight:600}
+.wf-row input[type="number"]{width:50px;padding:4px 6px;font-size:11px;border:1px solid var(--border);border-radius:4px;text-align:center}
+.wf-row input[type="checkbox"]{width:15px;height:15px;cursor:pointer}
+.wf-row .wf-unit{font-size:10px;color:var(--text3)}
+.wf-row .wf-done-label{font-size:10px;color:var(--text3);cursor:pointer}
+/* Platform checkboxes */
+.platform-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.platform-item{display:flex;align-items:center;gap:5px;font-size:12px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:var(--transition);background:var(--card);user-select:none}
+.platform-item:hover{border-color:var(--accent)}
+.platform-item.checked{background:var(--accent);color:#fff;border-color:var(--accent)}
+.platform-item input{display:none}
+/* Mood board */
+.mood-section{margin-bottom:16px}
+.mood-section-title{font-size:12px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.mood-upload{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mood-slot{aspect-ratio:1;border:1px dashed var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--transition);overflow:hidden;position:relative;background:var(--tag-bg)}
+.mood-slot:hover{border-color:var(--accent)}
+.mood-slot img{width:100%;height:100%;object-fit:cover}
+.mood-slot .ms-label{font-size:10px;color:var(--text3);text-align:center;padding:4px}
+.mood-slot .ms-remove{position:absolute;top:2px;right:2px;width:18px;height:18px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center}
+.mood-keywords{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.mood-keyword{font-size:11px;padding:3px 8px;border-radius:12px;background:var(--tag-bg);color:var(--text);display:flex;align-items:center;gap:4px}
+.mood-keyword .mk-remove{cursor:pointer;color:var(--text3);font-size:10px}
+.mood-keyword .mk-remove:hover{color:var(--red)}
+.keyword-input{padding:5px 8px;font-size:11px;border:1px solid var(--border);border-radius:4px;width:80px;outline:none;font-family:inherit}
+.keyword-input:focus{border-color:var(--accent)}
+/* Finance */
+.fin-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.fin-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
+.fin-card .fc-label{font-size:11px;color:var(--text3);margin-bottom:4px}
+.fin-card .fc-value{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.fin-card .fc-sub{font-size:11px;color:var(--text2);margin-top:3px}
+.fin-chart{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
+.fin-chart h3{font-size:14px;font-weight:700;margin-bottom:16px}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:160px;padding-bottom:24px;position:relative}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.bar{width:100%;max-width:40px;background:var(--accent);border-radius:4px 4px 0 0;transition:height .3s ease;min-height:2px;cursor:pointer}
+.bar:hover{opacity:.8}
+.bar-label{font-size:10px;color:var(--text3);position:absolute;bottom:-18px}
+.bar-val{font-size:10px;color:var(--text);font-weight:600;position:absolute;top:-16px;white-space:nowrap}
+.fin-table{width:100%;border-collapse:collapse;font-size:12px}
+.fin-table th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--border);font-size:11px;color:var(--text3);font-weight:600}
+.fin-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
+.fin-table .td-paid{color:var(--green);font-weight:600}
+.fin-table .td-unpaid{color:var(--amber);font-weight:600}
+/* Settings */
+.settings-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:14px}
+.settings-section h3{font-size:14px;font-weight:700;margin-bottom:10px}
+.settings-section p{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px}
+.settings-section code{background:var(--tag-bg);padding:2px 6px;border-radius:3px;font-size:11px;font-family:"SF Mono","Fira Code","Consolas",monospace}
+.guide-folder{background:var(--tag-bg);border-radius:var(--radius);padding:14px;font-family:"SF Mono","Fira Code","Consolas",monospace;font-size:11px;line-height:1.8;overflow-x:auto;white-space:pre;color:var(--text);margin-top:8px}
+/* Toast */
+.toast{position:fixed;bottom:28px;right:28px;padding:10px 18px;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:12px;font-weight:600;z-index:200;animation:slideIn .3s ease;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+@keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast-out{animation:slideOut .3s ease forwards}
+@keyframes slideOut{to{transform:translateY(20px);opacity:0}}
+/* Empty */
+.empty-state{text-align:center;padding:50px 20px;color:var(--text2)}
+.empty-state .ei{font-size:40px;margin-bottom:10px;opacity:.3}
+.empty-state h3{font-size:16px;color:var(--text);margin-bottom:4px}
+.empty-state p{font-size:12px;margin-bottom:14px}
+/* Dropdown */
+.dropdown{position:absolute;top:34px;right:0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 4px 16px rgba(0,0,0,.1);z-index:10;min-width:130px;overflow:hidden}
+.dropdown button{display:block;width:100%;text-align:left;padding:8px 14px;font-size:12px;border:none;background:none;cursor:pointer;font-family:inherit;transition:var(--transition)}
+.dropdown button:hover{background:var(--tag-bg)}
+.dropdown button.danger{color:var(--red)}
+/* Photo select page */
+.ps-info{background:var(--blue-bg);border:1px solid var(--blue);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--blue);margin-bottom:12px}
+/* Responsive */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main{margin-left:0;padding:16px}
+  .form-row,.form-row.cols-3{grid-template-columns:1fr}
+  .project-grid{grid-template-columns:1fr}
+  .dash-grid{grid-template-columns:1fr 1fr}
+  .dash-row{grid-template-columns:1fr}
+  .fin-summary{grid-template-columns:1fr 1fr}
+  .mood-upload{grid-template-columns:1fr 1fr}
+}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>彩華摄影档案</h1>
+      <p>SAIKA STUDIO</p>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav">
+      <button class="nav-item active" data-view="dashboard"><span class="icon">📊</span>仪表盘</button>
+      <button class="nav-item" data-view="schedule"><span class="icon">📅</span>日程</button>
+      <button class="nav-item" data-view="projects"><span class="icon">📁</span>项目<span class="badge" id="navBadge">0</span></button>
+      <button class="nav-item" data-view="finance"><span class="icon">💰</span>财务</button>
+      <button class="nav-item" data-view="settings"><span class="icon">⚙️</span>设置</button>
+    </nav>
+    <div class="sidebar-stats">
+      <div class="stat-row"><span>本月收入</span><span id="sbIncome">¥0</span></div>
+      <div class="stat-row"><span>本月接单</span><span id="sbOrders">0</span></div>
+      <div class="stat-row"><span>进行中</span><span id="sbActive">0</span></div>
+    </div>
+  </aside>
+  <main class="main" id="mainContent"></main>
+</div>
+<div class="modal-overlay hidden" id="projectModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="modalTitle">新建项目</h3>
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-danger btn-sm hidden" id="deleteBtn" onclick="deleteProject()">删除</button>
+      <button class="btn btn-outline" id="createFolderBtn" onclick="createLocalFolder()" title="需先启动本地服务器">📁 一键建文件夹</button>
+      <button class="btn btn-primary" id="saveBtn" onclick="saveProject()">保存</button>
+    </div>
+  </div>
+</div>
+<div id="toastContainer"></div>
+
+<script>
+// ========== DATA LAYER ==========
+const STORAGE_KEY = 'saika_photo_projects';
+const SETTINGS_KEY = 'saika_photo_settings';
+
+function loadProjects(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[]}catch(e){return[]}
+}
+function saveProjects(data){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+}
+function loadSettings(){
+  try{return JSON.parse(localStorage.getItem(SETTINGS_KEY))||{photographer:'',social:''}}catch(e){return{photographer:'',social:''}}
+}
+function saveSettings(s){
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+}
+
+let projects = loadProjects();
+let currentView = 'dashboard';
+let editingId = null;
+let calMonth = new Date();
+let dropdownVisible = null;
+let moodKeywordsTmp = [];
+
+// Demo data on first load
+if(projects.length === 0){
+  const now = new Date().toISOString();
+  projects = [
+    {
+      id:'demo1',status:'已确认',
+      clientName:'小美',contact:'wx_xiaomei',demandType:'COS',deliverable:'照片视频',
+      totalPrice:2000,deposit:1000,finalPayment:0,
+      shootDate:'2026-07-12',startTime:'10:00',endTime:'18:00',
+      city:'上海',location:'光影棚',routeLink:'',weather:'晴 32°C',
+      role:'初音未来',ip:'VOCALOID',styleType:'cosplay',shootType:'棚拍',
+      moodKeywords:['清凉','夏日','元气'],moodBoard:{reference:[],pose:[],lighting:[],composition:[]},
+      actualStart:'10:15',actualEnd:'18:30',shootNotes:'客人表现很好，出片率高',hasBTS:true,
+      photoWorkflow:{original:{count:320,done:true},selected:{count:45,done:true},color:{count:30,done:true},final:{count:28,done:true}},
+      videoWorkflow:{original:{count:5,done:true},selected:{count:3,done:true},color:{count:3,done:true},final:{count:2,done:true}},
+      publishedPlatforms:['xiaohongshu','douyin','bilibili'],
+      archived:true,cloudBackup:true,
+      createdAt:now,updatedAt:now
+    },
+    {
+      id:'demo2',status:'已确认',
+      clientName:'阿狸',contact:'wx_alii',demandType:'COS',deliverable:'照片',
+      totalPrice:1500,deposit:500,finalPayment:0,
+      shootDate:'2026-07-20',startTime:'14:00',endTime:'20:00',
+      city:'杭州',location:'西湖',routeLink:'https://maps.apple.com/?q=西湖',weather:'',
+      role:'西施',ip:'王者荣耀',styleType:'cosplay',shootType:'外景',
+      moodKeywords:['古风','唯美','日落'],moodBoard:{reference:[],pose:[],lighting:[],composition:[]},
+      actualStart:'',actualEnd:'',shootNotes:'',hasBTS:true,
+      photoWorkflow:{original:{count:480,done:true},selected:{count:60,done:true},color:{count:35,done:false},final:{count:0,done:false}},
+      videoWorkflow:{original:{count:0,done:false},selected:{count:0,done:false},color:{count:0,done:false},final:{count:0,done:false}},
+      publishedPlatforms:[],
+      archived:false,cloudBackup:false,
+      createdAt:now,updatedAt:now
+    },
+    {
+      id:'demo3',status:'待确认',
+      clientName:'小鹿',contact:'',demandType:'人像',deliverable:'照片',
+      totalPrice:800,deposit:0,finalPayment:0,
+      shootDate:'2026-07-28',startTime:'15:00',endTime:'18:00',
+      city:'上海',location:'外滩',routeLink:'',weather:'',
+      role:'',ip:'',styleType:'人像',shootType:'外景',
+      moodKeywords:[],moodBoard:{reference:[],pose:[],lighting:[],composition:[]},
+      actualStart:'',actualEnd:'',shootNotes:'',hasBTS:false,
+      photoWorkflow:{original:{count:0,done:false},selected:{count:0,done:false},color:{count:0,done:false},final:{count:0,done:false}},
+      videoWorkflow:{original:{count:0,done:false},selected:{count:0,done:false},color:{count:0,done:false},final:{count:0,done:false}},
+      publishedPlatforms:[],
+      archived:false,cloudBackup:false,
+      createdAt:now,updatedAt:now
+    }
+  ];
+  saveProjects(projects);
+}
+
+// ========== HELPERS ==========
+function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function toast(msg){const c=document.getElementById('toastContainer');const t=document.createElement('div');t.className='toast';t.textContent=msg;c.appendChild(t);setTimeout(()=>{t.classList.add('toast-out');setTimeout(()=>t.remove(),300)},2000)}
+function fmtMoney(n){return '¥'+(n||0).toLocaleString('zh-CN')}
+function fmtDate(d){if(!d)return '-';const dt=new Date(d);return dt.getMonth()+1+'月'+dt.getDate()+'日'}
+function fmtDateFull(d){if(!d)return '-';const dt=new Date(d);return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')}
+function daysUntil(d){if(!d)return null;const t=new Date(d);const now=new Date();now.setHours(0,0,0,0);t.setHours(0,0,0,0);return Math.round((t-now)/86400000)}
+function isProjectDone(p){
+  const pw=['original','selected','color','final'];
+  const vw=['original','selected','color','final'];
+  const photoOk = p.deliverable.includes('照片') ? pw.every(s=>p.photoWorkflow[s].done) : true;
+  const videoOk = p.deliverable.includes('视频') ? vw.every(s=>p.videoWorkflow[s].done) : true;
+  return photoOk && videoOk;
+}
+function getTotalPaid(p){return (p.deposit||0)+(p.finalPayment||0)}
+function getBalance(p){return effectiveTotal(p)-getTotalPaid(p)}
+function platformEmoji(pl){const m={xiaohongshu:'📕',douyin:'🎵',bilibili:'📺',instagram:'📸',twitter:'🐦'};return m[pl]||''}
+function platformLabel(pl){const m={xiaohongshu:'小红书',douyin:'抖音',bilibili:'B站',instagram:'Instagram',twitter:'Twitter'};return m[pl]||pl}
+
+// ========== PRICING ==========
+const DEFAULT_PRICING={
+  photoSingle:240, photoDouble:400, photoMinHours:2, photoIncluded:9, photoExtra:20,
+  videoSingle:350, videoExtra:20,
+  event4:120, event6:180, eventExtra:30,
+  assistant:50, depositRatio:0.5
+};
+function getPricing(){
+  const s=loadSettings();
+  return Object.assign({},DEFAULT_PRICING,s.pricing||{});
+}
+function parseHours(str){const m=parseFloat((str||'').replace(/[^0-9.]/g,''));return isNaN(m)?0:m;}
+function parseCount(str){const m=parseInt((str||'').replace(/[^0-9]/g,''),10);return isNaN(m)?0:m;}
+// 根据预约表单数据 + 价格设置，估算总价/定金/尾款
+function calcEstimate(d,pricing){
+  if(!d)return {total:0,deposit:0,final:0,base:0,assist:0,breakdown:''};
+  const type=d.shootType;
+  const double_=d.personCount==='double';
+  let base=0,assist=0,breakdown='';
+  if(type==='video'){
+    base=pricing.videoSingle; breakdown='视频 '+pricing.videoSingle;
+    if(d.needAssistant==='yes'){assist=pricing.assistant;breakdown+=' + 摄助 '+pricing.assistant;}
+  }else if(type==='event'){
+    const cnt=parseCount(d.duration);
+    if(cnt===4){base=pricing.event4;breakdown='场照 4图 '+pricing.event4;}
+    else if(cnt===6){base=pricing.event6;breakdown='场照 6图 '+pricing.event6;}
+    else if(cnt>0){base=cnt*pricing.eventExtra;breakdown='场照 '+cnt+'图×'+pricing.eventExtra;}
+    else {base=pricing.event4;breakdown='场照（未填张数，按4图估算）'+pricing.event4;}
+  }else{
+    let hours=parseHours(d.duration);
+    if(hours<=0)hours=pricing.photoMinHours;
+    if(hours<pricing.photoMinHours)hours=pricing.photoMinHours;
+    const rate=double_?pricing.photoDouble:pricing.photoSingle;
+    base=Math.round(hours*rate);
+    breakdown='正片 '+hours+'小时×'+rate+(double_?'(双人)':'')+'（含'+pricing.photoIncluded+'图调色）';
+    if(d.needAssistant==='yes'){assist=pricing.assistant;breakdown+=' + 摄助 '+pricing.assistant;}
+  }
+  const total=base+assist;
+  const deposit=Math.round(total*pricing.depositRatio);
+  return {total,deposit,final:total-deposit,base,assist,breakdown};
+}
+function effectiveTotal(p){return (p.totalPrice||0)+(p.extraFee||0);}
+
+// ========== RENDER ==========
+function render(){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===currentView));
+  updateSidebarStats();
+  const main = document.getElementById('mainContent');
+  if(currentView==='dashboard') renderDashboard(main);
+  else if(currentView==='schedule') renderSchedule(main);
+  else if(currentView==='projects') renderProjects(main);
+  else if(currentView==='finance') renderFinance(main);
+  else if(currentView==='settings') renderSettings(main);
+}
+
+function updateSidebarStats(){
+  const now = new Date();
+  const ym = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const monthProjects = projects.filter(p=>p.shootDate&&p.shootDate.startsWith(ym));
+  const monthIncome = monthProjects.reduce((s,p)=>s+getTotalPaid(p),0);
+  const active = projects.filter(p=>!isProjectDone(p)&&p.status==='已确认').length;
+  const sbI=document.getElementById('sbIncome'); if(sbI) sbI.textContent=fmtMoney(monthIncome);
+  const sbO=document.getElementById('sbOrders'); if(sbO) sbO.textContent=monthProjects.length;
+  const sbA=document.getElementById('sbActive'); if(sbA) sbA.textContent=active;
+  const navB=document.getElementById('navBadge'); if(navB) navB.textContent=projects.length;
+}
+
+// ===== DASHBOARD =====
+function renderDashboard(main){
+  const now=new Date();
+  const ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const monthProjects=projects.filter(p=>p.shootDate&&p.shootDate.startsWith(ym));
+  const monthIncome=monthProjects.reduce((s,p)=>s+getTotalPaid(p),0);
+  const activeProjects=projects.filter(p=>!isProjectDone(p)&&p.status==='已确认');
+  const upcoming=projects.filter(p=>p.shootDate&&daysUntil(p.shootDate)>=0&&daysUntil(p.shootDate)<=14&&p.status==='已确认').sort((a,b)=>new Date(a.shootDate)-new Date(b.shootDate));
+  const unpaid=projects.filter(p=>getBalance(p)>0&&p.status==='已确认');
+
+  let html=`<div class="main-header"><h2>仪表盘</h2>
+    <div class="header-actions"><button class="btn btn-primary" onclick="openModal()">+ 新建项目</button></div></div>`;
+
+  html+=`<div class="dash-grid">
+    <div class="dash-card"><div class="dc-icon">💰</div><div class="dc-value">${fmtMoney(monthIncome)}</div><div class="dc-label">本月收入</div><div class="dc-sub">${monthProjects.length} 单</div></div>
+    <div class="dash-card"><div class="dc-icon">📁</div><div class="dc-value">${activeProjects.length}</div><div class="dc-label">进行中项目</div><div class="dc-sub">共 ${projects.length} 个项目</div></div>
+    <div class="dash-card"><div class="dc-icon">📅</div><div class="dc-value">${upcoming.length}</div><div class="dc-label">近期拍摄</div><div class="dc-sub">未来 14 天</div></div>
+    <div class="dash-card"><div class="dc-icon">⏳</div><div class="dc-value">${fmtMoney(unpaid.reduce((s,p)=>s+getBalance(p),0))}</div><div class="dc-label">待收款</div><div class="dc-sub">${unpaid.length} 单未结清</div></div>
+    <div class="dash-card" style="cursor:pointer" onclick="currentView='projects';render()"><div class="dc-icon" id="bookingIcon">📨</div><div class="dc-value" id="bookingCount">-</div><div class="dc-label">待处理预约</div><div class="dc-sub">点击查看详情</div></div>
+  </div>`;
+
+  html+=`<div class="dash-row">
+    <div class="dash-panel">
+      <h3>📅 近期拍摄 <span class="count">${upcoming.length>0?'':'暂无'}</span></h3>
+      ${upcoming.length===0?'<p style="font-size:12px;color:var(--text3);padding:8px 0">未来 14 天没有拍摄计划</p>':
+        upcoming.map(p=>{
+          const d=daysUntil(p.shootDate);
+          return `<div class="list-item" onclick="openModal('${p.id}')" style="cursor:pointer">
+            <span class="li-date">${d===0?'今天':d+'天后'}</span>
+            <span class="li-name">${p.clientName}</span>
+            <span class="li-desc">${p.role||p.styleType||''} · ${p.location||''}</span>
+            <span class="li-tag tag-blue">${fmtDate(p.shootDate)}</span>
+          </div>`;
+        }).join('')
+      }
+    </div>
+    <div class="dash-panel">
+      <h3>🔄 进行中项目 <span class="count">${activeProjects.length} 个</span></h3>
+      ${activeProjects.length===0?'<p style="font-size:12px;color:var(--text3);padding:8px 0">没有进行中的项目</p>':
+        activeProjects.slice(0,6).map(p=>{
+          return `<div class="list-item" onclick="openModal('${p.id}')" style="cursor:pointer">
+            <span class="li-name">${p.clientName}</span>
+            <span class="li-desc">${p.role||p.demandType||''} · ${getWfProgress(p)}</span>
+            <span class="li-tag tag-amber">进行中</span>
+          </div>`;
+        }).join('')
+      }
+    </div>
+  </div>`;
+
+  html+=`<div class="dash-panel">
+    <h3>⏳ 待收款 <span class="count">${unpaid.length>0?fmtMoney(unpaid.reduce((s,p)=>s+getBalance(p),0)):'已结清'}</span></h3>
+    ${unpaid.length===0?'<p style="font-size:12px;color:var(--text3);padding:8px 0">所有项目已结清 🎉</p>':
+      unpaid.map(p=>`<div class="list-item" onclick="openModal('${p.id}')" style="cursor:pointer">
+        <span class="li-name">${p.clientName}</span>
+        <span class="li-desc">${fmtDate(p.shootDate)} · ${p.location||''}</span>
+        <span class="li-tag tag-green">已收 ${fmtMoney(getTotalPaid(p))}</span>
+        <span class="li-tag tag-amber">待收 ${fmtMoney(getBalance(p))}</span>
+      </div>`).join('')
+    }
+  </div>`;
+
+  main.innerHTML=html;
+}
+
+function getWfProgress(p){
+  let stages=[];
+  if(p.deliverable.includes('照片')){
+    stages=['original','selected','color','final'].map(s=>p.photoWorkflow[s].done);
+  }
+  if(p.deliverable.includes('视频')){
+    stages=stages.concat(['original','selected','color','final'].map(s=>p.videoWorkflow[s].done));
+  }
+  if(stages.length===0) return '未开始';
+  const done=stages.filter(s=>s).length;
+  return done+'/'+stages.length;
+}
+
+// ===== SCHEDULE =====
+function renderSchedule(main){
+  const y=calMonth.getFullYear();
+  const m=calMonth.getMonth();
+  const firstDay=new Date(y,m,1);
+  const lastDay=new Date(y,m+1,0);
+  const startWeekday=firstDay.getDay();
+  const daysInMonth=lastDay.getDate();
+  const today=new Date();
+  const todayStr=fmtDateFull(today);
+
+  const monthProjects=projects.filter(p=>{
+    if(!p.shootDate)return false;
+    const d=new Date(p.shootDate);
+    return d.getFullYear()===y&&d.getMonth()===m;
+  });
+
+  let html=`<div class="main-header"><h2>日程</h2>
+    <div class="header-actions"><button class="btn btn-primary" onclick="openModal()">+ 新建拍摄</button></div></div>`;
+
+  html+=`<div class="cal-header">
+    <h3>${y}年${m+1}月</h3>
+    <div class="cal-nav">
+      <button class="btn btn-secondary btn-sm" onclick="calPrev()">‹ 上月</button>
+      <button class="btn btn-secondary btn-sm" onclick="calToday()">今天</button>
+      <button class="btn btn-secondary btn-sm" onclick="calNext()">下月 ›</button>
+    </div>
+  </div>`;
+
+  html+=`<div class="cal-grid">`;
+  ['日','一','二','三','四','五','六'].forEach(w=>html+=`<div class="cal-weekday">${w}</div>`);
+  for(let i=0;i<startWeekday;i++) html+=`<div class="cal-day other"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayProjects=monthProjects.filter(p=>p.shootDate===dateStr);
+    const isToday=dateStr===todayStr;
+    html+=`<div class="cal-day${isToday?' today':''}${dayProjects.length>0?' has-event':''}" onclick="calDayClick('${dateStr}')">
+      <div class="cd-num">${d}</div>
+      <div class="cd-events">${dayProjects.map(p=>`<div class="cd-event">${p.clientName}${p.startTime?' '+p.startTime:''}</div>`).join('')}</div>
+    </div>`;
+  }
+  html+=`</div>`;
+
+  html+=`<div id="calDayDetail" class="cal-day-detail hidden">
+    <h4 id="calDayTitle"></h4>
+    <div id="calDayContent"></div>
+  </div>`;
+
+  // Upcoming list
+  const upcoming=projects.filter(p=>p.shootDate&&daysUntil(p.shootDate)>=0&&p.status==='已确认').sort((a,b)=>new Date(a.shootDate)-new Date(b.shootDate));
+  if(upcoming.length>0){
+    html+=`<div class="dash-panel" style="margin-top:16px">
+      <h3>📋 即将到来</h3>
+      ${upcoming.map(p=>{
+        const d=daysUntil(p.shootDate);
+        return `<div class="list-item" onclick="openModal('${p.id}')" style="cursor:pointer">
+          <span class="li-date">${d===0?'今天':d+'天后'}</span>
+          <span class="li-name">${p.clientName}</span>
+          <span class="li-desc">${p.startTime||''} ${p.location||''} ${p.role||''}</span>
+          ${p.weather?`<span class="li-tag tag-blue">🌤 ${p.weather}</span>`:''}
+          ${p.routeLink?`<a href="${p.routeLink}" target="_blank" class="li-tag tag-green" onclick="event.stopPropagation()">🧭 导航</a>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  main.innerHTML=html;
+}
+
+function calPrev(){calMonth.setMonth(calMonth.getMonth()-1);render()}
+function calNext(){calMonth.setMonth(calMonth.getMonth()+1);render()}
+function calToday(){calMonth=new Date();render()}
+function calDayClick(dateStr){
+  const dayProjects=projects.filter(p=>p.shootDate===dateStr);
+  const detail=document.getElementById('calDayDetail');
+  const title=document.getElementById('calDayTitle');
+  const content=document.getElementById('calDayContent');
+  const d=new Date(dateStr);
+  title.textContent=`${d.getMonth()+1}月${d.getDate()}日 ${['周日','周一','周二','周三','周四','周五','周六'][d.getDay()]}`;
+  if(dayProjects.length===0){
+    content.innerHTML=`<p style="font-size:12px;color:var(--text3);padding:8px 0">当天没有拍摄计划</p><button class="btn btn-secondary btn-sm" onclick="openModal(null,'${dateStr}')">+ 添加拍摄</button>`;
+  }else{
+    content.innerHTML=dayProjects.map(p=>`
+      <div class="list-item" onclick="openModal('${p.id}')" style="cursor:pointer">
+        <span class="li-name">${p.clientName}</span>
+        <span class="li-desc">${p.startTime||''}-${p.endTime||''} ${p.location||''} ${p.role||p.demandType||''}</span>
+        ${p.weather?`<span class="li-tag tag-blue">🌤 ${p.weather}</span>`:''}
+        ${p.routeLink?`<a href="${p.routeLink}" target="_blank" class="li-tag tag-green" onclick="event.stopPropagation()">🧭 导航</a>`:''}
+      </div>`).join('') + `<button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="openModal(null,'${dateStr}')">+ 添加拍摄</button>`;
+  }
+  detail.classList.remove('hidden');
+}
+
+// ===== PROJECTS =====
+function renderProjects(main){
+  const q=(document.getElementById('searchInput')?.value||'').toLowerCase();
+  const statusFilter=document.querySelector('.filter-chip.active[data-filter="status"]')?.dataset.value||'';
+  const styleFilter=document.querySelector('.filter-chip.active[data-filter="style"]')?.dataset.value||'';
+
+  let filtered=projects;
+  if(statusFilter==='active') filtered=filtered.filter(p=>!isProjectDone(p)&&p.status==='已确认');
+  else if(statusFilter==='done') filtered=filtered.filter(p=>isProjectDone(p));
+  else if(statusFilter==='pending') filtered=filtered.filter(p=>p.status==='待确认');
+  if(styleFilter) filtered=filtered.filter(p=>p.styleType===styleFilter);
+  if(q) filtered=filtered.filter(p=>(p.clientName+p.role+p.ip+p.location+p.styleType+(p.shootDate||'')+p.notes+(p.contact||'')).toLowerCase().includes(q));
+  filtered.sort((a,b)=>new Date(b.shootDate||0)-new Date(a.shootDate||0));
+
+  let html=`<div class="main-header"><h2>项目</h2>
+    <div class="header-actions"><button class="btn btn-primary" onclick="openModal()">+ 新建项目</button></div></div>`;
+
+  html+=`<div class="toolbar">
+    <div class="search-box"><span class="si">🔍</span><input id="searchInput" placeholder="搜索客户、角色、IP、地点..." oninput="renderProjects(document.getElementById('mainContent'))" value="${q}"></div>
+    <div class="filter-group">
+      <button class="filter-chip${statusFilter===''?' active':''}" data-filter="status" data-value="" onclick="setFilter(this,'status')">全部</button>
+      <button class="filter-chip${statusFilter==='active'?' active':''}" data-filter="status" data-value="active" onclick="setFilter(this,'status')">进行中</button>
+      <button class="filter-chip${statusFilter==='done'?' active':''}" data-filter="status" data-value="done" onclick="setFilter(this,'status')">已完成</button>
+      <button class="filter-chip${statusFilter==='pending'?' active':''}" data-filter="status" data-value="pending" onclick="setFilter(this,'status')">待确认</button>
+    </div>
+    <div class="filter-group">
+      ${['cosplay','人像','商业','活动','其他'].map(s=>`<button class="filter-chip${styleFilter===s?' active':''}" data-filter="style" data-value="${s}" onclick="setFilter(this,'style')">${s}</button>`).join('')}
+    </div>
+  </div>`;
+
+  // 待处理预约区域（⏰ 提醒 + 一键建档）
+  if(localServer && pendingBookings.length>0){
+    const catLabel={sankeng:'三坑',daily:'日常',cosplay:'Cosplay'};
+    html+=`<div style="background:linear-gradient(135deg,#FFFBF0,#FFF9E5);border:1.5px solid #E8DDB5;border-radius:var(--radius);padding:16px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h3 style="font-size:14px;margin:0">⏰ 待处理预约 <span style="font-size:12px;color:var(--text3);font-weight:400">${pendingBookings.length} 条新预约 · 确认价格后即可建档进入下一步</span></h3>
+        <button class="btn btn-secondary btn-sm" onclick="loadPendingBookings()">🔄 刷新</button>
+      </div>
+      ${pendingBookings.map(b=>{
+        const d=b.data;
+        const typeMap={'photo':'正片','video':'视频','event':'场照'};
+        const subj=d.category==='cosplay'?(d.character||'')+(d.ipSource?'('+d.ipSource+')':''):(d.clothStyle||'');
+        const est=calcEstimate(d,getPricing());
+        const djson=JSON.stringify(d).replace(/'/g,"&#39;");
+        const bjson=JSON.stringify(b).replace(/'/g,"&#39;");
+        return `<div style="padding:10px;background:#fff;border-radius:8px;margin-bottom:6px;border:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:600">${d.clientName||'-'} · ${subj}</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px">${catLabel[d.category]||''} · ${typeMap[d.shootType]||''} ${d.personCount==='double'?'双人':'单人'} · ${d.duration||''} · ${d.preferredDate||'未填日期'}</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text2);margin-top:6px;padding:6px 8px;background:#FAFAF7;border-radius:6px;line-height:1.5">
+            📊 预计：总价 <b>${fmtMoney(est.total)}</b> · 定金 <b style="color:var(--green)">${fmtMoney(est.deposit)}</b> · 尾款 <b style="color:var(--amber)">${fmtMoney(est.final)}</b>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px">${est.breakdown}</div>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <button class="btn btn-primary btn-sm" style="flex:1;font-size:12px;padding:7px 10px" onclick='createProjectFromBooking(${bjson})'>💰 确认价格并建档</button>
+            <button class="btn btn-secondary btn-sm" style="font-size:12px;padding:7px 10px" onclick='importBooking(${djson})'>✏️ 补充</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  if(filtered.length===0){
+    html+=`<div class="empty-state"><div class="ei">📷</div><h3>暂无项目</h3><p>点击"新建项目"开始管理</p><button class="btn btn-primary" onclick="openModal()">+ 新建项目</button></div>`;
+  }else{
+    html+=`<div class="project-grid">${filtered.map(p=>renderCard(p)).join('')}</div>`;
+  }
+
+  main.innerHTML=html;
+}
+
+function setFilter(el,type){
+  document.querySelectorAll(`.filter-chip[data-filter="${type}"]`).forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderProjects(document.getElementById('mainContent'));
+}
+
+function renderCard(p){
+  const done=isProjectDone(p);
+  const paid=getTotalPaid(p);
+  const balance=getBalance(p);
+  const shootTypeMap={场照:'🎪 场照',外景:'🌿 外景',棚拍:'🏠 棚拍'};
+  const styleMap={cosplay:'COS',人像:'人像',商业:'商业',活动:'活动',其他:'其他'};
+  const statusTag=p.status==='待确认'?'tag-amber':p.status==='已取消'?'tag-red':'tag-green';
+
+  let photoProg='';
+  if(p.deliverable.includes('照片')){
+    const stages=['original','selected','color','final'];
+    const sd=stages.filter(s=>p.photoWorkflow[s].done).length;
+    photoProg=`<div class="card-wf"><div class="wf-label">📷 照片 ${sd}/4</div><div class="wf-stages">${stages.map((s,i)=>`${i>0?`<div class="wf-line${p.photoWorkflow[s].done?' done':''}"></div>`:''}<div class="wf-dot${p.photoWorkflow[s].done?' done':''}"></div>`).join('')}</div></div>`;
+  }
+  let videoProg='';
+  if(p.deliverable.includes('视频')){
+    const stages=['original','selected','color','final'];
+    const sd=stages.filter(s=>p.videoWorkflow[s].done).length;
+    videoProg=`<div class="card-wf"><div class="wf-label">🎬 视频 ${sd}/4</div><div class="wf-stages">${stages.map((s,i)=>`${i>0?`<div class="wf-line${p.videoWorkflow[s].done?' done':''}"></div>`:''}<div class="wf-dot${p.videoWorkflow[s].done?' done':''}"></div>`).join('')}</div></div>`;
+  }
+
+  return `<div class="project-card" onclick="openModal('${p.id}')">
+    <div class="card-header">
+      <div>
+        <div class="card-title">${p.clientName}${p.role?' · '+p.role:''}</div>
+        <div class="card-subtitle">${p.shootDate?fmtDate(p.shootDate):'未定日期'}${p.ip?' · '+p.ip:''}</div>
+      </div>
+      <div style="position:relative"><button class="card-menu" onclick="event.stopPropagation();toggleDropdown(event,'${p.id}')">⋯</button></div>
+    </div>
+    <div class="card-meta">
+      <span class="tag ${statusTag}">${p.status}</span>
+      ${p.shootType?`<span class="tag">${shootTypeMap[p.shootType]||p.shootType}</span>`:''}
+      ${p.styleType?`<span class="tag">${styleMap[p.styleType]||p.styleType}</span>`:''}
+      ${p.location?`<span class="tag">${p.location}</span>`:''}
+      ${p.deliverable.includes('照片')?'<span class="tag tag-green">📷</span>':''}
+      ${p.deliverable.includes('视频')?'<span class="tag tag-green">🎬</span>':''}
+      ${p.hasBTS?'<span class="tag">🎞️花絮</span>':''}
+      ${done?'<span class="tag tag-accent">✓ 完成</span>':''}
+    </div>
+    ${photoProg}${videoProg}
+    <div class="card-fin">
+      <span class="fin-label">总价 ${fmtMoney(effectiveTotal(p))}${p.extraFee>0?` <span class="fin-unpaid" style="font-size:10px">＋加单${fmtMoney(p.extraFee)}</span>`:''}</span>
+      <span class="fin-paid">已收 ${fmtMoney(paid)}</span>
+      ${balance>0?`<span class="fin-unpaid">待收 ${fmtMoney(balance)}</span>`:'<span class="fin-paid" style="font-size:11px">✓ 已结清</span>'}
+    </div>
+  </div>`;
+}
+
+// ===== FINANCE =====
+function renderFinance(main){
+  const now=new Date();
+  const y=now.getFullYear();
+  const m=now.getMonth();
+
+  // Monthly data for current year
+  const monthData=[];
+  for(let i=0;i<12;i++){
+    const ym=y+'-'+String(i+1).padStart(2,'0');
+    const mp=projects.filter(p=>p.shootDate&&p.shootDate.startsWith(ym));
+    const income=mp.reduce((s,p)=>s+getTotalPaid(p),0);
+    const orders=mp.length;
+    monthData.push({month:i+1,income,orders});
+  }
+
+  const yearTotal=monthData.reduce((s,d)=>s+d.income,0);
+  const yearOrders=monthData.reduce((s,d)=>s+d.orders,0);
+  const avgPrice=yearOrders>0?Math.round(yearTotal/yearOrders):0;
+  const monthIncome=monthData[m].income;
+
+  let html=`<div class="main-header"><h2>财务</h2></div>`;
+
+  html+=`<div class="fin-summary">
+    <div class="fin-card"><div class="fc-label">本年度总收入</div><div class="fc-value">${fmtMoney(yearTotal)}</div><div class="fc-sub">${yearOrders} 单</div></div>
+    <div class="fin-card"><div class="fc-label">本月收入</div><div class="fc-value">${fmtMoney(monthIncome)}</div><div class="fc-sub">${monthData[m].orders} 单</div></div>
+    <div class="fin-card"><div class="fc-label">平均单价</div><div class="fc-value">${fmtMoney(avgPrice)}</div><div class="fc-sub">本年度</div></div>
+    <div class="fin-card"><div class="fc-label">待收款总额</div><div class="fc-value">${fmtMoney(projects.filter(p=>p.status==='已确认').reduce((s,p)=>s+getBalance(p),0))}</div><div class="fc-sub">${projects.filter(p=>getBalance(p)>0&&p.status==='已确认').length} 单未结清</div></div>
+  </div>`;
+
+  // Bar chart
+  const maxIncome=Math.max(...monthData.map(d=>d.income),1);
+  html+=`<div class="fin-chart">
+    <h3>${y}年 月度收入</h3>
+    <div class="bar-chart">
+      ${monthData.map(d=>{
+        const h=Math.round(d.income/maxIncome*140);
+        return `<div class="bar-col">
+          <div class="bar-val">${d.income>0?fmtMoney(d.income):''}</div>
+          <div class="bar" style="height:${h}px;${d.month===m+1?'background:var(--blue)':''}" title="${d.month}月: ${fmtMoney(d.income)} / ${d.orders}单"></div>
+          <div class="bar-label">${d.month}月</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  // Recent transactions table
+  const recent=projects.filter(p=>p.status==='已确认').sort((a,b)=>new Date(b.shootDate||0)-new Date(a.shootDate||0)).slice(0,12);
+  html+=`<div class="fin-chart">
+    <h3>近期订单</h3>
+    <table class="fin-table">
+      <thead><tr><th>日期</th><th>客户</th><th>类型</th><th>总价</th><th>已收</th><th>待收</th><th>状态</th></tr></thead>
+      <tbody>
+        ${recent.map(p=>{
+          const balance=getBalance(p);
+          return `<tr onclick="openModal('${p.id}')" style="cursor:pointer">
+            <td>${p.shootDate?fmtDate(p.shootDate):'-'}</td>
+            <td>${p.clientName}</td>
+            <td>${p.demandType||'-'}</td>
+            <td>${fmtMoney(effectiveTotal(p))}</td>
+            <td class="td-paid">${fmtMoney(getTotalPaid(p))}</td>
+            <td class="${balance>0?'td-unpaid':'td-paid'}">${balance>0?fmtMoney(balance):'✓'}</td>
+            <td>${isProjectDone(p)?'<span class="tag tag-green">已完成</span>':'<span class="tag tag-amber">进行中</span>'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  main.innerHTML=html;
+}
+
+// ===== SETTINGS =====
+function renderSettings(main){
+  const settings=loadSettings();
+  let html=`<div class="main-header"><h2>设置</h2></div>`;
+
+  html+=`<div class="settings-section">
+    <h3>📁 文件夹结构</h3>
+    <p>在电脑上运行文件夹生成器，自动创建项目文件夹：</p>
+    <div class="guide-folder">📁 彩華摄影档案/
+├── 📁 2026/
+│   └── 📁 2026-07-14_小美_雷电将军_原神_照片/
+│       ├── 📁 01_原图/
+│       ├── 📁 02_客人筛选/
+│       ├── 📁 03_调色/
+│       ├── 📁 04_成稿/
+│       ├── 📁 06_花絮/
+│       └── 📄 project.json</div>
+    <p style="margin-top:8px">运行命令：<code>python3 create_folders.py</code>（交互式创建）</p>
+  </div>`;
+
+  html+=`<div class="settings-section">
+    <h3>🖥️ 本地服务器（直接读取文件夹）</h3>
+    <p>启动本地服务器后，网页可以直接读取 <code>~/彩華摄影档案/</code> 中的图片，<strong>无需上传</strong>。</p>
+    <p style="margin-top:6px"><strong>启动方法：</strong>在终端运行：<code>python3 server.py</code></p>
+    <p style="margin-top:6px">启动后访问 <code>http://localhost:8765</code>，网页会自动检测到服务器。</p>
+    <p style="margin-top:6px;color:var(--text2);font-size:12px">检测到服务器后，项目编辑页的「客户选图」区域会出现「📁 从本地文件夹加载」按钮，点击即可浏览档案目录中的图片文件夹，选择照片后一键生成选图预览页。</p>
+    <p style="margin-top:6px;color:var(--text2);font-size:12px">未启动服务器时，仍可手动选择照片文件上传。</p>
+  </div>`;
+
+  html+=`<div class="settings-section">
+    <h3>💾 数据备份</h3>
+    <p>所有数据存储在浏览器本地。建议定期备份到电脑。</p>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn btn-secondary" onclick="exportAllData()">📥 导出备份</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 导入备份</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    </div>
+  </div>`;
+
+  html+=`<div class="settings-section">
+    <h3>📊 工作流说明</h3>
+    <p><strong>照片工作流：</strong>原图 → 客人筛选 → 调色 → 成稿</p>
+    <p><strong>视频工作流：</strong>原片 → 选片 → 调色 → 成片</p>
+    <p><strong>五个阶段：</strong>工作计划 → 拍摄准备 → 拍摄执行 → 后期制作 → 交付收尾</p>
+  </div>`;
+
+  html+=`<div class="settings-section">
+    <h3>⚠️ 关于数据</h3>
+    <p>数据存储在浏览器 localStorage 中，清除浏览器缓存会导致数据丢失。请定期备份。</p>
+    <p>后续升级到云端同步后，数据将自动备份到服务器，支持多设备访问。</p>
+  </div>`;
+
+  // ===== 约拍价格设置 =====
+  const pr=getPricing();
+  html+=`<div class="settings-section">
+    <h3>💰 约拍价格设置</h3>
+    <p style="margin-bottom:10px">所有价格可随时修改，涨价后<strong>新预约会按新价自动估算</strong>定金/尾款。保存后立即生效。</p>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>正片单人 ¥/小时</label><input type="number" id="setPhotoSingle" value="${pr.photoSingle}" min="0"></div>
+      <div class="form-group"><label>正片双人 ¥/小时</label><input type="number" id="setPhotoDouble" value="${pr.photoDouble}" min="0"></div>
+      <div class="form-group"><label>正片最低时长</label><input type="number" id="setPhotoMinHours" value="${pr.photoMinHours}" min="1"></div>
+    </div>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>正片含调色张数</label><input type="number" id="setPhotoIncluded" value="${pr.photoIncluded}" min="0"></div>
+      <div class="form-group"><label>正片加单调色 ¥/张</label><input type="number" id="setPhotoExtra" value="${pr.photoExtra}" min="0"></div>
+      <div class="form-group"><label>摄助 ¥/次</label><input type="number" id="setAssistant" value="${pr.assistant}" min="0"></div>
+    </div>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>视频单人 ¥/次</label><input type="number" id="setVideoSingle" value="${pr.videoSingle}" min="0"></div>
+      <div class="form-group"><label>场照 4图 ¥</label><input type="number" id="setEvent4" value="${pr.event4}" min="0"></div>
+      <div class="form-group"><label>场照 6图 ¥</label><input type="number" id="setEvent6" value="${pr.event6}" min="0"></div>
+    </div>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>场照加单 ¥/张</label><input type="number" id="setEventExtra" value="${pr.eventExtra}" min="0"></div>
+      <div class="form-group"><label>定金比例 %</label><input type="number" id="setDepositRatio" value="${Math.round(pr.depositRatio*100)}" min="0" max="100"></div>
+      <div class="form-group"><label></label><div></div></div>
+    </div>
+    <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="savePricing()">💾 保存价格设置</button>
+  </div>`;
+
+  main.innerHTML=html;
+}
+
+function savePricing(){
+  const num=id=>{const el=document.getElementById(id);return el?parseFloat(el.value)||0:0;};
+  const s=loadSettings();
+  s.pricing={
+    photoSingle:num('setPhotoSingle'),
+    photoDouble:num('setPhotoDouble'),
+    photoMinHours:num('setPhotoMinHours'),
+    photoIncluded:num('setPhotoIncluded'),
+    photoExtra:num('setPhotoExtra'),
+    videoSingle:num('setVideoSingle'),
+    videoExtra:num('setVideoExtra'),
+    event4:num('setEvent4'),
+    event6:num('setEvent6'),
+    eventExtra:num('setEventExtra'),
+    assistant:num('setAssistant'),
+    depositRatio:Math.min(100,Math.max(0,num('setDepositRatio')))/100
+  };
+  saveSettings(s);
+  toast('💰 价格已保存');
+}
+
+// ========== MODAL ==========
+function openModal(id, prefill){
+  editingId = id || null;
+  const modal = document.getElementById('projectModal');
+  const title = document.getElementById('modalTitle');
+  const body = document.getElementById('modalBody');
+  const deleteBtn = document.getElementById('deleteBtn');
+  modal.classList.remove('hidden');
+
+  let p = createEmptyProject();
+
+  if(id){
+    const found = projects.find(x=>x.id===id);
+    if(found){p=JSON.parse(JSON.stringify(found));title.textContent='编辑项目';deleteBtn.classList.remove('hidden')}
+    else{title.textContent='新建项目';deleteBtn.classList.add('hidden')}
+  }else{
+    title.textContent='新建项目';
+    deleteBtn.classList.add('hidden');
+  }
+
+  // 预填数据（支持 string 日期或 object 字段映射）
+  if(typeof prefill==='string'){
+    p.shootDate=prefill;
+  }else if(prefill && typeof prefill==='object'){
+    if(prefill.fClientName) p.clientName=prefill.fClientName;
+    if(prefill.fRole) p.role=prefill.fRole;
+    if(prefill.fIP) p.ip=prefill.fIP;
+    if(prefill.fShootDate) p.shootDate=prefill.fShootDate;
+    if(prefill.fMediaType) p.mediaType=prefill.fMediaType;
+    if(prefill.fContact) p.contact=prefill.fContact;
+    if(prefill.fTotalPrice!=null) p.totalPrice=prefill.fTotalPrice;
+    if(prefill.fBookingType) p.bookingType=prefill.fBookingType;
+    if(prefill.fNotes) p.notes=(p.notes||'')+'\n'+prefill.fNotes;
+  }
+
+  moodKeywordsTmp = [...(p.moodKeywords||[])];
+  window._selectPhotosTmp = [];
+  body.innerHTML = renderForm(p);
+  makeSectionsCollapsible(computeStage(p));
+  if(localServer) updateSelectPhotoUI();
+  modal.scrollTop = 0;
+}
+
+function createEmptyProject(){
+  return {
+    status:'待确认',
+    clientName:'',contact:'',demandType:'COS',deliverable:'照片',
+    totalPrice:0,deposit:0,finalPayment:0,
+    shootDate:'',startTime:'',endTime:'',
+    city:'',location:'',routeLink:'',weather:'',
+    role:'',ip:'',styleType:'cosplay',shootType:'棚拍',
+    moodKeywords:[],moodBoard:{reference:[],pose:[],lighting:[],composition:[]},
+    actualStart:'',actualEnd:'',shootNotes:'',hasBTS:false,
+    photoWorkflow:{original:{count:0,done:false},selected:{count:0,done:false},color:{count:0,done:false},final:{count:0,done:false}},
+    videoWorkflow:{original:{count:0,done:false},selected:{count:0,done:false},color:{count:0,done:false},final:{count:0,done:false}},
+    publishedPlatforms:[],
+    archived:false,cloudBackup:false,
+    notes:'',storyboard:'',
+    extraPhotos:0,extraUnit:0,extraFee:0,bookingType:''
+  };
+}
+
+function closeModal(){
+  document.getElementById('projectModal').classList.add('hidden');
+  editingId = null;
+  render();
+}
+
+function computeStage(p){
+  // 0预约 1定金 2策划 3拍摄 4后期 5交付
+  let s=0;
+  if((p.status==='已确认')||(p.deposit||0)>0) s=Math.max(s,1);
+  const mb=p.moodBoard||{};
+  if(p.location || p.routeLink || (mb.reference&&mb.reference.length) || (mb.pose&&mb.pose.length) || (p.moodKeywords&&p.moodKeywords.length)) s=Math.max(s,2);
+  if(p.actualStart || p.shootNotes) s=Math.max(s,3);
+  const wf=p.photoWorkflow||{};
+  if((wf.selected&&wf.selected.done)||(wf.color&&wf.color.done)||(wf.final&&wf.final.done)) s=Math.max(s,4);
+  if(p.archived || (p.publishedPlatforms&&p.publishedPlatforms.length>0)) s=Math.max(s,5);
+  return s;
+}
+function renderProgressBar(stage, p){
+  const labels=['预约','定金','策划','拍摄','后期','交付'];
+  let nodes='';
+  for(let i=0;i<6;i++){
+    const isDone=i<stage, isActive=i===stage;
+    const bg=isDone?'#7BA88E':(isActive?'var(--accent)':'#E8DFD0');
+    const txt=isDone?'var(--text2)':(isActive?'var(--text)':'var(--text3)');
+    const mark=isDone?'✓':(i+1);
+    nodes+=`<div style="flex:1;text-align:center">
+      <div style="width:26px;height:26px;line-height:26px;margin:0 auto;border-radius:50%;background:${bg};color:#fff;font-size:12px;font-weight:700">${mark}</div>
+      <div style="font-size:10px;margin-top:3px;color:${txt}">${labels[i]}</div>
+    </div>`;
+    if(i<5) nodes+=`<div style="flex:0 0 14px;height:2px;margin-top:12px;background:${isDone?'#7BA88E':'#E8DFD0'}"></div>`;
+  }
+  const stTxt={'待确认':'待确认','已确认':'已确认','已取消':'已取消'}[p.status]||p.status;
+  const key=`${p.clientName||'未命名'}${p.shootDate?' · '+fmtDate(p.shootDate):''}${p.location?' · '+p.location:''} · ${stTxt}`;
+  return `<div style="background:#FAFAF7;border:1px solid var(--border);border-radius:var(--radius);padding:12px 10px;margin-bottom:14px">
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">📌 ${key}</div>
+    <div style="display:flex;align-items:flex-start">${nodes}</div>
+  </div>`;
+}
+function makeSectionsCollapsible(stage){
+  document.querySelectorAll('#modalBody .form-section[data-stage]').forEach(sec=>{
+    const idx=parseInt(sec.dataset.stage||'1');
+    const title=sec.querySelector('.form-section-title');
+    if(!title)return;
+    title.style.cursor='pointer';
+    if(getComputedStyle(title).display!=='flex') title.style.display='flex';
+    title.style.justifyContent='space-between';
+    title.style.alignItems='center';
+    const chev=document.createElement('span');
+    chev.textContent='▾'; chev.style.transition='transform .2s'; chev.style.color='var(--text3)';
+    title.appendChild(chev);
+    const children=[...sec.children].filter(c=>c!==title);
+    const body=document.createElement('div'); body.className='sec-body';
+    children.forEach(c=>body.appendChild(c));
+    sec.appendChild(body);
+    if(idx>stage){ body.style.display='none'; chev.style.transform='rotate(-90deg)'; }
+    title.onclick=()=>{ const hid=body.style.display==='none'; body.style.display=hid?'':'none'; chev.style.transform=hid?'':'rotate(-90deg)'; };
+  });
+}
+
+function renderForm(p){
+  const platforms=['xiaohongshu','douyin','bilibili','instagram','twitter'];
+  const shootTypes=['场照','外景','棚拍'];
+  const styles=['cosplay','人像','商业','活动','其他'];
+  const demandTypes=['人像','COS','商业','活动跟拍'];
+  const statuses=['待确认','已确认','已取消'];
+
+  const stage=computeStage(p);
+  const pr2=getPricing();
+  const isEvent=(p.bookingType==='event')||(p.shootType==='场照');
+  const isVideo=p.deliverable.includes('视频');
+  const defaultUnit=isEvent?pr2.eventExtra:(isVideo?pr2.videoExtra:pr2.photoExtra);
+  const curExtraFee=(p.extraPhotos||0)*(p.extraUnit||defaultUnit);
+  return `
+  ${renderProgressBar(stage, p)}
+  <div class="form-section" data-stage="0"><div class="form-section-title">① 工作计划（接单）</div>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>状态 *</label><select id="fStatus">${statuses.map(s=>`<option value="${s}"${p.status===s?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="form-group"><label>客户CN *</label><input type="text" id="fClientName" value="${p.clientName||''}" placeholder="拍摄对象名称"></div>
+      <div class="form-group"><label>联系方式</label><input type="text" id="fContact" value="${p.contact||''}" placeholder="微信号"></div>
+    </div>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>需求类型</label><select id="fDemandType">${demandTypes.map(s=>`<option value="${s}"${p.demandType===s?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="form-group"><label>交付物</label><select id="fDeliverable"><option value="照片"${p.deliverable==='照片'?' selected':''}>照片</option><option value="视频"${p.deliverable==='视频'?' selected':''}>视频</option><option value="照片视频"${p.deliverable==='照片视频'?' selected':''}>照片+视频</option></select></div>
+      <div class="form-group"><label>花絮</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-top:6px;font-size:13px;color:var(--text2)"><input type="checkbox" id="fBTS" ${p.hasBTS?'checked':''} style="width:16px;height:16px;accent-color:var(--accent)"> <span>🎞️ 有花絮</span></label></div>
+    </div>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>总价 ¥</label><input type="number" id="fTotalPrice" value="${p.totalPrice||0}" min="0"></div>
+      <div class="form-group"><label>已收定金 ¥</label><input type="number" id="fDeposit" value="${p.deposit||0}" min="0"></div>
+      <div class="form-group"><label>已收尾款 ¥</label><input type="number" id="fFinalPayment" value="${p.finalPayment||0}" min="0"></div>
+    </div>
+  </div>
+
+  <div class="form-section" data-stage="2"><div class="form-section-title">② 拍摄准备（策划）</div>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>拍摄日期</label><input type="date" id="fShootDate" value="${p.shootDate||''}"></div>
+      <div class="form-group"><label>开始时间</label><input type="time" id="fStartTime" value="${p.startTime||''}"></div>
+      <div class="form-group"><label>结束时间</label><input type="time" id="fEndTime" value="${p.endTime||''}"></div>
+    </div>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>城市</label><input type="text" id="fCity" value="${p.city||''}" placeholder="如：上海"></div>
+      <div class="form-group"><label>地点</label><input type="text" id="fLocation" value="${p.location||''}" placeholder="如：外滩"></div>
+      <div class="form-group"><label>天气</label><input type="text" id="fWeather" value="${p.weather||''}" placeholder="自动获取或手填"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>导航链接</label><input type="text" id="fRouteLink" value="${p.routeLink||''}" placeholder="粘贴地图导航链接"></div>
+      <div class="form-group"><label>拍摄类型</label><select id="fShootType">${shootTypes.map(s=>`<option value="${s}"${p.shootType===s?' selected':''}>${s}</option>`).join('')}</select></div>
+    </div>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>角色</label><input type="text" id="fRole" value="${p.role||''}" placeholder="角色名"></div>
+      <div class="form-group"><label>IP</label><input type="text" id="fIP" value="${p.ip||''}" placeholder="原作IP"></div>
+      <div class="form-group"><label>风格类型</label><select id="fStyleType">${styles.map(s=>`<option value="${s}"${p.styleType===s?' selected':''}>${s}</option>`).join('')}</select></div>
+    </div>
+  </div>
+
+  <div class="form-section"><div class="form-section-title">🎨 情绪板</div>
+    <div class="form-row cols-1">
+      <div class="form-group">
+        <label>情绪关键词</label>
+        <div class="mood-keywords" id="moodKeywords">
+          ${moodKeywordsTmp.map((k,i)=>`<span class="mood-keyword">${k}<span class="mk-remove" onclick="removeKeyword(${i})">×</span></span>`).join('')}
+          <input type="text" class="keyword-input" id="keywordInput" placeholder="+ 添加" onkeydown="if(event.key==='Enter'){event.preventDefault();addKeyword()}">
+        </div>
+      </div>
+    </div>
+    <div class="mood-upload">
+      ${[
+        {key:'reference',label:'参考图'},
+        {key:'pose',label:'动作参考'},
+        {key:'lighting',label:'灯光参考'},
+        {key:'composition',label:'构图参考'}
+      ].map(slot=>{
+        const imgs=p.moodBoard[slot.key]||[];
+        return `<div>
+          <div class="mood-section-title">${slot.label}</div>
+          <div class="mood-slot" id="mood_${slot.key}" onclick="document.getElementById('file_${slot.key}').click()">
+            ${imgs.length>0?`<img src="${imgs[0]}"><button class="ms-remove" onclick="event.stopPropagation();removeMoodImg('${slot.key}')">×</button>`:`<span class="ms-label">📷 上传</span>`}
+          </div>
+          <input type="file" id="file_${slot.key}" accept="image/*" style="display:none" onchange="uploadMoodImg('${slot.key}',this)">
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--border)">
+      <button class="btn btn-primary btn-sm" onclick="exportPlanningPage()">📋 一键导出策划给客户</button>
+      <span style="font-size:10px;color:var(--text3);margin-left:8px">生成独立HTML，微信发给客户查看拍摄方案</span>
+    </div>
+  </div>
+
+  <div class="form-section" data-stage="3"><div class="form-section-title">③ 拍摄执行</div>
+    <div class="form-row">
+      <div class="form-group"><label>实际开始</label><input type="time" id="fActualStart" value="${p.actualStart||''}"></div>
+      <div class="form-group"><label>实际结束</label><input type="time" id="fActualEnd" value="${p.actualEnd||''}"></div>
+    </div>
+    <div class="form-row cols-1">
+      <div class="form-group"><label>现场备注</label><textarea id="fShootNotes" rows="2" placeholder="现场情况、客人表现等">${p.shootNotes||''}</textarea></div>
+    </div>
+  </div>
+
+  <div class="form-section" data-stage="4"><div class="form-section-title">④ 后期制作</div>
+    ${p.deliverable.includes('照片')?`
+    <div style="margin-bottom:12px"><strong style="font-size:12px">📷 照片工作流</strong></div>
+    <div class="wf-row"><span class="wf-name">① 原图</span><input type="number" id="fPO" value="${p.photoWorkflow.original.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPODone" ${p.photoWorkflow.original.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPODone').click()">完成</label></div>
+    <div class="wf-row"><span class="wf-name">② 筛选</span><input type="number" id="fPS" value="${p.photoWorkflow.selected.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPSDone" ${p.photoWorkflow.selected.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPSDone').click()">完成</label></div>
+    <div class="wf-row"><span class="wf-name">③ 调色</span><input type="number" id="fPC" value="${p.photoWorkflow.color.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPCDone" ${p.photoWorkflow.color.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPCDone').click()">完成</label></div>
+    <div class="wf-row"><span class="wf-name">④ 成稿</span><input type="number" id="fPF" value="${p.photoWorkflow.final.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPFDone" ${p.photoWorkflow.final.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPFDone').click()">完成</label></div>
+    `:''}
+    ${p.deliverable.includes('视频')?`
+    <div style="margin:12px 0 8px"><strong style="font-size:12px">🎬 视频工作流</strong></div>
+    <div class="wf-row"><span class="wf-name">① 原片</span><input type="number" id="fVO" value="${p.videoWorkflow.original.count}"><span class="wf-unit">条</span><input type="checkbox" id="fVODone" ${p.videoWorkflow.original.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fVODone').click()">完成</label></div>
+    <div class="wf-row"><span class="wf-name">② 选片</span><input type="number" id="fVS" value="${p.videoWorkflow.selected.count}"><span class="wf-unit">条</span><input type="checkbox" id="fVSDone" ${p.videoWorkflow.selected.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fVSDone').click()">完成</label></div>
+    <div class="wf-row"><span class="wf-name">③ 调色</span><input type="number" id="fVC" value="${p.videoWorkflow.color.count}"><span class="wf-unit">条</span><input type="checkbox" id="fVCDone" ${p.videoWorkflow.color.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fVCDone').click()">完成</label></div>
+    <div class="wf-row"><span class="wf-name">④ 成片</span><input type="number" id="fVF" value="${p.videoWorkflow.final.count}"><span class="wf-unit">条</span><input type="checkbox" id="fVFDone" ${p.videoWorkflow.final.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fVFDone').click()">完成</label></div>
+    <div style="margin-top:10px">
+      <div style="font-size:12px;font-weight:600;margin-bottom:4px">📝 分镜脚本 <span style="font-size:10px;color:var(--text3);font-weight:400">（可后续细化）</span></div>
+      <textarea id="fStoryboard" rows="3" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;outline:none;resize:vertical" placeholder="镜头1 | 画面描述 | 时长 | 备注&#10;镜头2 | 画面描述 | 时长 | 备注">${p.storyboard||''}</textarea>
+    </div>
+    `:''}
+    <div style="margin-top:12px;border:1px solid var(--border);border-radius:var(--radius);padding:12px;background:#FFFDF6">
+      <div style="font-size:12px;font-weight:600;margin-bottom:2px">➕ 选图加单</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:8px">客户选图阶段追加的张数，自动计入尾款</div>
+      <div class="form-row">
+        <div class="form-group"><label>加单张数</label><input type="number" id="fExtraPhotos" value="${p.extraPhotos||0}" min="0" oninput="updateExtraFee()"></div>
+        <div class="form-group"><label>单价 ¥/张</label><input type="number" id="fExtraUnit" value="${p.extraUnit||defaultUnit}" min="0" oninput="updateExtraFee()"></div>
+      </div>
+      <div style="font-size:12px;color:var(--text2)">加单费用：<b id="extraFeeVal" style="color:var(--amber)">${fmtMoney(curExtraFee)}</b> <span style="font-size:10px">（将加入总价与尾款 · 当前项目合计 ${fmtMoney((p.totalPrice||0)+curExtraFee)}）</span></div>
+    </div>
+    <div id="selectPhotoArea" style="margin-top:12px;border:1px solid var(--border);border-radius:var(--radius);padding:12px">
+      <div style="font-size:12px;font-weight:600;margin-bottom:6px">📷 客户选图</div>
+      <div class="ps-info" style="margin-bottom:8px">
+        💡 上传原图 → 自动压缩600px+水印 → 生成独立HTML → 微信发给客户选图
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <label class="btn btn-secondary btn-sm" style="cursor:pointer">
+          📁 选择照片（可多选）
+          <input type="file" multiple accept="image/*" style="display:none" onchange="uploadSelectPhotos(this)">
+        </label>
+        <span id="selectPhotoCount" style="font-size:11px;color:var(--text3)">未上传</span>
+        <span id="selectPhotoSize" style="font-size:11px;color:var(--text3)"></span>
+      </div>
+      <div id="selectThumbs" style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;max-height:200px;overflow-y:auto"></div>
+      <button class="btn btn-primary btn-sm" onclick="generatePhotoSelectPage()" style="margin-top:8px">🖼️ 生成选图预览页</button>
+    </div>
+  </div>
+
+  <div class="form-section" data-stage="5"><div class="form-section-title">⑤ 交付收尾</div>
+    <div class="form-section-title" style="border:none;margin-bottom:6px">发布平台</div>
+    <div class="platform-list">
+      ${platforms.map(pl=>`<label class="platform-item ${p.publishedPlatforms.includes(pl)?'checked':''}" onclick="event.preventDefault();this.querySelector('input').click()"><input type="checkbox" class="pub-check" data-platform="${pl}" ${p.publishedPlatforms.includes(pl)?'checked':''} onchange="this.parentElement.classList.toggle('checked',this.checked)">${platformEmoji(pl)} ${platformLabel(pl)}</label>`).join('')}
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>项目归档</label><label class="platform-item" onclick="event.preventDefault();document.getElementById('fArchived').click()"><input type="checkbox" id="fArchived" ${p.archived?'checked':''}> 📦 已归档</label></div>
+      <div class="form-group"><label>百度网盘备份</label><label class="platform-item" onclick="event.preventDefault();document.getElementById('fCloudBackup').click()"><input type="checkbox" id="fCloudBackup" ${p.cloudBackup?'checked':''}> ☁️ 已备份</label></div>
+    </div>
+    <div class="form-row cols-1">
+      <div class="form-group"><label>备注</label><textarea id="fNotes" rows="2" placeholder="其他备注">${p.notes||''}</textarea></div>
+    </div>
+  </div>`;
+}
+
+function addKeyword(){
+  const input=document.getElementById('keywordInput');
+  const val=input.value.trim();
+  if(val && !moodKeywordsTmp.includes(val)){
+    moodKeywordsTmp.push(val);
+    input.value='';
+    refreshKeywords();
+  }
+}
+function removeKeyword(i){
+  moodKeywordsTmp.splice(i,1);
+  refreshKeywords();
+}
+function refreshKeywords(){
+  const el=document.getElementById('moodKeywords');
+  const input='<input type="text" class="keyword-input" id="keywordInput" placeholder="+ 添加" onkeydown="if(event.key===\'Enter\'){event.preventDefault();addKeyword()}">';
+  el.innerHTML=moodKeywordsTmp.map((k,i)=>`<span class="mood-keyword">${k}<span class="mk-remove" onclick="removeKeyword(${i})">×</span></span>`).join('')+input;
+  document.getElementById('keywordInput').focus();
+}
+function updateExtraFee(){
+  const ph=document.getElementById('fExtraPhotos');
+  const pu=document.getElementById('fExtraUnit');
+  const val=document.getElementById('extraFeeVal');
+  if(!ph||!pu||!val)return;
+  const fee=(parseInt(ph.value)||0)*(parseInt(pu.value)||0);
+  val.textContent='¥'+fee.toLocaleString('zh-CN');
+}
+
+function uploadMoodImg(key, input){
+  const file=input.files[0];
+  if(!file)return;
+  if(file.size>500000){
+    toast('图片不能超过 500KB，请压缩后上传');
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    // Store in temp on the form element
+    if(!window._moodTmp)window._moodTmp={};
+    if(!window._moodTmp[key])window._moodTmp[key]=[];
+    window._moodTmp[key]=[e.target.result]; // replace
+    const slot=document.getElementById('mood_'+key);
+    slot.innerHTML=`<img src="${e.target.result}"><button class="ms-remove" onclick="event.stopPropagation();removeMoodImg('${key}')">×</button>`;
+  };
+  reader.readAsDataURL(file);
+}
+function removeMoodImg(key){
+  if(window._moodTmp&&window._moodTmp[key])delete window._moodTmp[key];
+  const slot=document.getElementById('mood_'+key);
+  slot.innerHTML=`<span class="ms-label">📷 上传</span>`;
+}
+
+function saveProject(){
+  const v=id=>{const el=document.getElementById(id);return el?el.value:''};
+  const chk=id=>{const el=document.getElementById(id);return el?el.checked:false};
+  const num=id=>{const el=document.getElementById(id);return el?parseInt(el.value)||0:0};
+
+  const clientName=v('fClientName').trim();
+  if(!clientName){toast('请输入客户CN');return}
+
+  const deliverable=v('fDeliverable');
+  const publishedPlatforms=[...document.querySelectorAll('.pub-check:checked')].map(c=>c.dataset.platform);
+
+  // Merge mood board
+  const moodBoard={reference:[],pose:[],lighting:[],composition:[]};
+  if(window._moodTmp){
+    for(const key in moodBoard){
+      if(window._moodTmp[key])moodBoard[key]=window._moodTmp[key];
+    }
+  }
+
+  const project={
+    status:v('fStatus'),
+    clientName,contact:v('fContact'),demandType:v('fDemandType'),deliverable,
+    totalPrice:num('fTotalPrice'),deposit:num('fDeposit'),finalPayment:num('fFinalPayment'),
+    shootDate:v('fShootDate'),startTime:v('fStartTime'),endTime:v('fEndTime'),
+    city:v('fCity'),location:v('fLocation'),routeLink:v('fRouteLink'),weather:v('fWeather'),
+    role:v('fRole'),ip:v('fIP'),styleType:v('fStyleType'),shootType:v('fShootType'),
+    moodKeywords:[...moodKeywordsTmp],moodBoard,
+    actualStart:v('fActualStart'),actualEnd:v('fActualEnd'),shootNotes:v('fShootNotes'),hasBTS:chk('fBTS'),
+    photoWorkflow:{
+      original:{count:num('fPO'),done:chk('fPODone')},
+      selected:{count:num('fPS'),done:chk('fPSDone')},
+      color:{count:num('fPC'),done:chk('fPCDone')},
+      final:{count:num('fPF'),done:chk('fPFDone')}
+    },
+    videoWorkflow:{
+      original:{count:num('fVO'),done:chk('fVODone')},
+      selected:{count:num('fVS'),done:chk('fVSDone')},
+      color:{count:num('fVC'),done:chk('fVCDone')},
+      final:{count:num('fVF'),done:chk('fVFDone')}
+    },
+    publishedPlatforms,
+    archived:chk('fArchived'),cloudBackup:chk('fCloudBackup'),
+    notes:v('fNotes'),storyboard:v('fStoryboard'),
+    bookingType:p.bookingType,
+    extraPhotos:num('fExtraPhotos'),
+    extraUnit:num('fExtraUnit'),
+    extraFee:(num('fExtraPhotos'))*(num('fExtraUnit')),
+    updatedAt:new Date().toISOString()
+  };
+
+  if(editingId){
+    const idx=projects.findIndex(p=>p.id===editingId);
+    if(idx>=0){project.id=editingId;project.createdAt=projects[idx].createdAt;projects[idx]=project}
+  }else{
+    project.id=genId();project.createdAt=new Date().toISOString();projects.unshift(project)
+  }
+
+  // Clean up temp
+  window._moodTmp={};
+
+  saveProjects(projects);
+  closeModal();
+  toast(editingId?'项目已更新':'项目已创建');
+}
+
+function deleteProject(){
+  if(!editingId)return;
+  if(!confirm('确定要删除这个项目吗？此操作不可撤销。'))return;
+  projects=projects.filter(p=>p.id!==editingId);
+  saveProjects(projects);
+  closeModal();
+  toast('项目已删除');
+}
+
+// ========== BOOKING MANAGEMENT ==========
+// 待办预约后端地址：本地默认同源；云端部署时在档案站链接后加 ?api=https://云后端
+const API_BASE = new URLSearchParams(location.search).get('api') || window.API_BASE || '';
+
+let pendingBookings=[];
+async function loadPendingBookings(){
+  try{
+    const r=await fetch(API_BASE+'/api/bookings');
+    pendingBookings=await r.json();
+    // 更新仪表盘计数
+    const el=document.getElementById('bookingCount');
+    if(el)el.textContent=pendingBookings.length;
+    const icon=document.getElementById('bookingIcon');
+    if(icon)icon.textContent=pendingBookings.length>0?'⏰':'📨';
+    // 如果当前在项目管理页，刷新显示
+    if(currentView==='projects')renderProjects(document.getElementById('mainContent'));
+  }catch(e){
+    pendingBookings=[];
+  }
+}
+function importBooking(d){
+  // 将预约数据映射到项目表单字段
+  const typeToMediaType={'photo':'照片','video':'视频','event':'照片'};
+  const catLabel={sankeng:'三坑',daily:'日常',cosplay:'cosplay'}[d.category]||'';
+  const role = d.category==='cosplay' ? (d.character||'') : (d.clothStyle||'');
+  const ip = d.category==='cosplay' ? (d.ipSource||'') : '';
+  const styleMap={sankeng:'其他',daily:'人像',cosplay:'cosplay'};
+  const est=calcEstimate(d,getPricing());
+  openModal(null,{
+    fClientName:d.clientName||'',
+    fRole:role,
+    fIP:ip,
+    fStyleType:styleMap[d.category]||'',
+    fShootDate:d.preferredDate||'',
+    fMediaType:typeToMediaType[d.shootType]||'照片',
+    fContact:d.wechat||'',
+    fTotalPrice:est.total,
+    fBookingType:d.shootType||'',
+    fNotes:(d.notes||'')+(catLabel?' ['+catLabel+']':'')+(d.needAssistant==='yes'?' [需要摄助]':''),
+  });
+  toast('已导入预约信息，请补充完整后保存');
+}
+
+// 确认价格并建档（直接生成档案，status=已确认，进入定金阶段）
+async function createProjectFromBooking(b){
+  const d=b.data||b;
+  const est=calcEstimate(d,getPricing());
+  if(!confirm('确认价格为「'+(d.clientName||'未命名')+'」建档？\n预计总价 '+fmtMoney(est.total)+'（定金 '+fmtMoney(est.deposit)+' / 尾款 '+fmtMoney(est.final)+'）\n建档后该预约将从待办列表移除，进入「待收定金」阶段。'))return;
+  const typeToMediaType={'photo':'照片','video':'视频','event':'照片'};
+  const catLabel={sankeng:'三坑',daily:'日常',cosplay:'cosplay'}[d.category]||'';
+  const role=d.category==='cosplay'?(d.character||''):(d.clothStyle||'');
+  const ip=d.category==='cosplay'?(d.ipSource||''):'';
+  const styleMap={sankeng:'其他',daily:'人像',cosplay:'cosplay'};
+  const pr=getPricing();
+  const isEvent=d.shootType==='event';
+  const isVideo=d.shootType==='video';
+  const extraUnitDef=isEvent?pr.eventExtra:(isVideo?pr.videoExtra:pr.photoExtra);
+  const p=createEmptyProject();
+  p.status='已确认';
+  p.clientName=d.clientName||'';
+  p.contact=d.wechat||'';
+  p.role=role; p.ip=ip;
+  p.styleType=styleMap[d.category]||'cosplay';
+  p.shootDate=d.preferredDate||'';
+  p.mediaType=typeToMediaType[d.shootType]||'照片';
+  p.deliverable=p.mediaType;
+  p.demandType=d.category==='cosplay'?'COS':(d.category==='daily'?'人像':'其他');
+  p.totalPrice=est.total;
+  p.estDeposit=est.deposit; p.estFinal=est.final;
+  p.bookingType=d.shootType||'';
+  p.extraUnit=extraUnitDef;
+  p.notes=[d.notes||'', catLabel?('['+catLabel+']'):'', d.needAssistant==='yes'?'[需要摄助]':'', d.allowDisplay==='no'?'[请勿公开]':''].filter(Boolean).join(' ');
+  p.createdAt=new Date().toISOString();
+  p.updatedAt=p.createdAt;
+  projects.unshift(p);
+  saveProjects(projects);
+  await deleteBooking(b.filename);
+  toast('✅ 已建档：'+(p.clientName||'未命名')+'（待收定金 '+fmtMoney(est.deposit)+'）');
+  render();
+  openModal(p.id);
+}
+async function deleteBooking(filename){
+  if(!filename)return;
+  try{
+    await fetch(API_BASE+'/api/booking-delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename})});
+    await loadPendingBookings();
+  }catch(e){console.error(e)}
+}
+
+// ========== DROPDOWN ==========
+function toggleDropdown(e,id){
+  e.stopPropagation();
+  if(dropdownVisible===id){closeDropdown();return}
+  closeDropdown();
+  dropdownVisible=id;
+  const el=e.target.closest('button');
+  const dd=document.createElement('div');dd.className='dropdown';dd.id='dd-'+id;
+  dd.innerHTML=`<button onclick="openModal('${id}');closeDropdown()">✏️ 编辑</button>
+    <button onclick="duplicateProject('${id}')">📋 复制</button>
+    <button class="danger" onclick="confirmDelete('${id}')">🗑️ 删除</button>`;
+  el.parentElement.appendChild(dd);
+  document.addEventListener('click',closeDropdown,{once:true});
+}
+function closeDropdown(){if(dropdownVisible){const dd=document.getElementById('dd-'+dropdownVisible);if(dd)dd.remove();dropdownVisible=null}}
+function confirmDelete(id){closeDropdown();if(!confirm('确定要删除这个项目吗？'))return;projects=projects.filter(p=>p.id!==id);saveProjects(projects);toast('已删除');render()}
+function duplicateProject(id){closeDropdown();const p=projects.find(x=>x.id===id);if(!p)return;const np=JSON.parse(JSON.stringify(p));np.id=genId();np.shootDate='';np.status='待确认';np.publishedPlatforms=[];np.createdAt=new Date().toISOString();np.updatedAt=new Date().toISOString();projects.unshift(np);saveProjects(projects);toast('项目已复制');render()}
+
+// ========== LOCAL SERVER DETECTION ==========
+let localServer=false;
+async function checkLocalServer(){
+  try{const r=await fetch('/api/check');if(r.ok){localServer=true;updateSelectPhotoUI();updateCreateFolderBtn();}}catch(e){localServer=false;updateCreateFolderBtn();}
+}
+function updateCreateFolderBtn(){
+  const btn=document.getElementById('createFolderBtn');
+  if(!btn)return;
+  if(localServer){
+    btn.disabled=false;
+    btn.title='根据表单信息创建本地文件夹';
+    btn.style.opacity='1';
+  }else{
+    btn.disabled=true;
+    btn.title='需先启动本地服务器 (python3 server.py)';
+    btn.style.opacity='0.5';
+  }
+}
+
+// ========== CREATE LOCAL FOLDER FROM FORM ==========
+async function createLocalFolder(){
+  if(!localServer){toast('请先启动本地服务器 (python3 server.py)');return;}
+  const v=id=>{const el=document.getElementById(id);return el?el.value.trim():''};
+  const date=v('fShootDate');
+  const client=v('fClientName');
+  if(!date){toast('请先填写拍摄日期');return;}
+  if(!client){toast('请先填写客户CN');return;}
+
+  const character=v('fRole');
+  const ip=v('fIP');
+  const mediaType=v('fDeliverable')||'照片';
+
+  const btn=document.getElementById('createFolderBtn');
+  btn.disabled=true;btn.textContent='⏳ 创建中...';
+  try{
+    const r=await fetch('/api/create-folder',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({date,client,character,ip,mediaType})
+    });
+    const res=await r.json();
+    if(r.ok&&res.ok){
+      toast('✅ 已创建文件夹：'+res.folderName);
+    }else{
+      toast('❌ 创建失败：'+(res.error||'未知错误'));
+    }
+  }catch(e){
+    toast('❌ 无法连接本地服务器');
+  }finally{
+    btn.disabled=!localServer;
+    btn.textContent='📁 一键建文件夹';
+  }
+}
+function updateSelectPhotoUI(){
+  const area=document.getElementById('selectPhotoArea');
+  if(!area||!localServer)return;
+  const info=area.querySelector('.ps-info');
+  if(info){info.innerHTML='💡 已连接本地服务器！点击「从本地文件夹加载」直接读取档案目录图片，无需上传';}
+  const label=area.querySelector('label');
+  if(label){
+    const btn=document.createElement('button');
+    btn.className='btn btn-primary btn-sm';
+    btn.style.marginRight='8px';
+    btn.textContent='📁 从本地文件夹加载';
+    btn.onclick=function(e){e.preventDefault();loadFromFolder();};
+    label.parentNode.insertBefore(btn,label);
+  }
+}
+
+// ========== LOAD FROM LOCAL FOLDER ==========
+let _folderOverlay=null;
+async function loadFromFolder(){
+  try{
+    const r=await fetch('/api/projects');
+    const projectList=await r.json();
+    if(!projectList.length){toast('档案目录中还没有项目文件夹，请先用 create_folders.py 创建');return;}
+    if(_folderOverlay){_folderOverlay.remove();}
+    _folderOverlay=document.createElement('div');
+    _folderOverlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+    const modal=document.createElement('div');
+    modal.style.cssText='background:#fff;border-radius:12px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto;padding:20px';
+    let html='<div style="font-size:15px;font-weight:700;margin-bottom:12px">选择项目文件夹</div>';
+    projectList.forEach(p=>{
+      const info=Object.entries(p.imageCounts||{}).map(([k,v])=>k+'('+v+'张)').join(' / ')||'暂无图片';
+      html+='<div class="folder-item" data-relpath="'+p.relPath+'" style="padding:10px 12px;border:1px solid var(--border);border-radius:6px;margin-bottom:6px;cursor:pointer"><div style="font-size:13px;font-weight:600">'+p.name+'</div><div style="font-size:11px;color:var(--text3);margin-top:2px">'+info+'</div></div>';
+    });
+    html+='<button class="btn btn-secondary btn-sm" style="margin-top:8px" id="folderCancel">取消</button>';
+    modal.innerHTML=html;
+    _folderOverlay.appendChild(modal);
+    _folderOverlay.onclick=e=>{if(e.target===_folderOverlay){_folderOverlay.remove();_folderOverlay=null;}};
+    modal.querySelector('#folderCancel').onclick=()=>{_folderOverlay.remove();_folderOverlay=null;};
+    modal.querySelectorAll('.folder-item').forEach(item=>{
+      item.onmouseover=function(){this.style.background='#F5F5F5'};
+      item.onmouseout=function(){this.style.background=''};
+      item.onclick=()=>selectFolderProject(item.dataset.relpath);
+    });
+    document.body.appendChild(_folderOverlay);
+  }catch(e){toast('无法连接本地服务器');}
+}
+
+async function selectFolderProject(relPath){
+  try{
+    const r=await fetch('/api/projects');
+    const projectList=await r.json();
+    const proj=projectList.find(p=>p.relPath===relPath);
+    if(!proj){toast('未找到该项目');return;}
+    const folders=proj.subfolders||[];
+    if(!folders.length){toast('该项目没有子文件夹');return;}
+    if(!_folderOverlay)return;
+    const modal=_folderOverlay.firstElementChild;
+    let html='<div style="font-size:15px;font-weight:700;margin-bottom:4px">选择子文件夹</div>';
+    html+='<div style="font-size:12px;color:var(--text3);margin-bottom:8px">'+proj.name+'</div>';
+    folders.forEach(f=>{
+      const cnt=proj.imageCounts[f]||0;
+      html+='<div class="subfolder-item" data-fullpath="'+relPath+'/'+f+'" style="padding:10px 12px;border:1px solid var(--border);border-radius:6px;margin-bottom:6px;cursor:pointer"><div style="font-size:13px;font-weight:600">'+f+'</div><div style="font-size:11px;color:var(--text3)">'+(cnt>0?cnt+' 张图片':'空文件夹')+'</div></div>';
+    });
+    html+='<button class="btn btn-secondary btn-sm" style="margin-top:8px" id="folderBack">返回</button>';
+    modal.innerHTML=html;
+    modal.querySelector('#folderBack').onclick=()=>loadFromFolder();
+    modal.querySelectorAll('.subfolder-item').forEach(item=>{
+      item.onmouseover=function(){this.style.background='#F5F5F5'};
+      item.onmouseout=function(){this.style.background=''};
+      item.onclick=()=>loadFolderImages(item.dataset.fullpath);
+    });
+  }catch(e){toast('读取失败');}
+}
+
+async function loadFolderImages(fullRelPath){
+  if(_folderOverlay){_folderOverlay.remove();_folderOverlay=null;}
+  toast('正在加载图片...');
+  try{
+    const r=await fetch('/api/files?path='+encodeURIComponent(fullRelPath));
+    const data=await r.json();
+    const images=(data.files||[]).filter(f=>f.isImage);
+    if(!images.length){toast('该文件夹没有可显示的图片（RAW文件不支持预览，请放入JPG）');return;}
+    window._selectPhotosTmp=images.map((img,i)=>({id:'folder_'+i,name:img.name,relPath:img.relPath,fromFolder:true}));
+    refreshSelectThumbs();
+    toast('已加载 '+images.length+' 张图片');
+  }catch(e){toast('加载图片失败');}
+}
+
+// ========== PHOTO UPLOAD (fallback) ==========
+function uploadSelectPhotos(input){
+  const files=Array.from(input.files).filter(f=>f.type.startsWith('image/'));
+  if(!files.length)return;
+  files.forEach((file,i)=>{window._selectPhotosTmp.push({id:'upload_'+Date.now()+'_'+i,name:file.name,file:file,fromFolder:false});});
+  input.value='';
+  refreshSelectThumbs();
+}
+function removeSelectPhoto(id){
+  window._selectPhotosTmp=window._selectPhotosTmp.filter(p=>p.id!==id);
+  refreshSelectThumbs();
+}
+function refreshSelectThumbs(){
+  const container=document.getElementById('selectThumbs');
+  const countEl=document.getElementById('selectPhotoCount');
+  if(!container)return;
+  const photos=window._selectPhotosTmp||[];
+  countEl.textContent=photos.length+' 张';
+  if(!photos.length){container.innerHTML='<div style="grid-column:1/-1;font-size:11px;color:var(--text3);padding:8px">未选择照片</div>';return;}
+  container.innerHTML=photos.map((p,i)=>`<div style="position:relative;aspect-ratio:1;border-radius:4px;overflow:hidden;background:#f0f0f0;cursor:pointer" onclick="removeSelectPhoto('${p.id}')" title="点击移除">${p.fromFolder?`<img src="/api/image?path=${encodeURIComponent(p.relPath)}" style="width:100%;height:100%;object-fit:cover" loading="lazy">`:`<img src="${URL.createObjectURL(p.file)}" style="width:100%;height:100%;object-fit:cover">`}<div style="position:absolute;top:2px;left:2px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;padding:1px 4px;border-radius:2px">${i+1}</div></div>`).join('');
+}
+
+// ========== IMAGE PROCESSING ==========
+async function processImage(src,maxEdge){
+  maxEdge=maxEdge||600;
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>{
+      let w=img.naturalWidth,h=img.naturalHeight;
+      if(w>h){if(w>maxEdge){h=h*maxEdge/w;w=maxEdge;}}
+      else{if(h>maxEdge){w=w*maxEdge/h;h=maxEdge;}}
+      w=Math.round(w);h=Math.round(h);
+      const canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      ctx.save();
+      ctx.translate(w/2,h/2);
+      ctx.rotate(-Math.PI/6);
+      const fs=Math.max(14,Math.round(w/20));
+      ctx.font='bold '+fs+'px -apple-system,"PingFang SC",sans-serif';
+      ctx.fillStyle='rgba(255,255,255,0.25)';
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      ctx.fillText('SAIKA · 彩華',0,0);
+      ctx.restore();
+      resolve(canvas.toDataURL('image/jpeg',0.72));
+    };
+    img.onerror=reject;
+    img.src=src;
+  });
+}
+
+// ========== GENERATE PHOTO SELECT PAGE ==========
+async function generatePhotoSelectPage(){
+  const photos=window._selectPhotosTmp||[];
+  const clientName=document.getElementById('fClientName')?.value||'客户';
+  if(!photos.length){
+    if(localServer){toast('请先点击「从本地文件夹加载」选择照片');}
+    else{toast('请先点击「选择照片」上传图片');}
+    return;
+  }
+  const btn=event?.target;
+  if(btn){btn.disabled=true;btn.textContent='⏳ 正在处理...';}
+  try{
+    const processedImages=[];
+    for(let i=0;i<photos.length;i++){
+      const p=photos[i];
+      let src=p.fromFolder?('/api/image?path='+encodeURIComponent(p.relPath)):URL.createObjectURL(p.file);
+      const dataUrl=await processImage(src,600);
+      processedImages.push({num:i+1,dataUrl,name:p.name||p.file?.name||('照片'+(i+1))});
+      if(btn)btn.textContent='⏳ 处理中 '+(i+1)+'/'+photos.length+'...';
+    }
+    const html=generateSelectPageHTML(clientName,processedImages);
+    const filename=clientName+'_选图预览页.html';
+
+    // 尝试保存到服务器
+    if(localServer){
+      try{
+        const resp=await fetch('/api/save-select-page',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({filename:filename,html:html})
+        });
+        const result=await resp.json();
+        if(result.ok&&result.url){
+          showSelectPageURL(result.url,clientName);
+          return;
+        }
+      }catch(e){console.warn('保存到服务器失败，回退到下载',e);}
+    }
+
+    // 回退：下载文件
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=filename;a.click();
+    URL.revokeObjectURL(url);
+    toast('已下载 HTML 文件（服务器未运行，无法生成链接）');
+  }catch(e){console.error(e);toast('生成失败：'+e.message);}
+  finally{if(btn){btn.disabled=false;btn.textContent='🖼️ 生成选图预览页';}}
+}
+
+function showSelectPageURL(url,clientName){
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  const modal=document.createElement('div');
+  modal.style.cssText='background:#fff;border-radius:12px;width:100%;max-width:440px;padding:24px;text-align:center';
+  modal.innerHTML=
+    '<div style="font-size:18px;font-weight:700;margin-bottom:8px">选图页已生成</div>'+
+    '<div style="font-size:13px;color:var(--text2);margin-bottom:16px">'+clientName+' 的选图预览页已保存</div>'+
+
+    '<div style="background:#F0F7FF;border-radius:8px;padding:14px;margin-bottom:12px;text-align:left">'+
+    '<div style="font-size:12px;font-weight:700;color:#2563EB;margin-bottom:6px">📱 方式一：局域网分享（同一WiFi）</div>'+
+    '<div style="font-size:11px;color:var(--text2);word-break:break-all;line-height:1.5">'+url+'</div>'+
+    '</div>'+
+
+    '<div style="background:#FFF8E1;border-radius:8px;padding:14px;margin-bottom:16px;text-align:left">'+
+    '<div style="font-size:12px;font-weight:700;color:#F57C00;margin-bottom:6px">🌐 方式二：远程分享（公网链接）</div>'+
+    '<div style="font-size:11px;color:var(--text2);line-height:1.6">'+
+    '客户在任何网络下都能打开。<br>'+
+    '请在 WorkBuddy 中对我说：<br>'+
+    '<b style="color:#1A1A1A">「部署选图页」</b><br>'+
+    '我会生成公网链接给你，复制到微信发给客户即可。</div>'+
+    '</div>';
+
+  const btnRow=document.createElement('div');
+  btnRow.style.cssText='display:flex;gap:8px;justify-content:center;flex-wrap:wrap';
+  const copyBtn=document.createElement('button');
+  copyBtn.textContent='📋 复制局域网链接';
+  copyBtn.className='btn btn-primary btn-sm';
+  copyBtn.onclick=()=>{
+    navigator.clipboard.writeText(url).then(()=>toast('链接已复制！粘贴到微信发给客户'));
+  };
+  const openBtn=document.createElement('button');
+  openBtn.textContent='预览效果';
+  openBtn.className='btn btn-secondary btn-sm';
+  openBtn.onclick=()=>window.open(url,'_blank');
+  const closeBtn=document.createElement('button');
+  closeBtn.textContent='关闭';
+  closeBtn.className='btn btn-secondary btn-sm';
+  closeBtn.onclick=()=>overlay.remove();
+  btnRow.appendChild(copyBtn);
+  btnRow.appendChild(openBtn);
+  btnRow.appendChild(closeBtn);
+  modal.appendChild(btnRow);
+  overlay.appendChild(modal);
+  overlay.onclick=e=>{if(e.target===overlay)overlay.remove();};
+  document.body.appendChild(overlay);
+}
+
+function generateSelectPageHTML(clientName,images){
+  var namesMap = '{' + images.map(function(img){
+    var n = (img.name||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"');
+    return '"' + img.num + '":"' + n + '"';
+  }).join(',') + '}';
+  var photoHTML = images.map(function(img){
+    var safeName = (img.name||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return '<div class="photo" data-num="'+img.num+'" data-name="'+safeName+'" onclick="toggleSelect(this)">'
+      + '<span class="num">No.'+String(img.num).padStart(3,'0')+'</span>'
+      + '<img src="'+img.dataUrl+'" loading="lazy" alt="'+safeName+'">'
+      + '<div class="fname">'+safeName+'</div>'
+      + '<div class="check">\u2713</div>'
+      + '</div>';
+  }).join('');
+
+  var css = '*{margin:0;padding:0;box-sizing:border-box}'
+    + 'body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#F5F5F5;max-width:600px;margin:0 auto;padding:16px 16px 80px}'
+    + '.header{text-align:center;padding:20px 0;border-bottom:2px solid #000;margin-bottom:16px}'
+    + '.header h1{font-size:20px;font-weight:800}'
+    + '.header p{font-size:13px;color:#666;margin-top:4px}'
+    + '.tip{text-align:center;font-size:11px;color:#999;padding:8px;margin-bottom:8px;background:#FFF8E1;border-radius:6px;line-height:1.6}'
+    + '.toolbar{position:sticky;top:0;background:#F5F5F5;padding:10px 0;z-index:10;display:flex;justify-content:space-between;align-items:center}'
+    + '.toolbar .count{font-size:14px;font-weight:700}'
+    + '.toolbar button{padding:8px 16px;font-size:12px;border:1px solid #000;background:#000;color:#fff;border-radius:6px;cursor:pointer;font-family:inherit}'
+    + '.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}'
+    + '.photo{position:relative;background:#ddd;border-radius:6px;overflow:hidden;cursor:pointer;transition:.15s}'
+    + '.photo.selected{outline:3px solid #2563EB;outline-offset:-3px}'
+    + '.photo img{display:block;width:100%;height:auto}'
+    + '.photo .num{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;padding:2px 6px;border-radius:3px}'
+    + '.photo .fname{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.65);color:#fff;font-size:9px;padding:2px 4px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    + '.photo .check{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:#2563EB;color:#fff;display:none;align-items:center;justify-content:center;font-size:14px}'
+    + '.photo.selected .check{display:flex}'
+    + '.bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:600px;background:#fff;border-top:1px solid #ddd;padding:12px 16px;z-index:10;display:flex;justify-content:space-between;align-items:center;box-shadow:0 -2px 10px rgba(0,0,0,.05)}'
+    + '.bottom-bar .info{font-size:13px}'
+    + '.bottom-bar .info b{color:#2563EB}'
+    + '.bottom-bar button{padding:10px 24px;font-size:14px;border:none;background:#2563EB;color:#fff;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:600}';
+
+  var js = 'var selected=new Set();'
+    + 'var photoNames=JSON.parse(\'' + namesMap + '\');'
+    + 'function toggleSelect(el){'
+    + '  var num=el.dataset.num;'
+    + '  if(selected.has(num)){selected.delete(num);el.classList.remove("selected")}'
+    + '  else{selected.add(num);el.classList.add("selected")}'
+    + '  document.getElementById("selCount").textContent=selected.size;'
+    + '  document.getElementById("selCount2").textContent=selected.size;'
+    + '}'
+    + 'function exportSelection(){'
+    + '  if(selected.size===0){alert("\u8bf7\u5148\u9009\u62e9\u7167\u7247");return}'
+    + '  var nums=Array.from(selected).sort(function(a,b){return a-b});'
+    + '  var lines=nums.map(function(n){return "No."+("00"+n).slice(-3)+"  "+(photoNames[n]||"")});'
+    + '  var text="\u9009\u56fe\u6e05\u5355\\n\u5ba2\u6237: ' + clientName + '\\n\u65e5\u671f: "+new Date().toLocaleDateString("zh-CN")+"\\n\u5df2\u9009: "+nums.length+" \u5f20\\n\\n\u7f16\u53f7\u00b7\u6587\u4ef6\u540d:\\n"+lines.join("\\n");'
+    + '  var blob=new Blob([text],{type:"text/plain;charset=utf-8"});'
+    + '  var a=document.createElement("a");'
+    + '  a.href=URL.createObjectURL(blob);'
+    + '  a.download="' + clientName + '_\u9009\u56fe\u6e05\u5355.txt";'
+    + '  a.click();'
+    + '  alert("\u5df2\u5bfc\u51fa\u9009\u56fe\u6e05\u5355\uff01\u8bf7\u53d1\u7ed9\u6444\u5f71\u5e08\u3002");'
+    + '}';
+
+  return '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">'
+    + '<meta name="viewport" content="width=device-width,initial-scale=1.0">'
+    + '<title>' + clientName + ' - \u9009\u56fe</title>'
+    + '<style>' + css + '</style></head><body>'
+    + '<div class="header"><h1>\ud83d\udcf7 \u9009\u56fe\u9884\u89c8</h1>'
+    + '<p>' + clientName + ' \u00b7 \u70b9\u51fb\u7167\u7247\u9009\u62e9 \u00b7 \u9009\u5b8c\u70b9\u51fb\u300c\u786e\u8ba4\u9009\u56fe\u300d</p></div>'
+    + '<div class="tip">\u26a0\ufe0f \u9884\u89c8\u56fe\u5e26\u6709\u6c34\u5370\uff0c\u4ec5\u4f9b\u9009\u56fe\u4f7f\u7528\u3002\u7167\u7247\u5e95\u90e8\u663e\u793a\u6587\u4ef6\u540d\uff0c\u53ef\u6309\u7f16\u53f7\u6216\u6587\u4ef6\u540d\u544a\u77e5\u6444\u5f71\u5e08\u3002</div>'
+    + '<div class="toolbar"><span class="count">\u5df2\u9009 <b id="selCount">0</b> \u5f20</span>'
+    + '<button onclick="exportSelection()">\ud83d\udccb \u5bfc\u51fa\u5df2\u9009\u6e05\u5355</button></div>'
+    + '<div class="gallery" id="gallery">' + photoHTML + '</div>'
+    + '<div class="bottom-bar"><div class="info">\u5df2\u9009 <b id="selCount2">0</b> \u5f20</div>'
+    + '<button onclick="exportSelection()">\u2713 \u786e\u8ba4\u9009\u56fe</button></div>'
+    + '<script>' + js + '<\/script>'
+    + '</body></html>';
+}
+
+// ========== EXPORT PLANNING PAGE ==========
+function exportPlanningPage(){
+  const v=id=>(document.getElementById(id)?.value||'').trim();
+  const clientName=v('fClientName')||'客户';
+  const shootDate=v('fShootDate');
+  const shootTime=v('fShootTime');
+  const city=v('fCity');
+  const location=v('fLocation');
+  const character=v('fCharacter');
+  const ip=v('fIP');
+  const shootType=v('fShootType');
+  const styleType=v('fStyleType');
+  const moodKeywords=(window.moodKeywordsTmp||[]).join('、');
+  const moodImages=(window._moodTmp||[]).filter(m=>m.type==='image'&&m.url);
+  let mapLink='';
+  if(location){mapLink='https://maps.apple.com/?q='+encodeURIComponent(location+(city?' '+city:''));}
+
+  const moodBoardHTML=moodImages.length?`<div class="section"><h2>🎨 情绪板</h2><div class="mood-grid">${moodImages.map(m=>'<img src="'+m.url+'" style="width:100%;border-radius:8px">').join('')}</div></div>`:'';
+
+  const html=`<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>拍摄策划 - ${clientName}</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#FAFAFA;color:#1A1A1A;line-height:1.6}.container{max-width:600px;margin:0 auto;padding:20px}.header{text-align:center;padding:30px 0 20px;border-bottom:2px solid #1A1A1A;margin-bottom:24px}.header .logo{font-size:24px;font-weight:900;letter-spacing:2px}.header .sub{font-size:12px;color:#999;letter-spacing:4px;margin-top:4px}.header .title{font-size:18px;font-weight:700;margin-top:16px}.header .client{font-size:14px;color:#666;margin-top:4px}.section{background:#fff;border-radius:10px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}.section h2{font-size:14px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #EEE}.info-row{display:flex;padding:6px 0;font-size:13px}.info-row .label{width:80px;color:#999;flex-shrink:0}.info-row .value{flex:1;font-weight:500}.tag{display:inline-block;background:#F3F3F3;padding:3px 10px;border-radius:12px;font-size:12px;margin:2px}.map-link{display:inline-block;margin-top:8px;padding:6px 14px;background:#1A1A1A;color:#fff;border-radius:6px;font-size:12px;text-decoration:none}.mood-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.footer{text-align:center;padding:20px 0;font-size:11px;color:#999}</style></head><body><div class="container"><div class="header"><div class="logo">SAIKA · 彩華</div><div class="sub">PHOTOGRAPHY</div><div class="title">拍摄策划方案</div><div class="client">${clientName}${character?' · '+character:''}${ip?' · '+ip:''}</div></div><div class="section"><h2>📅 拍摄安排</h2><div class="info-row"><span class="label">日期</span><span class="value">${shootDate||'待定'}</span></div><div class="info-row"><span class="label">时间</span><span class="value">${shootTime||'待定'}</span></div><div class="info-row"><span class="label">城市</span><span class="value">${city||'待定'}</span></div><div class="info-row"><span class="label">地点</span><span class="value">${location||'待定'}</span></div>${mapLink?'<a href="'+mapLink+'" class="map-link">🗺️ 点击导航</a>':''}</div><div class="section"><h2>🎬 拍摄信息</h2><div class="info-row"><span class="label">角色</span><span class="value">${character||'-'}</span></div><div class="info-row"><span class="label">IP</span><span class="value">${ip||'-'}</span></div><div class="info-row"><span class="label">拍摄类型</span><span class="value">${shootType||'-'}</span></div><div class="info-row"><span class="label">风格</span><span class="value">${styleType||'-'}</span></div></div>${moodKeywords?'<div class="section"><h2>💭 情绪关键词</h2><div>'+moodKeywords.split('、').map(k=>'<span class="tag">'+k+'</span>').join('')+'</div></div>':''}${moodBoardHTML}<div class="footer">SAIKA · 彩華 Photography · 本方案由彩華摄影档案系统生成</div></div></body></html>`;
+
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=clientName+'_拍摄策划.html';a.click();
+  URL.revokeObjectURL(url);
+  toast('策划方案已导出！微信发给客户查看');
+}
+
+// ========== DATA BACKUP ==========
+function exportAllData(){
+  const blob=new Blob([JSON.stringify(projects,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='彩華摄影档案备份_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  URL.revokeObjectURL(url);
+  toast('数据已备份');
+}
+function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!Array.isArray(data)){toast('无效的备份文件');return}
+      if(!confirm('即将导入 '+data.length+' 个项目，当前 '+projects.length+' 个项目将被覆盖。确定？'))return;
+      projects=data;saveProjects(projects);toast('已导入 '+data.length+' 个项目');render();
+    }catch(err){toast('文件格式错误')}
+  };
+  reader.readAsText(file);
+}
+
+// ========== NAV ==========
+document.addEventListener('DOMContentLoaded',()=>{
+  render();
+  checkLocalServer();
+  loadPendingBookings();
+  document.querySelectorAll('.nav-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+      currentView=item.dataset.view;
+      render();
+    });
+  });
+  document.getElementById('projectModal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+});
+</script>
+</body>
+</html>

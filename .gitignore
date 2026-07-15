@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.log
+.DS_Store
+# 运行时生成的预约数据（客户提交后产生），不纳入版本库
+bookings/*.json
+!bookings/.gitkeep
