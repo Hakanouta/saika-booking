@@ -290,6 +290,76 @@ function saveSettings(s){
   localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
 }
 
+// ========== 高德地图 ==========
+let _amapPromise=null;
+function ensureAmap(){
+  const s=loadSettings();
+  const key=s.amapKey, sec=s.amapSecurity;
+  if(!key) return Promise.resolve(null);
+  if(window.AMap) return Promise.resolve(window.AMap);
+  if(_amapPromise) return _amapPromise;
+  _amapPromise=new Promise((resolve)=>{
+    try{window._AMapSecurityConfig={securityJsCode:sec||''};}catch(e){}
+    const sc=document.createElement('script');
+    sc.src='https://webapi.amap.com/maps?v=2.0&key='+encodeURIComponent(key)+'&plugin=AMap.Geocoder';
+    sc.onload=()=>resolve(window.AMap||null);
+    sc.onerror=()=>resolve(null);
+    document.head.appendChild(sc);
+  });
+  return _amapPromise;
+}
+function geocodeCurrentLocation(){
+  const cityEl=document.getElementById('fCity'), locEl=document.getElementById('fLocation');
+  const city=cityEl?cityEl.value.trim():'', loc=locEl?locEl.value.trim():'';
+  const addr=(city+' '+loc).trim()||loc;
+  const statusEl=document.getElementById('geoStatus');
+  if(!addr){if(statusEl)statusEl.textContent='请先填写城市/地点';return;}
+  if(statusEl)statusEl.textContent='定位中…';
+  ensureAmap().then(AMap=>{
+    if(!AMap){if(statusEl)statusEl.textContent='未配置高德 Key（见设置页）';toast('⚠️ 请在设置页填写高德 Key');return;}
+    const geocoder=new AMap.Geocoder();
+    geocoder.getLocation(addr,(status,result)=>{
+      if(status==='complete'&&result.geocodes&&result.geocodes.length){
+        const L=result.geocodes[0].location;
+        document.getElementById('fLat').value=L.lat;
+        document.getElementById('fLng').value=L.lng;
+        if(statusEl)statusEl.textContent='✅ 已定位';
+        initLocationMap(L.lat,L.lng);
+      }else{
+        if(statusEl)statusEl.textContent='⚠️ 未找到，请更详细';
+        toast('⚠️ 定位失败，换更详细地址（如：上海市黄浦区外滩）');
+      }
+    });
+  });
+}
+function initLocationMap(lat,lng){
+  const el=document.getElementById('mapPreview');
+  if(!el)return;
+  ensureAmap().then(AMap=>{
+    if(!AMap){el.innerHTML='<span style="font-size:12px;color:#999">设置高德 Key 后显示地图</span>';return;}
+    if(el._map){el._map.setZoomAndCenter([lng,lat]);if(el._marker)el._marker.setPosition([lng,lat]);return;}
+    const map=new AMap.Map(el,{zoom:15,center:[lng,lat],resizeEnable:true});
+    const marker=new AMap.Marker({position:[lng,lat],title:(document.getElementById('fLocation')||{}).value||'拍摄地'});
+    map.add(marker);
+    el._map=map; el._marker=marker;
+  });
+}
+function navUrl(p){
+  if(p.lat&&p.lng){
+    return 'https://uri.amap.com/marker?position='+p.lng+','+p.lat+'&name='+encodeURIComponent(p.location||'拍摄地')+'&src=saika&coordinate=gaode&callnative=1';
+  }
+  if(p.location){
+    const kw=(p.city?p.city+' ':'')+p.location;
+    return 'https://uri.amap.com/search?keyword='+encodeURIComponent(kw);
+  }
+  return p.routeLink||'';
+}
+function navBtnHTML(p){
+  const u=navUrl(p);
+  if(!u)return '';
+  return `<a href="${u}" target="_blank" class="li-tag tag-green" onclick="event.stopPropagation()">📍 导航</a>`;
+}
+
 let projects = loadProjects();
 let currentView = 'dashboard';
 let editingId = null;
@@ -583,7 +653,7 @@ function renderSchedule(main){
           <span class="li-name">${p.clientName}</span>
           <span class="li-desc">${p.startTime||''} ${p.location||''} ${p.role||''}</span>
           ${p.weather?`<span class="li-tag tag-blue">🌤 ${p.weather}</span>`:''}
-          ${p.routeLink?`<a href="${p.routeLink}" target="_blank" class="li-tag tag-green" onclick="event.stopPropagation()">🧭 导航</a>`:''}
+          ${navBtnHTML(p)}
         </div>`;
       }).join('')}
     </div>`;
@@ -610,7 +680,7 @@ function calDayClick(dateStr){
         <span class="li-name">${p.clientName}</span>
         <span class="li-desc">${p.startTime||''}-${p.endTime||''} ${p.location||''} ${p.role||p.demandType||''}</span>
         ${p.weather?`<span class="li-tag tag-blue">🌤 ${p.weather}</span>`:''}
-        ${p.routeLink?`<a href="${p.routeLink}" target="_blank" class="li-tag tag-green" onclick="event.stopPropagation()">🧭 导航</a>`:''}
+        ${navBtnHTML(p)}
       </div>`).join('') + `<button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="openModal(null,'${dateStr}')">+ 添加拍摄</button>`;
   }
   detail.classList.remove('hidden');
@@ -875,6 +945,17 @@ function renderSettings(main){
     <p>后续升级到云端同步后，数据将自动备份到服务器，支持多设备访问。</p>
   </div>`;
 
+  html+=`<div class="settings-section">
+    <h3>🗺️ 高德地图（地点落针 / 导航）</h3>
+    <p>用于拍摄地点在地图上显示位置、一键高德导航。在 <a href="https://lbs.amap.com/" target="_blank">高德开放平台</a> 注册 → 个人认证 → 创建应用 → 添加 Key（服务平台选「Web端 JS API」），会同时给出安全密钥。</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div class="form-group" style="flex:1;min-width:200px"><label>高德 Key</label><input type="text" id="setAmapKey" value="${settings.amapKey||''}" placeholder="Web端 JS API Key"></div>
+      <div class="form-group" style="flex:1;min-width:200px"><label>安全密钥</label><input type="text" id="setAmapSecurity" value="${settings.amapSecurity||''}" placeholder="securityJsCode"></div>
+    </div>
+    <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="saveAmapSettings()">💾 保存地图设置</button>
+    <p style="margin-top:6px;color:var(--text2);font-size:12px">高德 Key 后台「域名白名单」建议加上 <code>localhost</code> 和 <code>saika-booking.onrender.com</code>。</p>
+  </div>`;
+
   // ===== 约拍价格设置 =====
   const pr=getPricing();
   html+=`<div class="settings-section">
@@ -927,6 +1008,15 @@ function savePricing(){
   toast('💰 价格已保存');
 }
 
+function saveAmapSettings(){
+  const s=loadSettings();
+  s.amapKey=(document.getElementById('setAmapKey').value||'').trim();
+  s.amapSecurity=(document.getElementById('setAmapSecurity').value||'').trim();
+  saveSettings(s);
+  _amapPromise=null;
+  toast('🗺️ 地图设置已保存');
+}
+
 // ========== MODAL ==========
 function openModal(id, prefill){
   editingId = id || null;
@@ -965,6 +1055,7 @@ function openModal(id, prefill){
   moodKeywordsTmp = [...(p.moodKeywords||[])];
   window._selectPhotosTmp = [];
   body.innerHTML = renderForm(p);
+  if(p.lat&&p.lng){ setTimeout(()=>initLocationMap(p.lat,p.lng), 60); }
   makeSectionsCollapsible(computeStage(p));
   if(localServer) updateSelectPhotoUI();
   modal.scrollTop = 0;
@@ -977,7 +1068,7 @@ function createEmptyProject(){
     clientName:'',contact:'',demandType:'COS',deliverable:'照片',
     totalPrice:0,deposit:0,finalPayment:0,
     shootDate:'',startTime:'',endTime:'',
-    city:'',location:'',routeLink:'',weather:'',
+    city:'',location:'',routeLink:'',lat:0,lng:0,weather:'',
     role:'',ip:'',styleType:'cosplay',shootType:'棚拍',
     moodKeywords:[],moodBoard:{reference:[],pose:[],lighting:[],composition:[]},
     actualStart:'',actualEnd:'',shootNotes:'',hasBTS:false,btsCount:0,btsNote:'',
@@ -1094,10 +1185,20 @@ function renderForm(p){
       <div class="form-group"><label>地点</label><input type="text" id="fLocation" value="${p.location||''}" placeholder="如：外滩"></div>
       <div class="form-group"><label>天气</label><input type="text" id="fWeather" value="${p.weather||''}" placeholder="自动获取或手填"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label>导航链接</label><input type="text" id="fRouteLink" value="${p.routeLink||''}" placeholder="粘贴地图导航链接"></div>
-      <div class="form-group"><label>拍摄类型</label><select id="fShootType">${shootTypes.map(s=>`<option value="${s}"${p.shootType===s?' selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="form-group">
+      <label>拍摄地点定位（地图落针）</label>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="geocodeCurrentLocation()">📍 在地图中定位</button>
+        <span id="geoStatus" style="font-size:12px;color:var(--text3)">${p.lat&&p.lng?'✅ 已定位':'输入地点后点此定位'}</span>
+      </div>
+      <div id="mapPreview" style="height:180px;margin-top:8px;border-radius:8px;overflow:hidden;background:#f3f3f3;display:flex;align-items:center;justify-content:center;font-size:12px;color:#999">${p.lat&&p.lng?'地图加载中…':'设置高德 Key 并填写地点后显示地图'}</div>
     </div>
+    <div class="form-row">
+      <div class="form-group"><label>拍摄类型</label><select id="fShootType">${shootTypes.map(s=>`<option value="${s}"${p.shootType===s?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="form-group"><label></label><div></div></div>
+    </div>
+    <input type="hidden" id="fLat" value="${p.lat||''}">
+    <input type="hidden" id="fLng" value="${p.lng||''}">
     <div class="form-row cols-3">
       <div class="form-group"><label>角色</label><input type="text" id="fRole" value="${p.role||''}" placeholder="角色名"></div>
       <div class="form-group"><label>IP</label><input type="text" id="fIP" value="${p.ip||''}" placeholder="原作IP"></div>
@@ -1290,7 +1391,7 @@ function saveProject(){
     clientName,contact:v('fContact'),demandType:v('fDemandType'),deliverable,
     totalPrice:num('fTotalPrice'),deposit:num('fDeposit'),finalPayment:num('fFinalPayment'),
     shootDate:v('fShootDate'),startTime:v('fStartTime'),endTime:v('fEndTime'),
-    city:v('fCity'),location:v('fLocation'),routeLink:v('fRouteLink'),weather:v('fWeather'),
+    city:v('fCity'),location:v('fLocation'),lat:parseFloat(document.getElementById('fLat').value)||0,lng:parseFloat(document.getElementById('fLng').value)||0,routeLink:'',weather:v('fWeather'),
     role:v('fRole'),ip:v('fIP'),styleType:v('fStyleType'),shootType:v('fShootType'),
     moodKeywords:[...moodKeywordsTmp],moodBoard,
     actualStart:v('fActualStart'),actualEnd:v('fActualEnd'),shootNotes:v('fShootNotes'),hasBTS:chk('fBTS'),btsCount:num('fBTSCount'),btsNote:v('fBTSNote'),
@@ -1840,8 +1941,11 @@ function exportPlanningPage(){
   const styleType=v('fStyleType');
   const moodKeywords=(window.moodKeywordsTmp||[]).join('、');
   const moodImages=(window._moodTmp||[]).filter(m=>m.type==='image'&&m.url);
+  const lat=parseFloat(document.getElementById('fLat')?.value)||0;
+  const lng=parseFloat(document.getElementById('fLng')?.value)||0;
   let mapLink='';
-  if(location){mapLink='https://maps.apple.com/?q='+encodeURIComponent(location+(city?' '+city:''));}
+  if(lat&&lng){mapLink='https://uri.amap.com/marker?position='+lng+','+lat+'&name='+encodeURIComponent(location||'拍摄地')+'&src=saika&coordinate=gaode&callnative=1';}
+  else if(location){mapLink='https://uri.amap.com/search?keyword='+encodeURIComponent((city?city+' ':'')+location);}
 
   const moodBoardHTML=moodImages.length?`<div class="section"><h2>🎨 情绪板</h2><div class="mood-grid">${moodImages.map(m=>'<img src="'+m.url+'" style="width:100%;border-radius:8px">').join('')}</div></div>`:'';
 
