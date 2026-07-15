@@ -635,6 +635,7 @@ function renderProjects(main){
     html+=`<div style="background:linear-gradient(135deg,#FFFBF0,#FFF9E5);border:1.5px solid #E8DDB5;border-radius:var(--radius);padding:16px;margin-bottom:16px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <h3 style="font-size:14px;margin:0">⏰ 待处理预约 <span style="font-size:12px;color:var(--text3);font-weight:400">${pendingBookings.length} 条新预约 · 确认价格后即可建档进入下一步</span></h3>
+        <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:${API_BASE?'#E8F3FF;color:#1a73e8':'#F0F0F0;color:#888'}">${API_BASE?'☁️ 云端 '+API_BASE.replace('https://','').replace('http://',''):'💻 本机'}</span>
         <button class="btn btn-secondary btn-sm" onclick="loadPendingBookings()">🔄 刷新</button>
       </div>
       ${pendingBookings.map(b=>{
@@ -1312,7 +1313,10 @@ function deleteProject(){
 
 // ========== BOOKING MANAGEMENT ==========
 // 待办预约后端地址：本地默认同源；云端部署时在档案站链接后加 ?api=https://云后端
-const API_BASE = new URLSearchParams(location.search).get('api') || window.API_BASE || '';
+// 改进：首次带 ?api= 打开后写入 localStorage，之后只开 localhost 也会自动连云端
+const _apiParam = new URLSearchParams(location.search).get('api');
+if(_apiParam){ try{ localStorage.setItem('SAIKA_API_BASE', _apiParam); }catch(e){} }
+const API_BASE = _apiParam || (function(){ try{ return localStorage.getItem('SAIKA_API_BASE')||''; }catch(e){ return ''; } })();
 
 let pendingBookings=[];
 async function loadPendingBookings(){
