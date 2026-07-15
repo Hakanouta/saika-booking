@@ -818,6 +818,7 @@ function renderCard(p){
       <span class="fin-paid">已收 ${fmtMoney(paid)}</span>
       ${balance>0?`<span class="fin-unpaid">待收 ${fmtMoney(balance)}</span>`:'<span class="fin-paid" style="font-size:11px">✓ 已结清</span>'}
     </div>
+    ${(p.selectPages&&p.selectPages.length)?`<div class="card-actions" onclick="event.stopPropagation()"><button class="btn btn-sm btn-secondary" onclick="window.open(${JSON.stringify(p.selectPages[p.selectPages.length-1].url)},'_blank')">📂 选图页 (${p.selectPages.length})</button></div>`:''}
   </div>`;
 }
 
@@ -1297,6 +1298,7 @@ function renderForm(p){
       </div>
       <div id="selectThumbs" style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;max-height:200px;overflow-y:auto"></div>
       <button class="btn btn-primary btn-sm" onclick="generatePhotoSelectPage()" style="margin-top:8px">🖼️ 生成选图预览页</button>
+      ${(p.selectPages&&p.selectPages.length)?('<div style="margin-top:10px"><div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px">📂 历史选图页（'+p.selectPages.length+'）</div>'+p.selectPages.slice().reverse().map(function(s){return '<div style="display:flex;align-items:center;gap:6px;font-size:11px;margin-bottom:3px"><a href="'+s.url+'" target="_blank" style="color:#185FA5;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(s.createdAt?fmtDate(s.createdAt):'选图页')+'</a><button class="btn btn-secondary btn-sm" style="padding:2px 8px;font-size:10px" onclick="event.stopPropagation();window.open('+JSON.stringify(s.url)+',\'_blank\')">打开</button></div>';}).join('')+'</div>'):''}
     </div>
   </div>
 
@@ -1788,6 +1790,7 @@ async function generatePhotoSelectPage(){
         });
         const result=await resp.json();
         if(result.ok&&result.url){
+          archiveSelectPage(result.url,clientName);
           showSelectPageURL(result.url,clientName);
           return;
         }
@@ -1802,6 +1805,19 @@ async function generatePhotoSelectPage(){
     toast('已下载 HTML 文件（服务器未运行，无法生成链接）');
   }catch(e){console.error(e);toast('生成失败：'+e.message);}
   finally{if(btn){btn.disabled=false;btn.textContent='🖼️ 生成选图预览页';}}
+}
+
+function archiveSelectPage(url,clientName){
+  if(!editingId)return;
+  const idx=projects.findIndex(p=>p.id===editingId);
+  if(idx<0)return;
+  const p=projects[idx];
+  p.selectPages=p.selectPages||[];
+  if(!p.selectPages.some(s=>s.url===url)){
+    p.selectPages.push({url,clientName,createdAt:new Date().toISOString()});
+    saveProjects(projects);
+    toast('已存档选图页到项目归档');
+  }
 }
 
 function showSelectPageURL(url,clientName){
