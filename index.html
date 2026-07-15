@@ -302,7 +302,7 @@ if(projects.length === 0){
   const now = new Date().toISOString();
   projects = [
     {
-      id:'demo1',status:'已确认',
+      id:'demo1',status:'已发布',
       clientName:'小美',contact:'wx_xiaomei',demandType:'COS',deliverable:'照片视频',
       totalPrice:2000,deposit:1000,finalPayment:0,
       shootDate:'2026-07-12',startTime:'10:00',endTime:'18:00',
@@ -317,7 +317,7 @@ if(projects.length === 0){
       createdAt:now,updatedAt:now
     },
     {
-      id:'demo2',status:'已确认',
+      id:'demo2',status:'进行中',
       clientName:'阿狸',contact:'wx_alii',demandType:'COS',deliverable:'照片',
       totalPrice:1500,deposit:500,finalPayment:0,
       shootDate:'2026-07-20',startTime:'14:00',endTime:'20:00',
@@ -363,6 +363,15 @@ function isProjectDone(p){
   const photoOk = p.deliverable.includes('照片') ? pw.every(s=>p.photoWorkflow[s].done) : true;
   const videoOk = p.deliverable.includes('视频') ? vw.every(s=>p.videoWorkflow[s].done) : true;
   return photoOk && videoOk;
+}
+function effectiveStatus(p){
+  if(!p) return '';
+  if(p.status==='已取消') return '已取消';
+  if(p.status==='待确认') return '待确认';
+  const auto = ((p.publishedPlatforms||[]).length>0)?'已发布':(isProjectDone(p)?'已完成':'进行中');
+  const order={'进行中':1,'已完成':2,'已发布':3};
+  if(order[p.status]!==undefined && order[p.status]>=order[auto]) return p.status;
+  return auto;
 }
 function getTotalPaid(p){return (p.deposit||0)+(p.finalPayment||0)}
 function getBalance(p){return effectiveTotal(p)-getTotalPaid(p)}
@@ -429,7 +438,7 @@ function updateSidebarStats(){
   const ym = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
   const monthProjects = projects.filter(p=>p.shootDate&&p.shootDate.startsWith(ym));
   const monthIncome = monthProjects.reduce((s,p)=>s+getTotalPaid(p),0);
-  const active = projects.filter(p=>!isProjectDone(p)&&p.status==='已确认').length;
+  const active = projects.filter(p=>effectiveStatus(p)==='进行中').length;
   const sbI=document.getElementById('sbIncome'); if(sbI) sbI.textContent=fmtMoney(monthIncome);
   const sbO=document.getElementById('sbOrders'); if(sbO) sbO.textContent=monthProjects.length;
   const sbA=document.getElementById('sbActive'); if(sbA) sbA.textContent=active;
@@ -442,9 +451,9 @@ function renderDashboard(main){
   const ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
   const monthProjects=projects.filter(p=>p.shootDate&&p.shootDate.startsWith(ym));
   const monthIncome=monthProjects.reduce((s,p)=>s+getTotalPaid(p),0);
-  const activeProjects=projects.filter(p=>!isProjectDone(p)&&p.status==='已确认');
-  const upcoming=projects.filter(p=>p.shootDate&&daysUntil(p.shootDate)>=0&&daysUntil(p.shootDate)<=14&&p.status==='已确认').sort((a,b)=>new Date(a.shootDate)-new Date(b.shootDate));
-  const unpaid=projects.filter(p=>getBalance(p)>0&&p.status==='已确认');
+  const activeProjects=projects.filter(p=>effectiveStatus(p)==='进行中');
+  const upcoming=projects.filter(p=>p.shootDate&&daysUntil(p.shootDate)>=0&&daysUntil(p.shootDate)<=14&&effectiveStatus(p)==='进行中').sort((a,b)=>new Date(a.shootDate)-new Date(b.shootDate));
+  const unpaid=projects.filter(p=>getBalance(p)>0&&effectiveStatus(p)==='进行中');
 
   let html=`<div class="main-header"><h2>仪表盘</h2>
     <div class="header-actions"><button class="btn btn-primary" onclick="openModal()">+ 新建项目</button></div></div>`;
@@ -563,7 +572,7 @@ function renderSchedule(main){
   </div>`;
 
   // Upcoming list
-  const upcoming=projects.filter(p=>p.shootDate&&daysUntil(p.shootDate)>=0&&p.status==='已确认').sort((a,b)=>new Date(a.shootDate)-new Date(b.shootDate));
+  const upcoming=projects.filter(p=>p.shootDate&&daysUntil(p.shootDate)>=0&&effectiveStatus(p)==='进行中').sort((a,b)=>new Date(a.shootDate)-new Date(b.shootDate));
   if(upcoming.length>0){
     html+=`<div class="dash-panel" style="margin-top:16px">
       <h3>📋 即将到来</h3>
@@ -614,9 +623,11 @@ function renderProjects(main){
   const styleFilter=document.querySelector('.filter-chip.active[data-filter="style"]')?.dataset.value||'';
 
   let filtered=projects;
-  if(statusFilter==='active') filtered=filtered.filter(p=>!isProjectDone(p)&&p.status==='已确认');
-  else if(statusFilter==='done') filtered=filtered.filter(p=>isProjectDone(p));
+  if(statusFilter==='active') filtered=filtered.filter(p=>effectiveStatus(p)==='进行中');
+  else if(statusFilter==='done') filtered=filtered.filter(p=>effectiveStatus(p)==='已完成');
+  else if(statusFilter==='published') filtered=filtered.filter(p=>effectiveStatus(p)==='已发布');
   else if(statusFilter==='pending') filtered=filtered.filter(p=>p.status==='待确认');
+  else if(statusFilter==='cancelled') filtered=filtered.filter(p=>p.status==='已取消');
   if(styleFilter) filtered=filtered.filter(p=>p.styleType===styleFilter);
   if(q) filtered=filtered.filter(p=>(p.clientName+p.role+p.ip+p.location+p.styleType+(p.shootDate||'')+p.notes+(p.contact||'')).toLowerCase().includes(q));
   filtered.sort((a,b)=>new Date(b.shootDate||0)-new Date(a.shootDate||0));
@@ -630,7 +641,9 @@ function renderProjects(main){
       <button class="filter-chip${statusFilter===''?' active':''}" data-filter="status" data-value="" onclick="setFilter(this,'status')">全部</button>
       <button class="filter-chip${statusFilter==='active'?' active':''}" data-filter="status" data-value="active" onclick="setFilter(this,'status')">进行中</button>
       <button class="filter-chip${statusFilter==='done'?' active':''}" data-filter="status" data-value="done" onclick="setFilter(this,'status')">已完成</button>
+      <button class="filter-chip${statusFilter==='published'?' active':''}" data-filter="status" data-value="published" onclick="setFilter(this,'status')">已发布</button>
       <button class="filter-chip${statusFilter==='pending'?' active':''}" data-filter="status" data-value="pending" onclick="setFilter(this,'status')">待确认</button>
+      <button class="filter-chip${statusFilter==='cancelled'?' active':''}" data-filter="status" data-value="cancelled" onclick="setFilter(this,'status')">已取消</button>
     </div>
     <div class="filter-group">
       ${['cosplay','人像','商业','活动','其他'].map(s=>`<button class="filter-chip${styleFilter===s?' active':''}" data-filter="style" data-value="${s}" onclick="setFilter(this,'style')">${s}</button>`).join('')}
@@ -695,7 +708,8 @@ function renderCard(p){
   const balance=getBalance(p);
   const shootTypeMap={场照:'🎪 场照',外景:'🌿 外景',棚拍:'🏠 棚拍'};
   const styleMap={cosplay:'COS',人像:'人像',商业:'商业',活动:'活动',其他:'其他'};
-  const statusTag=p.status==='待确认'?'tag-amber':p.status==='已取消'?'tag-red':'tag-green';
+  const _st=effectiveStatus(p);
+  const _stColor={'待确认':'#BA7517','进行中':'#185FA5','已完成':'#3B6D11','已发布':'#993556','已取消':'#A32D2D'}[_st]||'#5F5E5A';
 
   let photoProg='';
   if(p.deliverable.includes('照片')){
@@ -719,7 +733,7 @@ function renderCard(p){
       <div style="position:relative"><button class="card-menu" onclick="event.stopPropagation();toggleDropdown(event,'${p.id}')">⋯</button></div>
     </div>
     <div class="card-meta">
-      <span class="tag ${statusTag}">${p.status}</span>
+      <span class="tag" style="color:${_stColor};border-color:${_stColor}">${_st}</span>
       ${p.shootType?`<span class="tag">${shootTypeMap[p.shootType]||p.shootType}</span>`:''}
       ${p.styleType?`<span class="tag">${styleMap[p.styleType]||p.styleType}</span>`:''}
       ${p.location?`<span class="tag">${p.location}</span>`:''}
@@ -764,7 +778,7 @@ function renderFinance(main){
     <div class="fin-card"><div class="fc-label">本年度总收入</div><div class="fc-value">${fmtMoney(yearTotal)}</div><div class="fc-sub">${yearOrders} 单</div></div>
     <div class="fin-card"><div class="fc-label">本月收入</div><div class="fc-value">${fmtMoney(monthIncome)}</div><div class="fc-sub">${monthData[m].orders} 单</div></div>
     <div class="fin-card"><div class="fc-label">平均单价</div><div class="fc-value">${fmtMoney(avgPrice)}</div><div class="fc-sub">本年度</div></div>
-    <div class="fin-card"><div class="fc-label">待收款总额</div><div class="fc-value">${fmtMoney(projects.filter(p=>p.status==='已确认').reduce((s,p)=>s+getBalance(p),0))}</div><div class="fc-sub">${projects.filter(p=>getBalance(p)>0&&p.status==='已确认').length} 单未结清</div></div>
+    <div class="fin-card"><div class="fc-label">待收款总额</div><div class="fc-value">${fmtMoney(projects.filter(p=>effectiveStatus(p)==='进行中').reduce((s,p)=>s+getBalance(p),0))}</div><div class="fc-sub">${projects.filter(p=>getBalance(p)>0&&effectiveStatus(p)==='进行中').length} 单未结清</div></div>
   </div>`;
 
   // Bar chart
@@ -784,7 +798,7 @@ function renderFinance(main){
   </div>`;
 
   // Recent transactions table
-  const recent=projects.filter(p=>p.status==='已确认').sort((a,b)=>new Date(b.shootDate||0)-new Date(a.shootDate||0)).slice(0,12);
+  const recent=projects.filter(p=>effectiveStatus(p)!=='待确认'&&effectiveStatus(p)!=='已取消').sort((a,b)=>new Date(b.shootDate||0)-new Date(a.shootDate||0)).slice(0,12);
   html+=`<div class="fin-chart">
     <h3>近期订单</h3>
     <table class="fin-table">
@@ -799,7 +813,7 @@ function renderFinance(main){
             <td>${fmtMoney(effectiveTotal(p))}</td>
             <td class="td-paid">${fmtMoney(getTotalPaid(p))}</td>
             <td class="${balance>0?'td-unpaid':'td-paid'}">${balance>0?fmtMoney(balance):'✓'}</td>
-            <td>${isProjectDone(p)?'<span class="tag tag-green">已完成</span>':'<span class="tag tag-amber">进行中</span>'}</td>
+            <td>${(()=>{const s=effectiveStatus(p);const c={'待确认':'#BA7517','进行中':'#185FA5','已完成':'#3B6D11','已发布':'#993556','已取消':'#A32D2D'}[s]||'#5F5E5A';return `<span class="tag" style="color:${c};border-color:${c}">${s}</span>`;})()}</td>
           </tr>`;
         }).join('')}
       </tbody>
@@ -966,7 +980,7 @@ function createEmptyProject(){
     city:'',location:'',routeLink:'',weather:'',
     role:'',ip:'',styleType:'cosplay',shootType:'棚拍',
     moodKeywords:[],moodBoard:{reference:[],pose:[],lighting:[],composition:[]},
-    actualStart:'',actualEnd:'',shootNotes:'',hasBTS:false,
+    actualStart:'',actualEnd:'',shootNotes:'',hasBTS:false,btsCount:0,btsNote:'',
     photoWorkflow:{original:{count:0,done:false},selected:{count:0,done:false},color:{count:0,done:false},final:{count:0,done:false}},
     videoWorkflow:{original:{count:0,done:false},selected:{count:0,done:false},color:{count:0,done:false},final:{count:0,done:false}},
     publishedPlatforms:[],
@@ -985,7 +999,7 @@ function closeModal(){
 function computeStage(p){
   // 0预约 1定金 2策划 3拍摄 4后期 5交付
   let s=0;
-  if((p.status==='已确认')||(p.deposit||0)>0) s=Math.max(s,1);
+  if((p.status!=='待确认' && p.status!=='已取消')||(p.deposit||0)>0) s=Math.max(s,1);
   const mb=p.moodBoard||{};
   if(p.location || p.routeLink || (mb.reference&&mb.reference.length) || (mb.pose&&mb.pose.length) || (p.moodKeywords&&p.moodKeywords.length)) s=Math.max(s,2);
   if(p.actualStart || p.shootNotes) s=Math.max(s,3);
@@ -1008,7 +1022,7 @@ function renderProgressBar(stage, p){
     </div>`;
     if(i<5) nodes+=`<div style="flex:0 0 14px;height:2px;margin-top:12px;background:${isDone?'#7BA88E':'#E8DFD0'}"></div>`;
   }
-  const stTxt={'待确认':'待确认','已确认':'已确认','已取消':'已取消'}[p.status]||p.status;
+  const stTxt=effectiveStatus(p);
   const key=`${p.clientName||'未命名'}${p.shootDate?' · '+fmtDate(p.shootDate):''}${p.location?' · '+p.location:''} · ${stTxt}`;
   return `<div style="background:#FAFAF7;border:1px solid var(--border);border-radius:var(--radius);padding:12px 10px;margin-bottom:14px">
     <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">📌 ${key}</div>
@@ -1041,7 +1055,8 @@ function renderForm(p){
   const shootTypes=['场照','外景','棚拍'];
   const styles=['cosplay','人像','商业','活动','其他'];
   const demandTypes=['人像','COS','商业','活动跟拍'];
-  const statuses=['待确认','已确认','已取消'];
+  const statuses=['待确认','进行中','已完成','已发布','已取消'];
+  const curStatus = statuses.includes(p.status)?p.status:effectiveStatus(p);
 
   const stage=computeStage(p);
   const pr2=getPricing();
@@ -1053,14 +1068,13 @@ function renderForm(p){
   ${renderProgressBar(stage, p)}
   <div class="form-section" data-stage="0"><div class="form-section-title">① 工作计划（接单）</div>
     <div class="form-row cols-3">
-      <div class="form-group"><label>状态 *</label><select id="fStatus">${statuses.map(s=>`<option value="${s}"${p.status===s?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="form-group"><label>状态 *</label><select id="fStatus">${statuses.map(s=>`<option value="${s}"${curStatus===s?' selected':''}>${s}</option>`).join('')}</select></div>
       <div class="form-group"><label>客户CN *</label><input type="text" id="fClientName" value="${p.clientName||''}" placeholder="拍摄对象名称"></div>
       <div class="form-group"><label>联系方式</label><input type="text" id="fContact" value="${p.contact||''}" placeholder="微信号"></div>
     </div>
     <div class="form-row cols-3">
       <div class="form-group"><label>需求类型</label><select id="fDemandType">${demandTypes.map(s=>`<option value="${s}"${p.demandType===s?' selected':''}>${s}</option>`).join('')}</select></div>
       <div class="form-group"><label>交付物</label><select id="fDeliverable"><option value="照片"${p.deliverable==='照片'?' selected':''}>照片</option><option value="视频"${p.deliverable==='视频'?' selected':''}>视频</option><option value="照片视频"${p.deliverable==='照片视频'?' selected':''}>照片+视频</option></select></div>
-      <div class="form-group"><label>花絮</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-top:6px;font-size:13px;color:var(--text2)"><input type="checkbox" id="fBTS" ${p.hasBTS?'checked':''} style="width:16px;height:16px;accent-color:var(--accent)"> <span>🎞️ 有花絮</span></label></div>
     </div>
     <div class="form-row cols-3">
       <div class="form-group"><label>总价 ¥</label><input type="number" id="fTotalPrice" value="${p.totalPrice||0}" min="0"></div>
@@ -1131,6 +1145,11 @@ function renderForm(p){
     </div>
     <div class="form-row cols-1">
       <div class="form-group"><label>现场备注</label><textarea id="fShootNotes" rows="2" placeholder="现场情况、客人表现等">${p.shootNotes||''}</textarea></div>
+    </div>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>有无花絮</label><label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-top:6px;font-size:13px;color:var(--text2)"><input type="checkbox" id="fBTS" ${p.hasBTS?'checked':''} style="width:16px;height:16px;accent-color:var(--accent)"> <span>🎞️ 有花絮</span></label></div>
+      <div class="form-group"><label>花絮数量</label><input type="number" id="fBTSCount" value="${p.btsCount||0}" min="0" placeholder="张/条"></div>
+      <div class="form-group"><label>花絮说明</label><input type="text" id="fBTSNote" value="${p.btsNote||''}" placeholder="如：现场花絮9张"></div>
     </div>
   </div>
 
@@ -1274,7 +1293,7 @@ function saveProject(){
     city:v('fCity'),location:v('fLocation'),routeLink:v('fRouteLink'),weather:v('fWeather'),
     role:v('fRole'),ip:v('fIP'),styleType:v('fStyleType'),shootType:v('fShootType'),
     moodKeywords:[...moodKeywordsTmp],moodBoard,
-    actualStart:v('fActualStart'),actualEnd:v('fActualEnd'),shootNotes:v('fShootNotes'),hasBTS:chk('fBTS'),
+    actualStart:v('fActualStart'),actualEnd:v('fActualEnd'),shootNotes:v('fShootNotes'),hasBTS:chk('fBTS'),btsCount:num('fBTSCount'),btsNote:v('fBTSNote'),
     photoWorkflow:{
       original:{count:num('fPO'),done:chk('fPODone')},
       selected:{count:num('fPS'),done:chk('fPSDone')},
@@ -1386,7 +1405,7 @@ async function createProjectFromBooking(b){
   const isVideo=d.shootType==='video';
   const extraUnitDef=isEvent?pr.eventExtra:(isVideo?pr.videoExtra:pr.photoExtra);
   const p=createEmptyProject();
-  p.status='已确认';
+  p.status='进行中';
   p.clientName=d.clientName||'';
   p.contact=d.wechat||'';
   p.role=role; p.ip=ip;
