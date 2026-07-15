@@ -482,7 +482,7 @@ function calcEstimate(d,pricing){
     if(hours<pricing.photoMinHours)hours=pricing.photoMinHours;
     const rate=double_?pricing.photoDouble:pricing.photoSingle;
     base=Math.round(hours*rate);
-    breakdown='正片 '+hours+'小时×'+rate+(double_?'(双人)':'')+'（含'+pricing.photoIncluded+'图调色）';
+    breakdown='正片 '+hours+'小时×'+rate+(double_?'(双人)':'')+'（含'+pricing.photoIncluded+'图成稿）';
     if(d.needAssistant==='yes'){assist=pricing.assistant;breakdown+=' + 摄助 '+pricing.assistant;}
   }
   const total=base+assist;
@@ -907,8 +907,7 @@ function renderSettings(main){
 │   └── 📁 2026-07-14_小美_雷电将军_原神_照片/
 │       ├── 📁 01_原图/
 │       ├── 📁 02_客人筛选/
-│       ├── 📁 03_调色/
-│       ├── 📁 04_成稿/
+│       ├── 📁 03_成稿/
 │       ├── 📁 06_花絮/
 │       └── 📄 project.json</div>
     <p style="margin-top:8px">运行命令：<code>python3 create_folders.py</code>（交互式创建）</p>
@@ -935,9 +934,9 @@ function renderSettings(main){
 
   html+=`<div class="settings-section">
     <h3>📊 工作流说明</h3>
-    <p><strong>照片工作流：</strong>原图 → 客人筛选 → 调色 → 成稿</p>
-    <p><strong>视频工作流：</strong>原片 → 选片 → 调色 → 成片</p>
-    <p><strong>五个阶段：</strong>工作计划 → 拍摄准备 → 拍摄执行 → 后期制作 → 交付收尾</p>
+    <p><strong>照片工作流：</strong>原图 → 客人筛选（选图）→ 成稿</p>
+    <p><strong>视频工作流：</strong>原片 → 选片 → 成片</p>
+    <p><strong>六个阶段：</strong>咨询预约 → 定金定档 → 沟通需求 → 到场拍摄 → 小图选图 → 成片画廊</p>
   </div>`;
 
   html+=`<div class="settings-section">
@@ -1089,19 +1088,19 @@ function closeModal(){
 }
 
 function computeStage(p){
-  // 0预约 1定金 2策划 3拍摄 4后期 5交付
+  // 0咨询 1定金定档 2需求沟通 3到场拍摄 4小图选图 5成片画廊
   let s=0;
   if((p.status!=='待确认' && p.status!=='已取消')||(p.deposit||0)>0) s=Math.max(s,1);
   const mb=p.moodBoard||{};
-  if(p.location || p.routeLink || (mb.reference&&mb.reference.length) || (mb.pose&&mb.pose.length) || (p.moodKeywords&&p.moodKeywords.length)) s=Math.max(s,2);
+  if(p.location || (mb.reference&&mb.reference.length) || (mb.pose&&mb.pose.length) || (p.moodKeywords&&p.moodKeywords.length) || p.role || p.ip) s=Math.max(s,2);
   if(p.actualStart || p.shootNotes) s=Math.max(s,3);
-  const wf=p.photoWorkflow||{};
-  if((wf.selected&&wf.selected.done)||(wf.color&&wf.color.done)||(wf.final&&wf.final.done)) s=Math.max(s,4);
-  if(p.archived || (p.publishedPlatforms&&p.publishedPlatforms.length>0)) s=Math.max(s,5);
+  const wf=p.photoWorkflow||{}, vw=p.videoWorkflow||{};
+  if((wf.selected&&wf.selected.done)||(vw.selected&&vw.selected.done)) s=Math.max(s,4);
+  if(p.archived || (p.publishedPlatforms&&p.publishedPlatforms.length>0) || (wf.final&&wf.final.done) || (vw.final&&vw.final.done)) s=Math.max(s,5);
   return s;
 }
 function renderProgressBar(stage, p){
-  const labels=['预约','定金','策划','拍摄','后期','交付'];
+  const labels=['咨询','定档','需求','拍摄','选图','成片'];
   let nodes='';
   for(let i=0;i<6;i++){
     const isDone=i<stage, isActive=i===stage;
@@ -1158,7 +1157,7 @@ function renderForm(p){
   const curExtraFee=(p.extraPhotos||0)*(p.extraUnit||defaultUnit);
   return `
   ${renderProgressBar(stage, p)}
-  <div class="form-section" data-stage="0"><div class="form-section-title">① 工作计划（接单）</div>
+  <div class="form-section" data-stage="0"><div class="form-section-title">① 咨询预约（接单）</div>
     <div class="form-row cols-3">
       <div class="form-group"><label>状态 *</label><select id="fStatus">${statuses.map(s=>`<option value="${s}"${curStatus===s?' selected':''}>${s}</option>`).join('')}</select></div>
       <div class="form-group"><label>客户CN *</label><input type="text" id="fClientName" value="${p.clientName||''}" placeholder="拍摄对象名称"></div>
@@ -1170,17 +1169,22 @@ function renderForm(p){
     </div>
     <div class="form-row cols-3">
       <div class="form-group"><label>总价 ¥</label><input type="number" id="fTotalPrice" value="${p.totalPrice||0}" min="0"></div>
-      <div class="form-group"><label>已收定金 ¥</label><input type="number" id="fDeposit" value="${p.deposit||0}" min="0"></div>
-      <div class="form-group"><label>已收尾款 ¥</label><input type="number" id="fFinalPayment" value="${p.finalPayment||0}" min="0"></div>
     </div>
   </div>
 
-  <div class="form-section" data-stage="2"><div class="form-section-title">② 拍摄准备（策划）</div>
+  <div class="form-section" data-stage="1"><div class="form-section-title">② 50%定金定档（排期）</div>
     <div class="form-row cols-3">
+      <div class="form-group"><label>已收定金 ¥</label><input type="number" id="fDeposit" value="${p.deposit||0}" min="0"></div>
       <div class="form-group"><label>拍摄日期</label><input type="date" id="fShootDate" value="${p.shootDate||''}"></div>
       <div class="form-group"><label>开始时间</label><input type="time" id="fStartTime" value="${p.startTime||''}"></div>
-      <div class="form-group"><label>结束时间</label><input type="time" id="fEndTime" value="${p.endTime||''}"></div>
     </div>
+    <div class="form-row cols-3">
+      <div class="form-group"><label>结束时间</label><input type="time" id="fEndTime" value="${p.endTime||''}"></div>
+      <div class="form-group" style="grid-column:span 2"><label></label><div style="font-size:12px;color:var(--text3)">📅 定档后预约时间显示在日历视图；收定金即可确认档期。</div></div>
+    </div>
+  </div>
+
+  <div class="form-section" data-stage="2"><div class="form-section-title">③ 沟通拍摄细节需求（策划）</div>
     <div class="form-row cols-3">
       <div class="form-group"><label>城市</label><input type="text" id="fCity" value="${p.city||''}" placeholder="如：上海"></div>
       <div class="form-group"><label>地点</label><input type="text" id="fLocation" value="${p.location||''}" placeholder="如：外滩"></div>
@@ -1207,7 +1211,7 @@ function renderForm(p){
     </div>
   </div>
 
-  <div class="form-section"><div class="form-section-title">🎨 情绪板</div>
+  <div class="form-section" data-stage="2"><div class="form-section-title">🎨 情绪板</div>
     <div class="form-row cols-1">
       <div class="form-group">
         <label>情绪关键词</label>
@@ -1238,9 +1242,13 @@ function renderForm(p){
       <button class="btn btn-primary btn-sm" onclick="exportPlanningPage()">📋 一键导出策划给客户</button>
       <span style="font-size:10px;color:var(--text3);margin-left:8px">生成独立HTML，微信发给客户查看拍摄方案</span>
     </div>
+    <div style="margin-top:12px">
+      <div style="font-size:12px;font-weight:600;margin-bottom:4px">📝 分镜脚本 <span style="font-size:10px;color:var(--text3);font-weight:400">（可后续细化）</span></div>
+      <textarea id="fStoryboard" rows="3" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;outline:none;resize:vertical" placeholder="镜头1 | 画面描述 | 时长 | 备注&#10;镜头2 | 画面描述 | 时长 | 备注">${p.storyboard||''}</textarea>
+    </div>
   </div>
 
-  <div class="form-section" data-stage="3"><div class="form-section-title">③ 拍摄执行</div>
+  <div class="form-section" data-stage="3"><div class="form-section-title">④ 到场拍摄</div>
     <div class="form-row">
       <div class="form-group"><label>实际开始</label><input type="time" id="fActualStart" value="${p.actualStart||''}"></div>
       <div class="form-group"><label>实际结束</label><input type="time" id="fActualEnd" value="${p.actualEnd||''}"></div>
@@ -1255,24 +1263,18 @@ function renderForm(p){
     </div>
   </div>
 
-  <div class="form-section" data-stage="4"><div class="form-section-title">④ 后期制作</div>
+  <div class="form-section" data-stage="4"><div class="form-section-title">⑤ 小图选图</div>
     ${p.deliverable.includes('照片')?`
     <div style="margin-bottom:12px"><strong style="font-size:12px">📷 照片工作流</strong></div>
     <div class="wf-row"><span class="wf-name">① 原图</span><input type="number" id="fPO" value="${p.photoWorkflow.original.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPODone" ${p.photoWorkflow.original.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPODone').click()">完成</label></div>
     <div class="wf-row"><span class="wf-name">② 筛选</span><input type="number" id="fPS" value="${p.photoWorkflow.selected.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPSDone" ${p.photoWorkflow.selected.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPSDone').click()">完成</label></div>
-    <div class="wf-row"><span class="wf-name">③ 调色</span><input type="number" id="fPC" value="${p.photoWorkflow.color.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPCDone" ${p.photoWorkflow.color.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPCDone').click()">完成</label></div>
-    <div class="wf-row"><span class="wf-name">④ 成稿</span><input type="number" id="fPF" value="${p.photoWorkflow.final.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPFDone" ${p.photoWorkflow.final.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPFDone').click()">完成</label></div>
+    <div class="wf-row"><span class="wf-name">③ 成稿</span><input type="number" id="fPF" value="${p.photoWorkflow.final.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPFDone" ${p.photoWorkflow.final.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPFDone').click()">完成</label></div>
     `:''}
     ${p.deliverable.includes('视频')?`
     <div style="margin:12px 0 8px"><strong style="font-size:12px">🎬 视频工作流</strong></div>
     <div class="wf-row"><span class="wf-name">① 原片</span><input type="number" id="fVO" value="${p.videoWorkflow.original.count}"><span class="wf-unit">条</span><input type="checkbox" id="fVODone" ${p.videoWorkflow.original.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fVODone').click()">完成</label></div>
     <div class="wf-row"><span class="wf-name">② 选片</span><input type="number" id="fVS" value="${p.videoWorkflow.selected.count}"><span class="wf-unit">条</span><input type="checkbox" id="fVSDone" ${p.videoWorkflow.selected.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fVSDone').click()">完成</label></div>
-    <div class="wf-row"><span class="wf-name">③ 调色</span><input type="number" id="fVC" value="${p.videoWorkflow.color.count}"><span class="wf-unit">条</span><input type="checkbox" id="fVCDone" ${p.videoWorkflow.color.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fVCDone').click()">完成</label></div>
     <div class="wf-row"><span class="wf-name">④ 成片</span><input type="number" id="fVF" value="${p.videoWorkflow.final.count}"><span class="wf-unit">条</span><input type="checkbox" id="fVFDone" ${p.videoWorkflow.final.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fVFDone').click()">完成</label></div>
-    <div style="margin-top:10px">
-      <div style="font-size:12px;font-weight:600;margin-bottom:4px">📝 分镜脚本 <span style="font-size:10px;color:var(--text3);font-weight:400">（可后续细化）</span></div>
-      <textarea id="fStoryboard" rows="3" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;outline:none;resize:vertical" placeholder="镜头1 | 画面描述 | 时长 | 备注&#10;镜头2 | 画面描述 | 时长 | 备注">${p.storyboard||''}</textarea>
-    </div>
     `:''}
     <div style="margin-top:12px;border:1px solid var(--border);border-radius:var(--radius);padding:12px;background:#FFFDF6">
       <div style="font-size:12px;font-weight:600;margin-bottom:2px">➕ 选图加单</div>
@@ -1303,14 +1305,15 @@ function renderForm(p){
     </div>
   </div>
 
-  <div class="form-section" data-stage="5"><div class="form-section-title">⑤ 交付收尾</div>
+  <div class="form-section" data-stage="5"><div class="form-section-title">⑥ 成片画廊（交付导出）</div>
     <div class="form-section-title" style="border:none;margin-bottom:6px">发布平台</div>
     <div class="platform-list">
       ${platforms.map(pl=>`<label class="platform-item ${p.publishedPlatforms.includes(pl)?'checked':''}" onclick="event.preventDefault();this.querySelector('input').click()"><input type="checkbox" class="pub-check" data-platform="${pl}" ${p.publishedPlatforms.includes(pl)?'checked':''} onchange="this.parentElement.classList.toggle('checked',this.checked)">${platformEmoji(pl)} ${platformLabel(pl)}</label>`).join('')}
     </div>
-    <div class="form-row">
+    <div class="form-row cols-3">
       <div class="form-group"><label>项目归档</label><label class="platform-item" onclick="event.preventDefault();document.getElementById('fArchived').click()"><input type="checkbox" id="fArchived" ${p.archived?'checked':''}> 📦 已归档</label></div>
       <div class="form-group"><label>百度网盘备份</label><label class="platform-item" onclick="event.preventDefault();document.getElementById('fCloudBackup').click()"><input type="checkbox" id="fCloudBackup" ${p.cloudBackup?'checked':''}> ☁️ 已备份</label></div>
+      <div class="form-group"><label>已收尾款 ¥</label><input type="number" id="fFinalPayment" value="${p.finalPayment||0}" min="0"></div>
     </div>
     <div class="form-row cols-1">
       <div class="form-group"><label>备注</label><textarea id="fNotes" rows="2" placeholder="其他备注">${p.notes||''}</textarea></div>
@@ -1401,13 +1404,11 @@ function saveProject(){
     photoWorkflow:{
       original:{count:num('fPO'),done:chk('fPODone')},
       selected:{count:num('fPS'),done:chk('fPSDone')},
-      color:{count:num('fPC'),done:chk('fPCDone')},
       final:{count:num('fPF'),done:chk('fPFDone')}
     },
     videoWorkflow:{
       original:{count:num('fVO'),done:chk('fVODone')},
       selected:{count:num('fVS'),done:chk('fVSDone')},
-      color:{count:num('fVC'),done:chk('fVCDone')},
       final:{count:num('fVF'),done:chk('fVFDone')}
     },
     publishedPlatforms,
