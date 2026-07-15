@@ -1078,7 +1078,7 @@ function createEmptyProject(){
     publishedPlatforms:[],
     archived:false,cloudBackup:false,
     notes:'',storyboard:'',
-    extraPhotos:0,extraUnit:0,extraFee:0,bookingType:''
+    extraPhotos:0,extraUnit:0,extraFee:0,bookingType:'',priceSnapshot:null
   };
 }
 
@@ -1282,6 +1282,7 @@ function renderForm(p){
         <div class="form-group"><label>单价 ¥/张</label><input type="number" id="fExtraUnit" value="${p.extraUnit||defaultUnit}" min="0" oninput="updateExtraFee()"></div>
       </div>
       <div style="font-size:12px;color:var(--text2)">加单费用：<b id="extraFeeVal" style="color:var(--amber)">${fmtMoney(curExtraFee)}</b> <span style="font-size:10px">（将加入总价与尾款 · 当前项目合计 ${fmtMoney((p.totalPrice||0)+curExtraFee)}）</span></div>
+      ${(p.priceSnapshot)?('<div style="font-size:10px;color:var(--text3);margin-top:6px">📌 价目快照（建档时）：正片 ¥'+p.priceSnapshot.photoSingle+'/h'+(p.priceSnapshot.photoDouble?(' / 双人 ¥'+p.priceSnapshot.photoDouble+'/h'):'')+(p.priceSnapshot.videoSingle?(' · 视频 ¥'+p.priceSnapshot.videoSingle):'')+' · 加图 ¥'+(p.extraUnit||p.priceSnapshot.photoExtra)+'/张 · 定金 '+Math.round(p.priceSnapshot.depositRatio*100)+'%</div>'):''}
     </div>
     <div id="selectPhotoArea" style="margin-top:12px;border:1px solid var(--border);border-radius:var(--radius);padding:12px">
       <div style="font-size:12px;font-weight:600;margin-bottom:6px">📷 客户选图</div>
@@ -1417,6 +1418,7 @@ function saveProject(){
     extraUnit:num('fExtraUnit'),
     extraFee:(num('fExtraPhotos'))*(num('fExtraUnit')),
     updatedAt:new Date().toISOString()
+    ,priceSnapshot:(editingId?(projects.find(x=>x.id===editingId)||{}).priceSnapshot:null)||Object.assign({},getPricing())
   };
 
   if(editingId){
@@ -1521,6 +1523,7 @@ async function createProjectFromBooking(b){
   p.estDeposit=est.deposit; p.estFinal=est.final;
   p.bookingType=d.shootType||'';
   p.extraUnit=extraUnitDef;
+  p.priceSnapshot=Object.assign({},getPricing());
   p.notes=[d.notes||'', catLabel?('['+catLabel+']'):'', d.needAssistant==='yes'?'[需要摄助]':'', d.allowDisplay==='no'?'[请勿公开]':''].filter(Boolean).join(' ');
   p.createdAt=new Date().toISOString();
   p.updatedAt=p.createdAt;
