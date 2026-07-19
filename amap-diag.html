@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🗺️ 高德地图诊断工具</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f5f5;color:#333;padding:20px;max-width:720px;margin:auto}
+h1{font-size:18px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.step{background:#fff;border-radius:12px;padding:16px 20px;margin-bottom:10px;border-left:4px solid #ccc;transition:.2s}
+.step.running{border-left-color:#f39c12}
+.step.pass{border-left-color:#27ae60}
+.step.fail{border-left-color:#e74c3c}
+.step-title{font-weight:600;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.step-title .icon{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:bold;flex-shrink:0}
+.step-title .icon.wait{background:#bbb}.step-title .icon.run{background:#f39c12}.step-title .icon.ok{background:#27ae60}.step-title .icon.err{background:#e74c3c}
+.step-detail{font-size:12px;color:#666;line-height:1.7;word-break:break-all;max-height:200px;overflow-y:auto}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:8px 18px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+.btn-primary{background:#3498db;color:#fff}.btn-primary:hover{opacity:.9}
+.btn-danger{background:#e74c3c;color:#fff}.btn-danger:hover{opacity:.9}
+.actions{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.map-test-area{background:#fff;border-radius:12px;padding:16px;margin-bottom:16px}
+#diagMap{width:100%;height:260px;border-radius:8px;background:#eee;margin-top:10px;position:relative;overflow:hidden}
+.summary{background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;font-size:13px;line-height:1.8}
+.summary code{background:#f0f0f0;padding:1px 5px;border-radius:4px;font-size:11.5px}
+</style>
+</head>
+<body>
+<h1>🗺️ 高德地图诊断工具</h1>
+
+<div class="actions">
+  <button class="btn btn-primary" onclick="runAllTests()">▶️ 开始全部诊断</button>
+  <button class="btn btn-danger" onclick="clearAmapCache()">🔄 清除缓存后重试</button>
+</div>
+
+<div id="steps"></div>
+
+<div id="amapGlobalErr" style="display:none;background:#fde8e8;border:1px solid #e74c3c;color:#c0392b;border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;line-height:1.7"></div>
+
+<div class="map-test-area">
+  <strong>地图渲染测试区</strong>
+  <div id="diagMap">（诊断完成后会尝试在此渲染地图）</div>
+</div>
+
+<div class="summary" id="summary" style="display:none"><strong>📋 诊断总结：</strong><pre id="summaryText"></pre></div>
+
+<script>
+const KEY='saika_photo_settings';
+let results=[];
+
+function $(id){return document.getElementById(id)}
+
+function mk(s){return(s&&s.length>6)?(s.slice(0,4)+'…'+s.slice(-4)):s;}
+
+function addStep(num,title,html,cls){
+  const el=document.createElement('div');
+  el.className='step '+(cls||'wait');
+  const iconCls=cls==='pass'?'ok':cls==='fail'?'err':cls==='running'?'run':'wait';
+  el.innerHTML=`<div class="step-title"><span class="icon ${iconCls}">${cls==='pass'?'✓':cls==='fail'?'✗':cls==='running'?'…':num}</span>${title}</div><div class="step-detail">${html||''}</div>`;
+  $('steps').appendChild(el);
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+  return el;
+}
+
+// 全局错误捕获：高德异步抛的 INVALID_USER_SCODE 等会在这里显示
+window.addEventListener('error',function(e){
+  const msg=(e&&e.message)||'';
+  const file=(e&&e.filename)||'';
+  if(/amap|USERKEY|INVALID_USER|SECURITY|securityJsCode|SCODE|key/i.test(msg)||/amap\.com/.test(file)){
+    const box=document.getElementById('amapGlobalErr');
+    if(box){
+      box.style.display='block';
+      box.innerHTML='⚠️ 高德运行时错误：<b>'+msg+'</b><br><span style="font-size:11px;color:#888">（多为 Key / 安全密钥不匹配）</span>';
+    }
+  }
+},true);
+
+async function runAllTests(){
+  $('steps').innerHTML='';
+  $('summary').style.display='none';
+  $('diagMap').innerHTML='<div style="padding:110px;text-align:center;color:#999;font-size:13px">等待诊断…</div>';
+  results=[];
+
+  // Step 1: localStorage
+  let s1=addStep('1','读取 localStorage 设置','','running');
+  await sleep(300);
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(!raw){updateStep(s1,'fail','❌ localStorage 中找不到设置数据（key='+KEY+'）');results.push({n:1,t:'localStorage',ok:false,msg:'无数据'});return;}
+    const s=JSON.parse(raw);
+    const storedKey=(s.amapKey||'').trim();
+    const storedSec=(s.amapSecurity||'').trim();
+    const keyWs=(s.amapKey||'')!==storedKey;
+    const secWs=(s.amapSecurity||'')!==storedSec;
+    const hasKey=!!storedKey, hasSec=!!storedSec;
+    updateStep(s1,hasKey&&hasSec&&!keyWs&&!secWs?'pass':'fail',
+      `原始数据长度: ${raw.length} 字符<br>`+
+      `amapKey(去空格): <code>${storedKey||'(空!)'}</code> (脱敏: ${mk(storedKey)}, 长${storedKey.length})<br>`+
+      `amapSecurity(去空格): <code>${storedSec||'(空!)'}</code> (脱敏: ${mk(storedSec)}, 长${storedSec.length})<br>`+
+      (keyWs?'⚠️ <b>Key 首尾有空白字符！</b> 这会导致鉴权失败<br>':'')+
+      (secWs?'⚠️ <b>安全密钥首尾有空白字符！</b> 这会导致鉴权失败<br>':'')+
+      (!hasKey?'⚠️ <b>高德 Key 为空！请到设置页填写并点保存</b><br>':'')+
+      (!hasSec?'⚠️ <b>安全密钥为空！请到设置页填写并点保存</b><br>':'')+
+      (hasKey&&hasSec&&!keyWs&&!secWs?'✅ Key 和安全密钥均已存储且无明显问题':''));
+    results.push({n:1,t:'localStorage',ok:hasKey&&hasSec&&!keyWs&&!secWs});
+    if(!hasKey||!hasSec) showSummary(); return;
+  }catch(e){updateStep(s1,'fail','❌ 解析失败: '+e.message);results.push({n:1,t:'localStorage',ok:false,msg:e.message});showSummary();return;}
+
+  // Step 2: _AMapSecurityConfig
+  let s2=addStep('2','设置 _AMapSecurityConfig','','running');
+  await sleep(200);
+  const s=JSON.parse(localStorage.getItem(KEY));
+  const secTrim=(s.amapSecurity||'').trim();
+  try{
+    window._AMapSecurityConfig={securityJsCode:secTrim};
+    const set=window._AMapSecurityConfig;
+    const secLen=(set&&set.securityJsCode)?set.securityJsCode.length:0;
+    updateStep(s2,'pass',
+      `已设置 window._AMapSecurityConfig<br>`+
+      `securityJsCode 长度: ${secLen} 字符<br>`+
+      `值(脱敏): <code>${mk(set.securityJsCode)}</code>`);
+    results.push({n:2,t:'SecurityConfig',ok:true});
+  }catch(e){updateStep(s2,'fail','设置失败: '+e.message);results.push({n:2,t:'SecurityConfig',ok:false});showSummary();return;}
+
+  // Step 3: 加载 JS API 脚本
+  let s3=addStep('3','加载 webapi.amap.com/maps JS 脚本','','running');
+  await sleep(100);
+  try{
+    // 先清除旧的
+    if(window._amapDiagPromise)window._amapDiagPromise=null;
+    const oldScripts=document.querySelectorAll('script[src*="amap.com"]');
+    oldScripts.forEach(sc=>sc.remove());
+
+    const scriptSrc='https://webapi.amap.com/maps?v=2.0&key='+encodeURIComponent((s.amapKey||'').trim())+'&plugin=AMap.Geocoder';
+    const loaded=new Promise((resolve,reject)=>{
+      const timeout=setTimeout(()=>reject(new Error('⏱️ 脚本加载超时(10s)，可能网络被墙或 DNS 解析失败')),10000);
+      const sc=document.createElement('script');
+      sc.src=scriptSrc;
+      sc.onload=()=>{clearTimeout(timeout);resolve(!!window.AMap);};
+      sc.onerror=()=>{clearTimeout(timeout);reject(new Error('脚本 onerror 触发 — 可能是网络问题或被拦截'));};
+      document.head.appendChild(sc);
+    });
+
+    const hasAMap=await loaded;
+    updateStep(s3,hasAMap?'pass':'warn',
+      `脚本 src: <code style="word-break:break-all">${scriptSrc}</code><br>`+
+      `window.AMap 存在: <b>${hasAMap?'是 ✅':'否 ❌'}</b>`+
+      (hasAMap?`<br>AMap 版本: <code>${window.AMap.version||'未知'}</code>`:''));
+    results.push({n:3,t:'ScriptLoad',ok:hasAMap});
+    if(!hasAMap){showSummary();return;}
+  }catch(e){
+    updateStep(s3,'fail','加载异常: '+e.message);
+    results.push({n:3,t:'ScriptLoad',ok:false,msg:e.message});
+    showSummary();return;
+  }
+
+  // Step 4: 创建 Map 实例
+  let s4=addStep('4','创建 AMap.Map 实例','','running');
+  await sleep(200);
+  try{
+    const div=$('diagMap');
+    div.innerHTML='';
+    let mapError=null;
+    const map=new window.AMap.Map(div,{
+      zoom:10,
+      center:[121.4737,31.2304],
+      viewMode:'2D'
+    });
+    
+    // 监听错误
+    const mapErrHandler=ev=>{
+      mapError=ev&&ev.error?(ev.error.message||ev.error):'未知';
+    };
+    map.on('error',mapErrHandler);
+    
+    // 等待一下看是否触发 error
+    await sleep(1500);
+    
+    if(mapError){
+      updateStep(s4,'fail',
+        `⚠️ Map 实例创建后触发了 error 事件<br>`+
+        `错误信息: <b style="color:#e74c3c">${mapError}</b><br>`+
+        `这通常意味着：<b>安全密钥不匹配</b> 或 Key 的「服务平台」类型不对`);
+      results.push({n:4,t:'MapInstance',ok:false,msg:mapError});
+    } else {
+      // 检查地图容器是否有内容
+      const hasContent=div.innerHTML.length>100;
+      updateStep(s4,'pass',
+        `Map 实例创建成功，未触发 error 事件<br>`+
+        `容器内容长度: ${div.innerHTML.length} 字符${hasContent?' (有渲染内容 ✅':' (可能为空 ⚠️)'}`);
+      results.push({n:4,t:'MapInstance',ok:true});
+    }
+  }catch(e){
+    updateStep(s4,'fail','创建 Map 异常: '+e.message+'<br>这几乎总是安全密钥不匹配导致的');
+    results.push({n:4,t:'MapInstance',ok:false,msg:e.message});
+    showSummary();return;
+  }
+
+  // Step 5: Geocoder 地理编码测试
+  let s5=addStep('5','Geocoder 地理编码测试 (上海市)','','running');
+  await sleep(200);
+  try{
+    const geo=new window.AMap.Geocoder();
+    const geoResult=await new Promise((resolve)=>{
+      const to=setTimeout(()=>resolve({status:'timeout',msg:'⏱️ Geocoder 回调超时(8s)，可能是安全校验不通过导致静默失败'}),8000);
+      geo.getLocation('上海市',(status,result)=>{
+        clearTimeout(to);
+        resolve({status:status,info:(result&&result.info)||status,geocodes:(result&&result.geocodes)||[],raw:result});
+      });
+    });
+
+    if(geoResult.status==='complete'&&geoResult.geocodes.length){
+      const loc=geoResult.geocodes[0].location;
+      updateStep(s5,'pass',
+        `状态: complete ✅<br>`+
+        `找到结果数: ${geoResult.geocodes.length}<br>`+
+        `第一个结果: ${geoResult.geocodes[0].formattedAddress||''}<br>`+
+        `坐标: lat=${loc.lat}, lng=${loc.lng}`);
+      results.push({n:5,t:'Geocode',ok:true});
+    } else {
+      updateStep(s5,'fail',
+        `状态: <b>${geoResult.status||'无回调'}</b><br>`+
+        `info: ${geoResult.info||'-'}<br>`+
+        `常见原因：安全密钥不匹配 / Key 类型不是 Web端(JS API) / 域名白名单限制 / 网络问题`);
+      results.push({n:5,t:'Geocode',ok:false,msg:geoResult.info||geoResult.status});
+    }
+  }catch(e){
+    updateStep(s5,'fail','Geocoder 异常: '+e.message);
+    results.push({n:5,t:'Geocode',ok:false,msg:e.message});
+  }
+
+  showSummary();
+}
+
+function updateStep(el,cls,html){
+  el.className='step '+cls;
+  const iconEl=el.querySelector('.icon');
+  if(iconEl){
+    iconEl.className='icon '+(cls==='pass'?'ok':cls==='fail'?'err':cls==='running'?'run':'wait');
+    iconEl.textContent=cls==='pass'?'✓':cls==='fail'?'✗':cls==='running'?'…':'';
+  }
+  el.querySelector('.step-detail').innerHTML=html||'';
+}
+
+function clearAmapCache(){
+  // 清除所有 amap 相关的缓存和全局变量
+  if(window._amapPromise)window._amapPromise=null;
+  if(window._amapDiagPromise)window._amapDiagPromise=null;
+  if(window._AMapSecurityConfig)delete window._AMapSecurityConfig;
+  
+  // 移除所有 amap 脚本标签
+  document.querySelectorAll('script[src*="amap.com"]').forEach(el=>el.remove());
+  
+  // 尝试销毁已有 map（此处仅做安全清理）
+  try{ if(window.AMap&&window.AMap.LngLat){ /* 难以直接销毁，忽略 */ } }catch(e){}
+  
+  $('steps').innerHTML='<div class="step pass"><div class="step-title"><span class="icon ok">✓</span>缓存已清除</div><div class="step-detail">已清除 _amapPromise、_AMapSecurityConfig、amap script 标签。点击「开始全部诊断」重新测试。</div></div>';
+  $('diagMap').innerHTML='<div style="padding:110px;text-align:center;color:#999;font-size:13px">缓存已清空</div>';
+  $('summary').style.display='none';
+}
+
+function showSummary(){
+  const allOk=results.every(r=>r.ok);
+  const failSteps=results.filter(r=>!r.ok);
+  
+  $('summary').style.display='block';
+  let txt=allOk?
+    '✅ 全部通过！高德地图应可正常使用。\n\n':
+    '⚠️ 有步骤未通过：\n\n';
+  
+  failSteps.forEach(r=>{
+    txt+=`  第${r.n}步 [${r.t}]: ${r.msg||'失败'}\n`;
+  });
+  
+  if(!allOk){
+    txt+=`\n建议操作：
+`;
+    if(failSteps.some(r=>r.n===1)){
+      txt+='  → 去 index.html 设置页填写高德 Key 和安全密钥，点保存\n';
+    }
+    if(failSteps.some(r=>r.n>=2&&r.n<=4)){
+      txt+='  → 检查高德控制台：确认该 Key 的「服务平台」是「Web端(JS API)」\n';
+      txt+='  → 如果改过安全密钥，需在设置页更新并保存\n';
+      txt+='  → 点此页面的「🔄 清除缓存后重试」再跑一次\n';
+    }
+    if(failSteps.some(r=>r.n===5)){
+      txt+='  → 地图能显示但地理编码失败 → 检查是否配了域名白名单限制\n';
+    }
+  }
+  
+  $('summaryText').textContent=txt;
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// 自动运行（加兜底 try/catch，任何异常都显示到页面）
+setTimeout(()=>{
+  runAllTests().catch(err=>{
+    const box=document.getElementById('amapGlobalErr');
+    if(box){box.style.display='block';box.innerHTML='⚠️ 诊断脚本意外出错：<b>'+(err&&err.message||err)+'</b><br><span style="font-size:11px;color:#888">请把这段发给我</span>';}
+  });
+},500);
+</script>
+</body>
+</html>

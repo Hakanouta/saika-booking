@@ -114,6 +114,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self._json({'ok': True, 'baseDir': BASE_DIR, 'localIP': self._get_local_ip()})
         elif path == '/api/bookings':
             self._api_bookings_list()
+        elif path == '/api/select-list':
+            self._api_select_list()
         else:
             super().do_GET()
 
@@ -129,6 +131,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self._api_booking_submit()
         elif path == '/api/booking-delete':
             self._api_booking_delete()
+        elif path == '/api/select-submit':
+            self._api_select_submit()
+        elif path == '/api/select-delete':
+            self._api_select_delete()
         else:
             self._send_text(404, 'Not found')
 
@@ -308,14 +314,23 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             with open(save_path, 'w', encoding='utf-8') as f:
                 f.write(html)
 
-            local_ip = self._get_local_ip()
-            port = self.server.server_address[1]
-            local_url = f'http://{local_ip}:{port}/select_pages/{urllib.parse.quote(filename)}'
+            # 返回的链接需可被客户端直接打开：云端用公网 Host，本地用局域网 IP
+            host = self.headers.get('Host', '')
+            proto = self.headers.get('X-Forwarded-Proto') or 'http'
+            render_ext = os.environ.get('RENDER_EXTERNAL_URL', '')
+            if render_ext:
+                public_url = f'{render_ext}/select_pages/{urllib.parse.quote(filename)}'
+            elif 'onrender.com' in host:
+                public_url = f'{proto}://{host}/select_pages/{urllib.parse.quote(filename)}'
+            else:
+                local_ip = self._get_local_ip()
+                port = self.server.server_address[1]
+                public_url = f'http://{local_ip}:{port}/select_pages/{urllib.parse.quote(filename)}'
 
             # 自动生成索引页
             self._generate_select_index()
 
-            self._json({'ok': True, 'url': local_url, 'filename': filename})
+            self._json({'ok': True, 'url': public_url, 'filename': filename})
         except Exception as e:
             self._json({'error': str(e)}, 500)
 
@@ -435,6 +450,102 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 return
             bookings_dir = os.path.join(APP_DIR, 'bookings')
             fp = os.path.join(bookings_dir, fn)
+            if os.path.isfile(fp):
+                os.remove(fp)
+                self._json({'ok': True})
+            else:
+                self._json({'ok': False, 'error': 'not found'})
+        except Exception as e:
+            self._json({'ok': False, 'error': str(e)})
+
+    # ---------- 选图回传（客户一键回传） ----------
+    def _selections_dir(self):
+        d = os.path.join(APP_DIR, 'selections')
+        try:
+            os.makedirs(d, exist_ok=True)
+        except Exception:
+            pass
+        return d
+
+    def _api_select_submit(self):
+        """接收客户在选图页一键回传的选图结果，存为 JSON"""
+        content_length = int(self.headers.get('Content-Length', 0))
+        if content_length == 0 or content_length > 64 * 1024:
+            self._json({'error': '请求体为空或过大'}, 400)
+            return
+
+        body = self.rfile.read(content_length)
+        try:
+            import time as _t
+            data = json.loads(body)
+
+            page_id = (data.get('pageId') or '').strip()
+            client = (data.get('clientName') or '匿名客户').strip()
+            selected = data.get('selected') or []
+
+            if not page_id:
+                self._json({'error': '缺少 pageId'}, 400)
+                return
+            if not isinstance(selected, list) or not selected:
+                self._json({'error': '没有选图数据'}, 400)
+                return
+
+            selected = [int(x) for x in selected if str(x).isdigit()]
+            if not selected:
+                self._json({'error': '没有有效的选图编号'}, 400)
+                return
+
+            ts = datetime.now().strftime('%Y%m%d_%H%M%S')
+            rec = {
+                'pageId': page_id,
+                'clientName': client,
+                'pageName': (data.get('pageName') or '').strip(),
+                'selected': selected,
+                'count': len(selected),
+                'submittedAt': datetime.now().isoformat(),
+                'mtime': _t.strftime('%Y-%m-%d %H:%M', _t.localtime()),
+            }
+
+            fn = sanitize(page_id) + '_' + ts + '.json'
+            fp = os.path.join(self._selections_dir(), fn)
+            with open(fp, 'w', encoding='utf-8') as f:
+                json.dump(rec, f, ensure_ascii=False, indent=2)
+
+            self._json({'ok': True, 'message': '选图结果已收到', 'filename': fn})
+        except Exception as e:
+            self._json({'error': str(e)}, 500)
+
+    def _api_select_list(self):
+        """列出所有待处理的客户回传选图"""
+        d = self._selections_dir()
+        if not os.path.isdir(d):
+            self._json([])
+            return
+        recs = []
+        for f in sorted(os.listdir(d), reverse=True):
+            if not f.endswith('.json'):
+                continue
+            try:
+                with open(os.path.join(d, f), 'r', encoding='utf-8') as fh:
+                    data = json.load(fh)
+                data['filename'] = f
+                recs.append(data)
+            except Exception:
+                pass
+        recs.sort(key=lambda r: r.get('submittedAt', ''), reverse=True)
+        self._json(recs)
+
+    def _api_select_delete(self):
+        """标记回传已处理：删除对应 JSON"""
+        try:
+            length = int(self.headers.get('Content-Length', 0))
+            raw = self.rfile.read(length) if length else b''
+            data = json.loads(raw.decode('utf-8')) if raw else {}
+            fn = data.get('filename', '')
+            if not fn or '/' in fn or '\\' in fn or not fn.endswith('.json'):
+                self._json({'ok': False, 'error': 'invalid filename'})
+                return
+            fp = os.path.join(self._selections_dir(), fn)
             if os.path.isfile(fp):
                 os.remove(fp)
                 self._json({'ok': True})

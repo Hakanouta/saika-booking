@@ -169,6 +169,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hira
 .mood-keyword .mk-remove:hover{color:var(--red)}
 .keyword-input{padding:5px 8px;font-size:11px;border:1px solid var(--border);border-radius:4px;width:80px;outline:none;font-family:inherit}
 .keyword-input:focus{border-color:var(--accent)}
+/* Storyboard table */
+.sb-table{border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;margin-top:4px;-webkit-overflow-scrolling:touch}
+.sb-row{display:grid;grid-template-columns:54px minmax(120px,1fr) 84px 64px minmax(120px,1fr) minmax(90px,1fr) 28px;min-width:620px;border-top:1px solid var(--border);align-items:stretch}
+.sb-row:first-child{border-top:none}
+.sb-row.head{background:var(--tag-bg);font-size:11px;font-weight:700;color:var(--text2)}
+.sb-cell{padding:6px;border-right:1px solid var(--border);display:flex;align-items:center;font-size:11px;color:var(--text2);min-width:0}
+.sb-cell:last-child{border-right:none;justify-content:center}
+.sb-input{width:100%;border:1px solid var(--border);border-radius:5px;padding:5px 6px;font-size:11px;font-family:inherit;outline:none;resize:vertical;background:#fff;color:var(--text)}
+.sb-input:focus{border-color:var(--accent)}
+textarea.sb-input{line-height:1.4}
+.sb-img-slot{width:100%;aspect-ratio:1;border:1px dashed var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;background:var(--tag-bg);font-size:16px;color:var(--text3)}
+.sb-img-slot img{width:100%;height:100%;object-fit:cover}
+.sb-img-x{position:absolute;top:1px;right:1px;width:16px;height:16px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:9px;display:flex;align-items:center;justify-content:center}
+.sb-del-btn{width:22px;height:22px;border:1px solid var(--border);background:#fff;border-radius:50%;cursor:pointer;color:var(--text3);font-size:12px;line-height:1}
+.sb-del-btn:hover{border-color:var(--red);color:var(--red)}
 /* Finance */
 .fin-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .fin-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
@@ -223,6 +238,44 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hira
   .mood-upload{grid-template-columns:1fr 1fr}
 }
 .hidden{display:none!important}
+
+/* ===== 地点记录系统 ===== */
+.loc-stats{display:flex;gap:18px;flex-wrap:wrap;margin:4px 0 10px;font-size:13px;font-weight:600}
+.loc-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.loc-map{width:100%;height:360px;border-radius:var(--radius);overflow:hidden;background:#f3f3f3;margin-bottom:16px;box-shadow:var(--shadow)}
+.loc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.loc-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:12px;cursor:pointer;transition:var(--transition);box-shadow:var(--shadow)}
+.loc-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.loc-card-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.loc-cat{color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;flex-shrink:0}
+.loc-name{font-size:14px;font-weight:600;color:var(--text)}
+.loc-addr{font-size:12px;color:var(--text2);margin-bottom:4px}
+.loc-count{font-size:12px;color:var(--text2);margin-bottom:6px}
+.loc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px}
+.loc-tag{font-size:10px;background:var(--tag-bg);color:var(--text2);padding:2px 7px;border-radius:10px}
+.loc-roles{font-size:11px;color:var(--text3)}
+.loc-card-img{margin:-12px -12px 10px;border-radius:var(--radius) var(--radius) 0 0;overflow:hidden;background:#eee;height:130px}
+.loc-card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.loc-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-top:8px}
+.loc-photo-cell{position:relative;aspect-ratio:1/1;border-radius:8px;overflow:hidden;background:#f0f0f0;border:1px solid var(--border)}
+.loc-photo-cell img{width:100%;height:100%;object-fit:cover;display:block}
+.loc-photo-del{position:absolute;top:3px;right:3px;width:20px;height:20px;border:none;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:13px;line-height:20px;text-align:center;cursor:pointer;padding:0}
+.loc-role{color:var(--accent)}
+.loc-suggest{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:12px;color:var(--text3)}
+.loc-suggest-btn{font-size:11px;background:var(--tag-bg);color:var(--accent);border:1px solid var(--border);border-radius:10px;padding:3px 10px;cursor:pointer;font-family:inherit;font-weight:500}
+.loc-suggest-btn:hover{background:var(--accent);color:#fff}
+.empty-box{padding:24px;text-align:center;color:var(--text3);font-size:13px;border:1px dashed var(--border);border-radius:var(--radius);background:var(--tag-bg)}
+@media(max-width:640px){
+  .loc-map{height:280px}
+}
+
+/* ===== 成片画廊 ===== */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px}
+.g-cell{position:relative;aspect-ratio:1;border-radius:6px;overflow:hidden;background:#f0f0f0}
+.g-cell img{width:100%;height:100%;object-fit:cover;display:block}
+.g-del{position:absolute;top:2px;right:2px;width:18px;height:18px;border:none;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:12px;line-height:1;cursor:pointer}
+.g-del:hover{background:rgba(200,0,0,.8)}
+.caption-box{margin-top:10px;padding:10px;border:1px solid var(--border);border-radius:var(--radius);background:#fff}
 </style>
 </head>
 <body>
@@ -237,6 +290,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hira
       <button class="nav-item" data-view="schedule"><span class="icon">📅</span>日程</button>
       <button class="nav-item" data-view="projects"><span class="icon">📁</span>项目<span class="badge" id="navBadge">0</span></button>
       <button class="nav-item" data-view="finance"><span class="icon">💰</span>财务</button>
+      <button class="nav-item" data-view="locations"><span class="icon">🗺️</span>地点<span class="badge" id="locBadge">0</span></button>
       <button class="nav-item" data-view="settings"><span class="icon">⚙️</span>设置</button>
     </nav>
     <div class="sidebar-stats">
@@ -264,6 +318,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hira
 </div>
 <div id="toastContainer"></div>
 
+<div class="modal-overlay hidden" id="locationModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="locModalTitle">地点</h3>
+      <button class="close-btn" onclick="closeLocationModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="locModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeLocationModal()">取消</button>
+      <button class="btn btn-danger btn-sm hidden" id="locDeleteBtn" onclick="deleteLocation()">删除</button>
+      <button class="btn btn-outline" id="locShootBtn" onclick="newShootAtLocation()">📷 在此地点新建拍摄</button>
+      <button class="btn btn-primary" onclick="saveLocation()">保存</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ========== DATA LAYER ==========
 const STORAGE_KEY = 'saika_photo_projects';
@@ -281,13 +351,44 @@ function loadProjects(){
   return arr;
 }
 function saveProjects(data){
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}
+  catch(e){toast('⚠️ 存储空间不足（成片图片过大），部分数据可能未保存，建议减少画廊图片或压缩');console.error(e);}
 }
 function loadSettings(){
   try{return JSON.parse(localStorage.getItem(SETTINGS_KEY))||{photographer:'',social:''}}catch(e){return{photographer:'',social:''}}
 }
 function saveSettings(s){
   localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+}
+
+// ========== 地点记录 ==========
+const LOC_KEY = 'saika_locations';
+function loadLocations(){
+  try{return JSON.parse(localStorage.getItem(LOC_KEY))||[]}catch(e){return[]}
+}
+function saveLocations(data){
+  try{localStorage.setItem(LOC_KEY,JSON.stringify(data));}catch(e){toast('地点数据过大，保存失败');}
+}
+let locations = loadLocations();
+let locPhotosTmp = [];   // 地点图片临时缓冲（编辑/新建时载入，保存时写回 l.photos）
+// 三色分类：棚(red) / 外景(green) / 收藏未去(blue)
+const LOC_CATS = {
+  studio:{label:'棚',color:'#e74c3c',emoji:'🏢'},
+  outdoor:{label:'外景',color:'#27ae60',emoji:'🌳'},
+  favorite:{label:'收藏未去',color:'#3498db',emoji:'⭐'}
+};
+function locCatLabel(c){return (LOC_CATS[c]||LOC_CATS.outdoor).label;}
+function locCatColor(c){return (LOC_CATS[c]||LOC_CATS.outdoor).color;}
+// 自动统计某地点的拍摄次数 + 关联项目（按 location 名称匹配）
+function locProjectCount(name){
+  if(!name)return 0;
+  const n=name.trim();
+  return projects.filter(p=>p.location&&p.location.trim()===n).length;
+}
+function projectsAtLocation(name){
+  if(!name)return [];
+  const n=name.trim();
+  return projects.filter(p=>p.location&&p.location.trim()===n);
 }
 
 // ========== 高德地图 ==========
@@ -303,10 +404,58 @@ function ensureAmap(){
     const sc=document.createElement('script');
     sc.src='https://webapi.amap.com/maps?v=2.0&key='+encodeURIComponent(key)+'&plugin=AMap.Geocoder';
     sc.onload=()=>resolve(window.AMap||null);
-    sc.onerror=()=>resolve(null);
+    sc.onerror=()=>{_amapPromise=null;resolve(null);};
     document.head.appendChild(sc);
   });
   return _amapPromise;
+}
+
+// 捕获高德运行时错误（多因 Key/安全密钥不匹配），直接显示在地图区，免开控制台
+window.addEventListener('error',function(e){
+  const msg=(e&&e.message)||'';
+  const file=(e&&e.filename)||'';
+  if(/amap|USERKEY|INVALID_USER|SECURITY|securityJsCode|SCODE|key/i.test(msg)||/amap\.com/.test(file)){
+    showMapError('⚠️ 高德地图错误：'+msg+'（多为 Key 或安全密钥不匹配，请到设置页点「测试地图连接」核对）');
+  }
+},true);
+
+function showMapError(text){
+  ['locMap','mapPreview','locMapPreview'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&!el._errored){el._errored=true;el.innerHTML='<div style="padding:30px;text-align:center;color:#c0392b;font-size:13px;line-height:1.6">'+text+'</div>';}
+  });
+}
+
+// 一键检测地图 Key 是否可用（设置页调用）
+async function testAmap(){
+  const el=document.getElementById('amapTestResult');
+  if(!el)return;
+  el.style.color='var(--text2)';
+  el.textContent='🧪 正在测试地图连接…';
+  const s=loadSettings();
+  const mk=k=>(k&&k.length>6)?(k.slice(0,4)+'…'+k.slice(-4)):k;
+  if(!s.amapKey){el.style.color='#c0392b';el.textContent='❌ 请先在上方填写「高德 Key」，再点保存';return;}
+  if(!s.amapSecurity){el.style.color='#c0392b';el.textContent='❌ Key 已填，但「安全密钥」为空。高德 2.0 必须填安全密钥（securityJsCode），否则地图无法渲染';return;}
+  el.textContent='🧪 正在测试（Key: '+mk(s.amapKey)+'，安全密钥: '+mk(s.amapSecurity)+'）…';
+  const AMap=await ensureAmap();
+  if(!AMap){el.style.color='#c0392b';el.textContent='❌ 高德脚本加载失败（网络被墙？或 Key 无效）';return;}
+  try{
+    const div=document.createElement('div');
+    div.style.cssText='width:1px;height:1px;position:absolute;left:-9999px;top:-9999px';
+    document.body.appendChild(div);
+    const map=new AMap.Map(div,{zoom:10,center:[121.4737,31.2304],viewMode:'2D'});
+    let finished=false;
+    const to=setTimeout(()=>{if(finished)return;div.remove();el.style.color='#c0392b';el.textContent='⚠️ 地图初始化超时（卡在加载）。多为安全密钥不匹配，或 Key 类型不是「Web端(JS API)」';},9000);
+    map.on('error',ev=>{finished=true;clearTimeout(to);div.remove();el.style.color='#c0392b';el.textContent='❌ 地图初始化失败：'+(ev&&ev.error?ev.error.message||ev.error:'未知错误')+'（通常是安全密钥不匹配 → 请到高德控制台重新生成「Key+安全密钥」配对）';});
+    const geo=new AMap.Geocoder();
+    geo.getLocation('上海市',(status,result)=>{
+      finished=true;clearTimeout(to);div.remove();
+      if(status==='complete'){el.style.color='var(--green)';el.textContent='✅ 地图可用！Key 与安全密钥均正确，可正常定位';}
+      else{el.style.color='#c0392b';el.textContent='⚠️ 地图加载成功但定位失败：'+(result&&result.info||status)+'（检查 Key 服务平台类型是否为「Web端(JS API)」）';}
+    });
+  }catch(err){
+    el.style.color='#c0392b';el.textContent='❌ 地图初始化异常：'+(err&&err.message||err)+'（多为安全密钥错误）';
+  }
 }
 function geocodeCurrentLocation(){
   const cityEl=document.getElementById('fCity'), locEl=document.getElementById('fLocation');
@@ -315,21 +464,25 @@ function geocodeCurrentLocation(){
   const statusEl=document.getElementById('geoStatus');
   if(!addr){if(statusEl)statusEl.textContent='请先填写城市/地点';return;}
   if(statusEl)statusEl.textContent='定位中…';
+  let _to=setTimeout(()=>{if(statusEl&&statusEl.textContent==='定位中…'){statusEl.textContent='⚠️ 定位超时（检查网络/高德 Key/安全密钥）';}},9000);
   ensureAmap().then(AMap=>{
-    if(!AMap){if(statusEl)statusEl.textContent='未配置高德 Key（见设置页）';toast('⚠️ 请在设置页填写高德 Key');return;}
-    const geocoder=new AMap.Geocoder();
-    geocoder.getLocation(addr,(status,result)=>{
-      if(status==='complete'&&result.geocodes&&result.geocodes.length){
-        const L=result.geocodes[0].location;
-        document.getElementById('fLat').value=L.lat;
-        document.getElementById('fLng').value=L.lng;
-        if(statusEl)statusEl.textContent='✅ 已定位';
-        initLocationMap(L.lat,L.lng);
-      }else{
-        if(statusEl)statusEl.textContent='⚠️ 未找到，请更详细';
-        toast('⚠️ 定位失败，换更详细地址（如：上海市黄浦区外滩）');
-      }
-    });
+    if(!AMap){clearTimeout(_to);if(statusEl)statusEl.textContent='未配置高德 Key（见设置页）';toast('⚠️ 请在设置页填写高德 Key');return;}
+    try{
+      const geocoder=new AMap.Geocoder();
+      geocoder.getLocation(addr,(status,result)=>{
+        clearTimeout(_to);
+        if(status==='complete'&&result.geocodes&&result.geocodes.length){
+          const L=result.geocodes[0].location;
+          document.getElementById('fLat').value=L.lat;
+          document.getElementById('fLng').value=L.lng;
+          if(statusEl)statusEl.textContent='✅ 已定位';
+          initLocationMap(L.lat,L.lng);
+        }else{
+          if(statusEl)statusEl.textContent='⚠️ 未找到，请更详细';
+          toast('⚠️ 定位失败，换更详细地址（如：上海市黄浦区外滩）');
+        }
+      });
+    }catch(err){clearTimeout(_to);if(statusEl)statusEl.textContent='⚠️ 地理编码异常';toast('⚠️ 高德地理编码出错：'+(err&&err.message||err));}
   });
 }
 function initLocationMap(lat,lng){
@@ -339,6 +492,7 @@ function initLocationMap(lat,lng){
     if(!AMap){el.innerHTML='<span style="font-size:12px;color:#999">设置高德 Key 后显示地图</span>';return;}
     if(el._map){el._map.setZoomAndCenter([lng,lat]);if(el._marker)el._marker.setPosition([lng,lat]);return;}
     const map=new AMap.Map(el,{zoom:15,center:[lng,lat],resizeEnable:true});
+    map.on('error',ev=>{el.innerHTML='<div style="padding:20px;text-align:center;color:#c0392b;font-size:12px">⚠️ 地图初始化失败：'+(ev&&ev.error?ev.error.message||ev.error:'安全密钥不匹配')+'<br>请到设置页点「测试地图连接」</div>';});
     const marker=new AMap.Marker({position:[lng,lat],title:(document.getElementById('fLocation')||{}).value||'拍摄地'});
     map.add(marker);
     el._map=map; el._marker=marker;
@@ -366,6 +520,7 @@ let editingId = null;
 let calMonth = new Date();
 let dropdownVisible = null;
 let moodKeywordsTmp = [];
+let galleryTmp = [];
 
 // Demo data on first load
 if(projects.length === 0){
@@ -500,6 +655,7 @@ function render(){
   else if(currentView==='schedule') renderSchedule(main);
   else if(currentView==='projects') renderProjects(main);
   else if(currentView==='finance') renderFinance(main);
+  else if(currentView==='locations') renderLocations(main);
   else if(currentView==='settings') renderSettings(main);
 }
 
@@ -686,6 +842,240 @@ function calDayClick(dateStr){
   detail.classList.remove('hidden');
 }
 
+// ===== 地点记录系统 =====
+let locFilter='all';
+let locMap=null, locMarkers=[];
+let editingLocId=null;
+
+function renderLocations(main){
+  const badge=document.getElementById('locBadge'); if(badge)badge.textContent=locations.length;
+  const list = locFilter==='all'?locations:locations.filter(l=>l.category===locFilter);
+  let html=`<div class="main-header"><h2>🗺️ 拍摄地点记录</h2>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="importLocationsFromProjects()">📥 从项目导入</button>
+      <button class="btn btn-primary" onclick="openLocationModal()">+ 新建地点</button>
+    </div></div>`;
+  const cnt={studio:locations.filter(l=>l.category==='studio').length,outdoor:locations.filter(l=>l.category==='outdoor').length,favorite:locations.filter(l=>l.category==='favorite').length};
+  html+=`<div class="loc-stats">
+    <span class="loc-stat" style="color:${LOC_CATS.studio.color}">🏢 棚 ${cnt.studio}</span>
+    <span class="loc-stat" style="color:${LOC_CATS.outdoor.color}">🌳 外景 ${cnt.outdoor}</span>
+    <span class="loc-stat" style="color:${LOC_CATS.favorite.color}">⭐ 收藏未去 ${cnt.favorite}</span>
+  </div>`;
+  html+=`<div class="loc-chips">${['all','studio','outdoor','favorite'].map(c=>`<button class="filter-chip${locFilter===c?' active':''}" onclick="locFilter='${c}';renderLocations(document.getElementById('mainContent'))">${c==='all'?'全部':LOC_CATS[c].emoji+' '+LOC_CATS[c].label}</button>`).join('')}</div>`;
+  html+=`<div id="locMap" class="loc-map"></div>`;
+  if(list.length===0){
+    html+=`<div class="empty-box">还没有地点记录。点「+ 新建地点」添加，或「从项目导入」把已拍过的地方自动收录（也可收录网上看到的想去的地点，标记为「收藏未去」）。</div>`;
+  }else{
+    html+=`<div class="loc-grid">`+list.map(l=>{
+      const projs=projectsAtLocation(l.name);
+      const count=projs.length||l.count||0;
+      return `<div class="loc-card" onclick="openLocationModal('${l.id}')" style="border-left:4px solid ${locCatColor(l.category)}">
+        ${l.photos&&l.photos.length?`<div class="loc-card-img"><img src="${l.photos[0].src}" alt=""></div>`:''}
+        <div class="loc-card-top"><span class="loc-cat" style="background:${locCatColor(l.category)}">${LOC_CATS[l.category].label}</span><span class="loc-name">${escHtml(l.name)}</span></div>
+        ${l.address?`<div class="loc-addr">📍 ${escHtml(l.address)}</div>`:''}
+        ${count?`<div class="loc-count">📸 拍摄 ${count} 次</div>`:''}
+        ${(l.styleTags&&l.styleTags.length)?`<div class="loc-tags">${l.styleTags.map(t=>`<span class="loc-tag">${escHtml(t)}</span>`).join('')}</div>`:''}
+        ${(l.roles&&l.roles.length)?`<div class="loc-roles">角色：${l.roles.map(r=>`<span class="loc-role">${escHtml(r)}</span>`).join('、')}</div>`:''}
+      </div>`;
+    }).join('')+`</div>`;
+  }
+  main.innerHTML=html;
+  renderLocMap();
+}
+
+function renderLocMap(){
+  const el=document.getElementById('locMap'); if(!el)return;
+  ensureAmap().then(AMap=>{
+    if(!AMap){el.innerHTML='<div style="padding:30px;text-align:center;color:#999;font-size:13px">请在「设置」页填写高德 Key 后显示地图</div>';return;}
+    const list=locFilter==='all'?locations:locations.filter(l=>l.category===locFilter);
+    const withCoord=list.filter(l=>l.lat&&l.lng);
+    if(locMap){try{locMap.destroy();}catch(e){} locMap=null;}
+    const center=withCoord.length?[withCoord[0].lng,withCoord[0].lat]:[121.4737,31.2304];
+    el.innerHTML='<div style="padding:30px;text-align:center;color:#999;font-size:13px">地图加载中…</div>';
+    locMap=new AMap.Map(el,{zoom:withCoord.length?11:5,center:center,resizeEnable:true});
+    locMap.on('error',ev=>{el.innerHTML='<div style="padding:30px;text-align:center;color:#c0392b;font-size:13px;line-height:1.6">⚠️ 地图加载失败：'+(ev&&ev.error?(ev.error.message||ev.error):'安全密钥不匹配（INVALID_USER_SCODE）')+'<br>请到「设置」页点「测试地图连接」核对 Key / 安全密钥</div>';});
+    withCoord.forEach(l=>{
+      const mk=new AMap.Marker({position:[l.lng,l.lat],title:l.name,
+        content:'<div style="width:18px;height:18px;border-radius:50%;background:'+locCatColor(l.category)+';border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5)"></div>'});
+      mk.on('click',()=>openLocationModal(l.id));
+      locMap.add(mk);
+    });
+    if(withCoord.length>1) locMap.setFitView();
+  });
+}
+
+function openLocationModal(id){
+  let l={category:'outdoor',styleTags:[],roles:[],name:'',address:'',notes:'',lat:0,lng:0,photos:[]};
+  if(id){const f=locations.find(x=>x.id===id);if(f)l=JSON.parse(JSON.stringify(f));}
+  editingLocId=id||null;
+  locPhotosTmp=(l.photos||[]).slice();
+  document.getElementById('locModalTitle').textContent=id?'编辑地点':'新建地点';
+  document.getElementById('locModalBody').innerHTML=renderLocationForm(l);
+  renderLocPhotos();
+  document.getElementById('locDeleteBtn').classList.toggle('hidden',!id);
+  document.getElementById('locationModal').classList.remove('hidden');
+  if(l.lat&&l.lng){setTimeout(()=>{const el=document.getElementById('locMapPreview');if(el&&!el._map){ensureAmap().then(AMap=>{if(AMap){const map=new AMap.Map(el,{zoom:15,center:[l.lng,l.lat],resizeEnable:true});map.on('error',ev=>{el.innerHTML='<div style="padding:16px;text-align:center;color:#c0392b;font-size:12px">⚠️ 地图加载失败：'+(ev&&ev.error?(ev.error.message||ev.error):'安全密钥不匹配')+'</div>';});const mk=new AMap.Marker({position:[l.lng,l.lat]});map.add(mk);el._map=map;el._marker=mk;}});}},60);}
+}
+function renderLocationForm(l){
+  const cat=l.category||'outdoor';
+  return `
+  <div class="form-row cols-2">
+    <div class="form-group"><label>地点名称 *</label><input type="text" id="locName" value="${escAttr(l.name||'')}" placeholder="如：外滩 / XX摄影棚"></div>
+    <div class="form-group"><label>分类</label><select id="locCat">
+      ${Object.keys(LOC_CATS).map(c=>`<option value="${c}"${cat===c?' selected':''}>${LOC_CATS[c].emoji} ${LOC_CATS[c].label}</option>`).join('')}
+    </select></div>
+  </div>
+  <div class="form-group">
+    <label>地址 / 定位</label>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <input type="text" id="locAddr" value="${escAttr(l.address||'')}" placeholder="详细地址，用于地图定位" style="flex:1;min-width:200px;padding:7px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius);outline:none;font-family:inherit">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="geocodeLocationModal()">📍 定位</button>
+      <span id="locGeoStatus" style="font-size:12px;color:var(--text3)">${l.lat&&l.lng?'✅ 已定位':'输入地址后点定位'}</span>
+    </div>
+    <div id="locMapPreview" style="height:160px;margin-top:8px;border-radius:8px;overflow:hidden;background:#f3f3f3;display:flex;align-items:center;justify-content:center;font-size:12px;color:#999">${l.lat&&l.lng?'地图加载中…':'定位后显示地图'}</div>
+  </div>
+  <div class="form-row cols-2">
+    <div class="form-group"><label>可拍风格类型</label><input type="text" id="locStyleTags" value="${escAttr((l.styleTags||[]).join('，'))}" placeholder="逗号分隔，如：cosplay，人像，暗黑"></div>
+    <div class="form-group"><label>拍过的角色 / IP</label><input type="text" id="locRoles" value="${escAttr((l.roles||[]).join('，'))}" placeholder="逗号分隔，如：初音，原神"></div>
+  </div>
+  <div class="form-group"><label>备注</label><textarea id="locNotes" rows="2" placeholder="交通、费用、注意事项…">${escHtml(l.notes||'')}</textarea></div>
+  <div class="form-group">
+    <label>地点实拍 / 参考图</label>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <label class="btn btn-secondary btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px">📷 添加图片<input type="file" multiple accept="image/*" style="display:none" onchange="uploadLocPhoto(this)"></label>
+      <span id="locPhotoCount" style="font-size:12px;color:var(--text3)"></span>
+    </div>
+    <div id="locPhotoGrid" class="loc-photo-grid"></div>
+  </div>
+  <input type="hidden" id="locLat" value="${l.lat||''}">
+  <input type="hidden" id="locLng" value="${l.lng||''}">
+  `;
+}
+function uploadLocPhoto(input){
+  const files=Array.from(input.files).filter(f=>f.type.startsWith('image/'));
+  if(!files.length)return;
+  (async()=>{
+    for(const f of files){
+      if(locPhotosTmp.length>=6){toast('地点图片最多 6 张');break;}
+      try{const src=await compressImageFile(f,800);locPhotosTmp.push({src});}catch(e){toast('图片处理失败');}
+    }
+    input.value='';
+    renderLocPhotos();
+  })();
+}
+function removeLocPhoto(i){if(i>=0&&i<locPhotosTmp.length){locPhotosTmp.splice(i,1);renderLocPhotos();}}
+function renderLocPhotos(){
+  const grid=document.getElementById('locPhotoGrid');if(!grid)return;
+  const cnt=document.getElementById('locPhotoCount');if(cnt)cnt.textContent=locPhotosTmp.length+' / 6';
+  if(!locPhotosTmp.length){grid.innerHTML='<div style="font-size:11px;color:var(--text3);padding:6px">还没有图片，添加后可在地点卡片看到这里的样子</div>';return;}
+  grid.innerHTML=locPhotosTmp.map((g,i)=>`<div class="loc-photo-cell"><img src="${g.src}" alt="地点图片"><button class="loc-photo-del" type="button" title="删除" onclick="removeLocPhoto(${i})">×</button></div>`).join('');
+}
+function geocodeLocationModal(){
+  const addr=document.getElementById('locAddr').value.trim();
+  if(!addr){toast('请先填写地址');return;}
+  const statusEl=document.getElementById('locGeoStatus');
+  if(statusEl)statusEl.textContent='定位中…';
+  let _to=setTimeout(()=>{if(statusEl&&statusEl.textContent==='定位中…'){statusEl.textContent='⚠️ 定位超时（检查网络/高德 Key/安全密钥）';}},9000);
+  ensureAmap().then(AMap=>{
+    if(!AMap){clearTimeout(_to);if(statusEl)statusEl.textContent='未配置高德 Key';toast('⚠️ 请在设置页填写高德 Key');return;}
+    try{
+      const geocoder=new AMap.Geocoder();
+      geocoder.getLocation(addr,(status,result)=>{
+        clearTimeout(_to);
+        if(status==='complete'&&result.geocodes&&result.geocodes.length){
+          const L=result.geocodes[0].location;
+          document.getElementById('locLat').value=L.lat;
+          document.getElementById('locLng').value=L.lng;
+          if(statusEl)statusEl.textContent='✅ 已定位';
+          const el=document.getElementById('locMapPreview');
+          if(el._map){el._map.setZoomAndCenter([L.lng,L.lat]);if(el._marker)el._marker.setPosition([L.lng,L.lat]);}
+          else{const map=new AMap.Map(el,{zoom:15,center:[L.lng,L.lat],resizeEnable:true});
+            map.on('error',ev=>{el.innerHTML='<div style="padding:16px;text-align:center;color:#c0392b;font-size:12px">⚠️ 地图加载失败：'+(ev&&ev.error?(ev.error.message||ev.error):'安全密钥不匹配')+'</div>';});
+            const mk=new AMap.Marker({position:[L.lng,L.lat]});map.add(mk);el._map=map;el._marker=mk;}
+        }else{clearTimeout(_to);if(statusEl)statusEl.textContent='定位失败，请手动确认';toast('⚠️ 定位失败：'+(result&&result.info||status));}
+      });
+    }catch(err){clearTimeout(_to);if(statusEl)statusEl.textContent='⚠️ 地理编码异常';toast('⚠️ 高德地理编码出错：'+(err&&err.message||err));}
+  });
+}
+function saveLocation(){
+  const name=document.getElementById('locName').value.trim();
+  if(!name){toast('请填写地点名称');return;}
+  const cat=document.getElementById('locCat').value;
+  const address=document.getElementById('locAddr').value.trim();
+  const lat=parseFloat(document.getElementById('locLat').value)||0;
+  const lng=parseFloat(document.getElementById('locLng').value)||0;
+  const styleTags=document.getElementById('locStyleTags').value.split(/[，,]/).map(s=>s.trim()).filter(Boolean);
+  const roles=document.getElementById('locRoles').value.split(/[，,]/).map(s=>s.trim()).filter(Boolean);
+  const notes=document.getElementById('locNotes').value.trim();
+  if(editingLocId){
+    const idx=locations.findIndex(l=>l.id===editingLocId);
+    if(idx>=0){locations[idx]=Object.assign(locations[idx],{name,address,category:cat,lat,lng,styleTags,roles,notes,photos:locPhotosTmp.slice(),updatedAt:new Date().toISOString()});}
+  }else{
+    locations.push({id:genId(),name,address,category:cat,lat,lng,styleTags,roles,notes,photos:locPhotosTmp.slice(),count:locProjectCount(name),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+  }
+  saveLocations(locations);
+  closeLocationModal();
+  renderLocations(document.getElementById('mainContent'));
+  toast('地点已保存');
+}
+function deleteLocation(){
+  if(!editingLocId)return;
+  if(!confirm('确定删除该地点记录？'))return;
+  locations=locations.filter(l=>l.id!==editingLocId);
+  saveLocations(locations);
+  closeLocationModal();
+  renderLocations(document.getElementById('mainContent'));
+  toast('已删除');
+}
+function closeLocationModal(){document.getElementById('locationModal').classList.add('hidden');editingLocId=null;}
+function newShootAtLocation(){
+  const l=locations.find(x=>x.id===editingLocId);
+  if(!l)return;
+  closeLocationModal();
+  openModal(null,{fLocation:l.name});
+}
+function importLocationsFromProjects(){
+  let added=0; const byName={};
+  locations.forEach(l=>byName[l.name.trim()]=l);
+  projects.forEach(p=>{
+    if(p.location&&p.location.trim()&&p.lat&&p.lng){
+      const n=p.location.trim();
+      if(byName[n])return;
+      const cat=/棚|studio/i.test(n)?'studio':'outdoor';
+      const obj={id:genId(),name:n,address:p.city?p.city+' '+n:n,category:cat,lat:p.lat,lng:p.lng,
+        styleTags:p.styleType?[p.styleType]:[],roles:(p.role||p.ip)?[p.role,p.ip].filter(Boolean):[],
+        count:locProjectCount(n),notes:'从项目自动导入',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+      locations.push(obj); byName[n]=obj; added++;
+    }
+  });
+  saveLocations(locations);
+  toast('已从项目导入 '+added+' 个地点');
+  renderLocations(document.getElementById('mainContent'));
+}
+// 项目表单③段：根据 风格/角色/IP 联想推荐地点
+function updateLocSuggestions(){
+  const box=document.getElementById('locSuggest'); if(!box)return;
+  const st=document.getElementById('fStyleType');
+  const ro=document.getElementById('fRole');
+  const ip=document.getElementById('fIP');
+  const sv=st?st.value:''; const rov=ro?ro.value.trim():''; const ipv=ip?ip.value.trim():'';
+  if(!sv&&!rov&&!ipv){box.innerHTML='';return;}
+  const matched=locations.filter(l=>{
+    if(sv&&(l.styleTags||[]).indexOf(sv)>=0)return true;
+    if(rov&&(l.roles||[]).some(r=>r&&rov&&r.toLowerCase().indexOf(rov.toLowerCase())>=0))return true;
+    if(ipv&&(l.roles||[]).some(r=>r&&ipv&&r.toLowerCase().indexOf(ipv.toLowerCase())>=0))return true;
+    return false;
+  }).slice(0,4);
+  if(!matched.length){box.innerHTML='';return;}
+  box.innerHTML='💡 推荐地点：'+matched.map(l=>`<button class="loc-suggest-btn" type="button" onclick="applyLocSuggestion(${JSON.stringify(l.name)},${JSON.stringify(l.city||l.address||'')})">${escHtml(l.name)}</button>`).join('');
+}
+function applyLocSuggestion(name,city){
+  const le=document.getElementById('fLocation'); if(le)le.value=name;
+  const ce=document.getElementById('fCity'); if(ce&&city)ce.value=city;
+  geocodeCurrentLocation();
+  toast('已填入地点：'+name);
+}
+
 // ===== PROJECTS =====
 function renderProjects(main){
   const q=(document.getElementById('searchInput')?.value||'').toLowerCase();
@@ -807,6 +1197,7 @@ function renderCard(p){
       ${p.shootType?`<span class="tag">${shootTypeMap[p.shootType]||p.shootType}</span>`:''}
       ${p.styleType?`<span class="tag">${styleMap[p.styleType]||p.styleType}</span>`:''}
       ${p.location?`<span class="tag">${p.location}</span>`:''}
+      ${p.duration?`<span class="tag">${(/图|张|张数|张图/.test(p.duration)?'🖼️ ':'⏱️ ')+p.duration}</span>`:''}
       ${p.deliverable.includes('照片')?'<span class="tag tag-green">📷</span>':''}
       ${p.deliverable.includes('视频')?'<span class="tag tag-green">🎬</span>':''}
       ${p.hasBTS?'<span class="tag">🎞️花絮</span>':''}
@@ -818,7 +1209,7 @@ function renderCard(p){
       <span class="fin-paid">已收 ${fmtMoney(paid)}</span>
       ${balance>0?`<span class="fin-unpaid">待收 ${fmtMoney(balance)}</span>`:'<span class="fin-paid" style="font-size:11px">✓ 已结清</span>'}
     </div>
-    ${(p.selectPages&&p.selectPages.length)?`<div class="card-actions" onclick="event.stopPropagation()"><button class="btn btn-sm btn-secondary" onclick="window.open(${JSON.stringify(p.selectPages[p.selectPages.length-1].url)},'_blank')">📂 选图页 (${p.selectPages.length})</button></div>`:''}
+    ${(p.selectPages&&p.selectPages.length)?`<span class="tag" style="background:rgba(16,163,74,.12);color:var(--green);font-weight:600">✅ 选${p.clientSelected&&p.clientSelected.length?p.clientSelected.length:0}</span><div class="card-actions" onclick="event.stopPropagation()"><button class="btn btn-sm btn-secondary" onclick="window.open(${JSON.stringify(p.selectPages[p.selectPages.length-1].url)},'_blank')">📂 选图页 (${p.selectPages.length})</button></div>`:''}
   </div>`;
 }
 
@@ -953,7 +1344,9 @@ function renderSettings(main){
       <div class="form-group" style="flex:1;min-width:200px"><label>安全密钥</label><input type="text" id="setAmapSecurity" value="${settings.amapSecurity||''}" placeholder="securityJsCode"></div>
     </div>
     <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="saveAmapSettings()">💾 保存地图设置</button>
-    <p style="margin-top:6px;color:var(--text2);font-size:12px">高德 Key 后台「域名白名单」建议加上 <code>localhost</code> 和 <code>saika-booking.onrender.com</code>。</p>
+    <button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="testAmap()">🧪 测试地图连接</button>
+    <div id="amapTestResult" style="margin-top:8px;font-size:12px;color:var(--text2)"></div>
+    <p style="margin-top:6px;color:var(--text2);font-size:12px">高德 Key 后台「域名白名单」建议加上 <code>localhost</code> 和 <code>saika-booking.onrender.com</code>。若地图空白，先点「测试地图连接」看报错。</p>
   </div>`;
 
   // ===== 约拍价格设置 =====
@@ -1047,17 +1440,29 @@ function openModal(id, prefill){
     if(prefill.fShootDate) p.shootDate=prefill.fShootDate;
     if(prefill.fMediaType) p.mediaType=prefill.fMediaType;
     if(prefill.fContact) p.contact=prefill.fContact;
+    if(prefill.fLocation) p.location=prefill.fLocation;
+    if(prefill.fCity) p.city=prefill.fCity;
     if(prefill.fTotalPrice!=null) p.totalPrice=prefill.fTotalPrice;
     if(prefill.fBookingType) p.bookingType=prefill.fBookingType;
     if(prefill.fNotes) p.notes=(p.notes||'')+'\n'+prefill.fNotes;
   }
 
   moodKeywordsTmp = [...(p.moodKeywords||[])];
+  window._storyboardTmp = normalizeStoryboard(p.storyboard);
   window._selectPhotosTmp = [];
+  window._fPOManual = false;
+  galleryTmp = [...(p.gallery||[])];
   body.innerHTML = renderForm(p);
+  initStoryboardUI();
   if(p.lat&&p.lng){ setTimeout(()=>initLocationMap(p.lat,p.lng), 60); }
   makeSectionsCollapsible(computeStage(p));
+  updatePaidSummary();
+  updateExtraFee();
   if(localServer) updateSelectPhotoUI();
+  renderClientSelResult();
+  loadSelectFeedback();
+  updateLocSuggestions();
+  renderGallery();
   modal.scrollTop = 0;
 }
 
@@ -1077,7 +1482,7 @@ function createEmptyProject(){
     publishedPlatforms:[],
     archived:false,cloudBackup:false,
     notes:'',storyboard:'',
-    extraPhotos:0,extraUnit:0,extraFee:0,bookingType:'',priceSnapshot:null
+    extraPhotos:0,extraUnit:0,extraFee:0,bookingType:'',priceSnapshot:null,duration:'',clientSelected:[],gallery:[]
   };
 }
 
@@ -1141,6 +1546,69 @@ function makeSectionsCollapsible(stage){
   });
 }
 
+// ========== DURATION HINT (① 咨询预约：体现约几个小时 / 几张图) ==========
+function formatDurationHint(duration){
+  const d=(duration||'').trim();
+  if(!d) return '填写客户想拍的时长/张数（如 2小时 或 4图）';
+  const isEvent=/图|张|张数|张图/.test(d);
+  if(isEvent){
+    const n=parseCount(d);
+    return '🖼️ 客户约拍 '+(n?n+' 张图':'约 '+d)+'（漫展场照）';
+  }
+  const h=parseHours(d);
+  return '⏱️ 客户约拍 '+(h?h+' 小时':'约 '+d)+'（正片/视频）';
+}
+function updateDurationHint(){
+  const el=document.getElementById('fDuration');
+  if(!el)return;
+  const hint=document.getElementById('durHint');
+  const lbl=document.getElementById('durLabel');
+  const isEvent=/图|张|张数|张图/.test(el.value);
+  if(lbl) lbl.textContent=isEvent?'约拍张数（图）':'约拍时长（小时）';
+  if(hint) hint.textContent=formatDurationHint(el.value);
+}
+
+// ========== 收款汇总（② 实时同步：总价/已收/待收，所有地方读同一组字段） ==========
+function updatePaidSummary(){
+  const tp=document.getElementById('fTotalPrice');
+  const dp=document.getElementById('fDeposit');
+  const fp=document.getElementById('fFinalPayment');
+  const ep=document.getElementById('fExtraPhotos');
+  const eu=document.getElementById('fExtraUnit');
+  const sum=document.getElementById('paidSummary');
+  const sum2=document.getElementById('paidSummary2');
+  if(!tp)return;
+  const total=(parseInt(tp.value)||0)+(parseInt(ep&&ep.value)||0)*(parseInt(eu&&eu.value)||0);
+  const paid=(parseInt(dp&&dp.value)||0)+(parseInt(fp&&fp.value)||0);
+  const bal=Math.max(total-paid,0);
+  const html='总价 <b>¥'+total.toLocaleString('zh-CN')+'</b> · 已收 <b style="color:var(--green)">¥'+paid.toLocaleString('zh-CN')+'</b> · 待收 <b style="color:var(--amber)">¥'+bal.toLocaleString('zh-CN')+'</b>';
+  if(sum) sum.innerHTML=html;
+  if(sum2) sum2.innerHTML=html;
+}
+
+// ========== 客户原始预约表单备份（① 预约栏可随时回看） ==========
+function bookingRawHTML(r){
+  if(!r)return '';
+  const catLabel={sankeng:'三坑',daily:'日常',cosplay:'cosplay'}[r.category]||r.category||'';
+  const typeLabel={photo:'正片约拍',video:'视频约拍',event:'漫展场照'}[r.shootType]||r.shootType||'';
+  const personLabel={single:'单人',double:'双人'}[r.personCount]||'';
+  const rows=[
+    ['称呼/CN', r.clientName],
+    ['微信', r.wechat],
+    ['约拍类型', typeLabel+(personLabel?'（'+personLabel+'）':'')],
+    ['分类', catLabel],
+    ['角色/风格', r.category==='cosplay'?(r.character||''):(r.clothStyle||'')],
+    ['IP 出处', r.category==='cosplay'?r.ipSource:''],
+    ['约拍量', r.duration],
+    ['期望日期', r.preferredDate],
+    ['摄助', r.needAssistant==='yes'?'需要 (+50/时)':'不需要'],
+    ['允许展示', r.allowDisplay==='no'?'🔒 请勿公开':'✨ 可以展示'],
+    ['备注', r.notes],
+    ['提交时间', r.submittedAt?fmtDate(r.submittedAt):'']
+  ].filter(x=>x[1]);
+  return rows.map(x=>'<div><b style="display:inline-block;min-width:62px;color:var(--text3)">'+x[0]+'：</b>'+escHtml(String(x[1]))+'</div>').join('');
+}
+
 function renderForm(p){
   const platforms=['xiaohongshu','douyin','bilibili','instagram','twitter'];
   const shootTypes=['场照','外景','棚拍'];
@@ -1153,6 +1621,7 @@ function renderForm(p){
   const pr2=getPricing();
   const isEvent=(p.bookingType==='event')||(p.shootType==='场照');
   const isVideo=p.deliverable.includes('视频');
+  const durIsEvent=(p.bookingType==='event')||(p.shootType==='场照')||/图|张|张数|张图/.test(p.duration||'');
   const defaultUnit=isEvent?pr2.eventExtra:(isVideo?pr2.videoExtra:pr2.photoExtra);
   const curExtraFee=(p.extraPhotos||0)*(p.extraUnit||defaultUnit);
   return `
@@ -1170,18 +1639,35 @@ function renderForm(p){
     <div class="form-row cols-3">
       <div class="form-group"><label>总价 ¥</label><input type="number" id="fTotalPrice" value="${p.totalPrice||0}" min="0"></div>
     </div>
+    <div class="form-row cols-3" style="margin-top:-6px">
+      <div class="form-group"><label id="durLabel">${durIsEvent?'约拍张数（图）':'约拍时长（小时）'}</label>
+        <input type="text" id="fDuration" value="${p.duration||''}" placeholder="${durIsEvent?'如：4图 / 6图':'如：2小时 / 3小时'}" oninput="updateDurationHint()">
+      </div>
+      <div class="form-group" style="grid-column:span 2"><label></label>
+        <div id="durHint" style="font-size:12px;color:var(--text3);padding-top:8px">${formatDurationHint(p.duration)}</div>
+      </div>
+    </div>
+    ${(p.bookingRaw)?`
+    <div style="margin-top:10px;border:1px dashed var(--border);border-radius:8px;padding:10px 12px;background:#FBFBF7">
+      <details>
+        <summary style="cursor:pointer;font-size:12px;font-weight:600;color:var(--text2)">📋 客户原始预约表单（备份 · 预约栏）</summary>
+        <div style="margin-top:8px;font-size:12px;line-height:1.9;color:var(--text2)">${bookingRawHTML(p.bookingRaw)}</div>
+      </details>
+    </div>`:''}
   </div>
 
-  <div class="form-section" data-stage="1"><div class="form-section-title">② 50%定金定档（排期）</div>
+  <div class="form-section" data-stage="1"><div class="form-section-title">② 定金定档 & 收款</div>
     <div class="form-row cols-3">
-      <div class="form-group"><label>已收定金 ¥</label><input type="number" id="fDeposit" value="${p.deposit||0}" min="0"></div>
+      <div class="form-group"><label>已收定金 ¥</label><input type="number" id="fDeposit" value="${p.deposit||0}" min="0" oninput="updatePaidSummary()"></div>
+      <div class="form-group"><label>已收尾款 ¥</label><input type="number" id="fFinalPayment" value="${p.finalPayment||0}" min="0" oninput="updatePaidSummary()"></div>
       <div class="form-group"><label>拍摄日期</label><input type="date" id="fShootDate" value="${p.shootDate||''}"></div>
-      <div class="form-group"><label>开始时间</label><input type="time" id="fStartTime" value="${p.startTime||''}"></div>
     </div>
     <div class="form-row cols-3">
+      <div class="form-group"><label>开始时间</label><input type="time" id="fStartTime" value="${p.startTime||''}"></div>
       <div class="form-group"><label>结束时间</label><input type="time" id="fEndTime" value="${p.endTime||''}"></div>
-      <div class="form-group" style="grid-column:span 2"><label></label><div style="font-size:12px;color:var(--text3)">📅 定档后预约时间显示在日历视图；收定金即可确认档期。</div></div>
+      <div class="form-group"><label></label><div id="paidSummary" style="font-size:12px;color:var(--text3);padding-top:6px"></div></div>
     </div>
+    ${(p.estDeposit)?('<div style="font-size:11px;color:var(--text3);margin-top:2px">💡 建档时预计定金 <b>¥'+fmtMoney(p.estDeposit)+'</b>（= 总价×'+Math.round((p.priceSnapshot?p.priceSnapshot.depositRatio:0.5)*100)+'%）'+(p.estFinal?(' · 预计尾款 <b>¥'+fmtMoney(p.estFinal)+'</b>'):'')+'</div>'):''}
   </div>
 
   <div class="form-section" data-stage="2"><div class="form-section-title">③ 沟通拍摄细节需求（策划）</div>
@@ -1205,10 +1691,11 @@ function renderForm(p){
     <input type="hidden" id="fLat" value="${p.lat||''}">
     <input type="hidden" id="fLng" value="${p.lng||''}">
     <div class="form-row cols-3">
-      <div class="form-group"><label>角色</label><input type="text" id="fRole" value="${p.role||''}" placeholder="角色名"></div>
-      <div class="form-group"><label>IP</label><input type="text" id="fIP" value="${p.ip||''}" placeholder="原作IP"></div>
-      <div class="form-group"><label>风格类型</label><select id="fStyleType">${styles.map(s=>`<option value="${s}"${p.styleType===s?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="form-group"><label>角色</label><input type="text" id="fRole" value="${p.role||''}" placeholder="角色名" oninput="updateLocSuggestions()"></div>
+      <div class="form-group"><label>IP</label><input type="text" id="fIP" value="${p.ip||''}" placeholder="原作IP" oninput="updateLocSuggestions()"></div>
+      <div class="form-group"><label>风格类型</label><select id="fStyleType" onchange="updateLocSuggestions()">${styles.map(s=>`<option value="${s}"${p.styleType===s?' selected':''}>${s}</option>`).join('')}</select></div>
     </div>
+    <div id="locSuggest" class="loc-suggest"></div>
   </div>
 
   <div class="form-section" data-stage="2"><div class="form-section-title">🎨 情绪板</div>
@@ -1242,9 +1729,11 @@ function renderForm(p){
       <button class="btn btn-primary btn-sm" onclick="exportPlanningPage()">📋 一键导出策划给客户</button>
       <span style="font-size:10px;color:var(--text3);margin-left:8px">生成独立HTML，微信发给客户查看拍摄方案</span>
     </div>
-    <div style="margin-top:12px">
-      <div style="font-size:12px;font-weight:600;margin-bottom:4px">📝 分镜脚本 <span style="font-size:10px;color:var(--text3);font-weight:400">（可后续细化）</span></div>
-      <textarea id="fStoryboard" rows="3" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;outline:none;resize:vertical" placeholder="镜头1 | 画面描述 | 时长 | 备注&#10;镜头2 | 画面描述 | 时长 | 备注">${p.storyboard||''}</textarea>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--border)">
+      <div style="font-size:12px;font-weight:600;margin-bottom:4px">🎬 分镜脚本（视频拍摄）</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">每一镜可插入<b>画面参考图</b>或<b>参考视频链接</b>，导出策划案时一并发给客户预览</div>
+      <div id="sbTable" class="sb-table"></div>
+      <button class="btn btn-secondary btn-sm" onclick="addStoryboardRow()" style="margin-top:8px">＋ 添加分镜</button>
     </div>
   </div>
 
@@ -1266,7 +1755,7 @@ function renderForm(p){
   <div class="form-section" data-stage="4"><div class="form-section-title">⑤ 小图选图</div>
     ${p.deliverable.includes('照片')?`
     <div style="margin-bottom:12px"><strong style="font-size:12px">📷 照片工作流</strong></div>
-    <div class="wf-row"><span class="wf-name">① 原图</span><input type="number" id="fPO" value="${p.photoWorkflow.original.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPODone" ${p.photoWorkflow.original.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPODone').click()">完成</label></div>
+    <div class="wf-row"><span class="wf-name">① 原图</span><input type="number" id="fPO" value="${p.photoWorkflow.original.count}" oninput="window._fPOManual=true" title="从「从本地文件夹加载」或上传选图原图后，会自动同步此数量，可手动修改"><span class="wf-unit">张</span><input type="checkbox" id="fPODone" ${p.photoWorkflow.original.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPODone').click()">完成</label><span id="fPOHint" class="wf-auto" style="font-size:10px;color:var(--green);margin-left:6px;display:none">↪已按选图页自动填入</span></div>
     <div class="wf-row"><span class="wf-name">② 筛选</span><input type="number" id="fPS" value="${p.photoWorkflow.selected.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPSDone" ${p.photoWorkflow.selected.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPSDone').click()">完成</label></div>
     <div class="wf-row"><span class="wf-name">③ 成稿</span><input type="number" id="fPF" value="${p.photoWorkflow.final.count}"><span class="wf-unit">张</span><input type="checkbox" id="fPFDone" ${p.photoWorkflow.final.done?'checked':''}><label class="wf-done-label" onclick="document.getElementById('fPFDone').click()">完成</label></div>
     `:''}
@@ -1284,6 +1773,7 @@ function renderForm(p){
         <div class="form-group"><label>单价 ¥/张</label><input type="number" id="fExtraUnit" value="${p.extraUnit||defaultUnit}" min="0" oninput="updateExtraFee()"></div>
       </div>
       <div style="font-size:12px;color:var(--text2)">加单费用：<b id="extraFeeVal" style="color:var(--amber)">${fmtMoney(curExtraFee)}</b> <span style="font-size:10px">（将加入总价与尾款 · 当前项目合计 ${fmtMoney((p.totalPrice||0)+curExtraFee)}）</span></div>
+      <div id="deliverCountNote" style="font-size:10px;color:var(--text3);margin-top:6px"></div>
       ${(p.priceSnapshot)?('<div style="font-size:10px;color:var(--text3);margin-top:6px">📌 价目快照（建档时）：正片 ¥'+p.priceSnapshot.photoSingle+'/h'+(p.priceSnapshot.photoDouble?(' / 双人 ¥'+p.priceSnapshot.photoDouble+'/h'):'')+(p.priceSnapshot.videoSingle?(' · 视频 ¥'+p.priceSnapshot.videoSingle):'')+' · 加图 ¥'+(p.extraUnit||p.priceSnapshot.photoExtra)+'/张 · 定金 '+Math.round(p.priceSnapshot.depositRatio*100)+'%</div>'):''}
     </div>
     <div id="selectPhotoArea" style="margin-top:12px;border:1px solid var(--border);border-radius:var(--radius);padding:12px">
@@ -1301,11 +1791,48 @@ function renderForm(p){
       </div>
       <div id="selectThumbs" style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;max-height:200px;overflow-y:auto"></div>
       <button class="btn btn-primary btn-sm" onclick="generatePhotoSelectPage()" style="margin-top:8px">🖼️ 生成选图预览页</button>
-      ${(p.selectPages&&p.selectPages.length)?('<div style="margin-top:10px"><div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px">📂 历史选图页（'+p.selectPages.length+'）</div>'+p.selectPages.slice().reverse().map(function(s){return '<div style="display:flex;align-items:center;gap:6px;font-size:11px;margin-bottom:3px"><a href="'+s.url+'" target="_blank" style="color:#185FA5;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(s.createdAt?fmtDate(s.createdAt):'选图页')+'</a><button class="btn btn-secondary btn-sm" style="padding:2px 8px;font-size:10px" onclick="event.stopPropagation();window.open('+JSON.stringify(s.url)+',\'_blank\')">打开</button></div>';}).join('')+'</div>'):''}
+      ${(p.selectPages&&p.selectPages.length)?('<div style="margin-top:10px"><div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px">📂 我的选图页备份（随时可点开查看）</div>'+p.selectPages.slice().reverse().map(function(s){return '<div style="display:flex;align-items:center;gap:6px;font-size:11px;margin-bottom:3px"><a href="'+s.url+'" target="_blank" style="color:#185FA5;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(s.createdAt?fmtDate(s.createdAt):'选图页')+(s.clientName?' · '+s.clientName:'')+'</a><button class="btn btn-secondary btn-sm" style="padding:2px 8px;font-size:10px" onclick="event.stopPropagation();window.open('+JSON.stringify(s.url)+',\'_blank\')">打开</button><button class="btn btn-secondary btn-sm" style="padding:2px 8px;font-size:10px" onclick="event.stopPropagation();copyText('+JSON.stringify(s.url)+',\'选图页链接已复制\')">复制</button></div>';}).join('')+'</div>'):''}
+      <div style="margin-top:8px;display:flex;gap:6px;align-items:center">
+        <input id="relateSelectUrl" placeholder="已有选图页链接（如绘梨衣）" style="flex:1;min-width:0;padding:5px 8px;font-size:11px;border:1px solid var(--border);border-radius:5px;outline:none;font-family:inherit">
+        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();relateSelectPage()">关联</button>
+      </div>
+      <div style="margin-top:12px;border-top:1px dashed var(--border);padding-top:10px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:2px">📥 导入客户选图结果</div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:8px">客户在选图页点「导出已选清单」发回的编号，粘贴进来（如 1,3,5,8）或上传 .txt，平台即记录「客户已选 N 张」并可联动加单</div>
+        <textarea id="clientSelInput" rows="2" placeholder="粘贴编号 1,3,5,8 或整段选图清单…" style="width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;outline:none;resize:vertical"></textarea>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:8px">
+          <label class="btn btn-secondary btn-sm" style="cursor:pointer">📄 上传 .txt<input type="file" accept=".txt,text/plain" style="display:none" onchange="importClientSelFile(this)"></label>
+          <button class="btn btn-primary btn-sm" onclick="importClientSelection()">导入</button>
+          <span id="clientSelStatus" style="font-size:11px;color:var(--green);font-weight:600"></span>
+        </div>
+        <div id="clientSelResult" style="margin-top:8px;font-size:11px;color:var(--text2)"></div>
+      </div>
+      <div id="selectFeedbackWrap" style="margin-top:12px;border-top:1px dashed var(--border);padding-top:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div style="font-size:12px;font-weight:600">☁️ 客户一键回传</div>
+          <button class="btn btn-secondary btn-sm" style="padding:2px 10px;font-size:10px" onclick="loadSelectFeedback()">↻ 刷新</button>
+        </div>
+        <div id="selectFeedbackList" style="font-size:11px;color:var(--text3)">加载中…</div>
+      </div>
     </div>
   </div>
 
   <div class="form-section" data-stage="5"><div class="form-section-title">⑥ 成片画廊（交付导出）</div>
+    <div style="border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:14px;background:#FFFDF6">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:600">🖼️ 成片画廊（<span id="galleryCount">0</span> 张）</div>
+        <label class="btn btn-secondary btn-sm" style="cursor:pointer">📷 上传成片<input type="file" multiple accept="image/*" style="display:none" onchange="uploadGalleryPhoto(this)"></label>
+      </div>
+      <div id="galleryGrid" class="gallery-grid"></div>
+      <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <select id="exportPlatform" style="font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:5px;outline:none;font-family:inherit">
+          ${platforms.map(pl=>`<option value="${pl}">${platformEmoji(pl)} 导出到 ${platformLabel(pl)}</option>`).join('')}
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="exportFinalCaption()">📋 生成文案</button>
+        <button class="btn btn-secondary btn-sm" onclick="generateFinalPage()">🌐 导出成片展示页</button>
+      </div>
+      <div id="finalCaptionBox" class="caption-box hidden"></div>
+    </div>
     <div class="form-section-title" style="border:none;margin-bottom:6px">发布平台</div>
     <div class="platform-list">
       ${platforms.map(pl=>`<label class="platform-item ${p.publishedPlatforms.includes(pl)?'checked':''}" onclick="event.preventDefault();this.querySelector('input').click()"><input type="checkbox" class="pub-check" data-platform="${pl}" ${p.publishedPlatforms.includes(pl)?'checked':''} onchange="this.parentElement.classList.toggle('checked',this.checked)">${platformEmoji(pl)} ${platformLabel(pl)}</label>`).join('')}
@@ -1313,7 +1840,7 @@ function renderForm(p){
     <div class="form-row cols-3">
       <div class="form-group"><label>项目归档</label><label class="platform-item" onclick="event.preventDefault();document.getElementById('fArchived').click()"><input type="checkbox" id="fArchived" ${p.archived?'checked':''}> 📦 已归档</label></div>
       <div class="form-group"><label>百度网盘备份</label><label class="platform-item" onclick="event.preventDefault();document.getElementById('fCloudBackup').click()"><input type="checkbox" id="fCloudBackup" ${p.cloudBackup?'checked':''}> ☁️ 已备份</label></div>
-      <div class="form-group"><label>已收尾款 ¥</label><input type="number" id="fFinalPayment" value="${p.finalPayment||0}" min="0"></div>
+      <div class="form-group"><label>收款汇总</label><div id="paidSummary2" style="font-size:12px;color:var(--text3);padding-top:6px"></div></div>
     </div>
     <div class="form-row cols-1">
       <div class="form-group"><label>备注</label><textarea id="fNotes" rows="2" placeholder="其他备注">${p.notes||''}</textarea></div>
@@ -1345,8 +1872,17 @@ function updateExtraFee(){
   const pu=document.getElementById('fExtraUnit');
   const val=document.getElementById('extraFeeVal');
   if(!ph||!pu||!val)return;
-  const fee=(parseInt(ph.value)||0)*(parseInt(pu.value)||0);
+  const extra=parseInt(ph.value)||0;
+  const fee=extra*(parseInt(pu.value)||0);
   val.textContent='¥'+fee.toLocaleString('zh-CN');
+  // 加单张数 ↔ 成稿张数 联动：自动把"基础含调色 + 加单"填入成稿张数（未手填时）
+  const note=document.getElementById('deliverCountNote');
+  const proj=editingId?projects.find(x=>x.id===editingId):null;
+  const isEvt=proj&&((proj.bookingType==='event')||(proj.shootType==='场照'));
+  const base=isEvt?(parseCount(proj.duration)||4):((proj&&proj.priceSnapshot&&proj.priceSnapshot.photoIncluded)||getPricing().photoIncluded||9);
+  if(note) note.textContent='📦 交付总张数 = 基础 '+base+' + 加单 '+extra+' = '+(base+extra)+' 张（已自动填入「③成稿」）';
+  const pf=document.getElementById('fPF');
+  if(pf && (pf.value===''||pf.value==='0')) pf.value=base+extra;
 }
 
 function uploadMoodImg(key, input){
@@ -1394,7 +1930,7 @@ function saveProject(){
 
   const project={
     status:v('fStatus'),
-    clientName,contact:v('fContact'),demandType:v('fDemandType'),deliverable,
+    clientName,contact:v('fContact'),demandType:v('fDemandType'),deliverable,duration:v('fDuration'),
     totalPrice:num('fTotalPrice'),deposit:num('fDeposit'),finalPayment:num('fFinalPayment'),
     shootDate:v('fShootDate'),startTime:v('fStartTime'),endTime:v('fEndTime'),
     city:v('fCity'),location:v('fLocation'),lat:parseFloat(document.getElementById('fLat').value)||0,lng:parseFloat(document.getElementById('fLng').value)||0,routeLink:'',weather:v('fWeather'),
@@ -1413,7 +1949,8 @@ function saveProject(){
     },
     publishedPlatforms,
     archived:chk('fArchived'),cloudBackup:chk('fCloudBackup'),
-    notes:v('fNotes'),storyboard:v('fStoryboard'),
+    notes:v('fNotes'),storyboard:(window._storyboardTmp||[]).filter(r=>r&&(r.shot||r.desc||r.img||r.dur||r.vlink||r.note)),
+    gallery:galleryTmp.slice(),
     bookingType:p.bookingType,
     extraPhotos:num('fExtraPhotos'),
     extraUnit:num('fExtraUnit'),
@@ -1522,7 +2059,10 @@ async function createProjectFromBooking(b){
   p.demandType=d.category==='cosplay'?'COS':(d.category==='daily'?'人像':'其他');
   p.totalPrice=est.total;
   p.estDeposit=est.deposit; p.estFinal=est.final;
+  p.deposit=est.deposit;
+  p.bookingRaw=JSON.parse(JSON.stringify(d));
   p.bookingType=d.shootType||'';
+  p.duration=d.duration||'';
   p.extraUnit=extraUnitDef;
   p.priceSnapshot=Object.assign({},getPricing());
   p.notes=[d.notes||'', catLabel?('['+catLabel+']'):'', d.needAssistant==='yes'?'[需要摄助]':'', d.allowDisplay==='no'?'[请勿公开]':''].filter(Boolean).join(' ');
@@ -1724,9 +2264,18 @@ function refreshSelectThumbs(){
   const countEl=document.getElementById('selectPhotoCount');
   if(!container)return;
   const photos=window._selectPhotosTmp||[];
-  countEl.textContent=photos.length+' 张';
-  if(!photos.length){container.innerHTML='<div style="grid-column:1/-1;font-size:11px;color:var(--text3);padding:8px">未选择照片</div>';return;}
-  container.innerHTML=photos.map((p,i)=>`<div style="position:relative;aspect-ratio:1;border-radius:4px;overflow:hidden;background:#f0f0f0;cursor:pointer" onclick="removeSelectPhoto('${p.id}')" title="点击移除">${p.fromFolder?`<img src="/api/image?path=${encodeURIComponent(p.relPath)}" style="width:100%;height:100%;object-fit:cover" loading="lazy">`:`<img src="${URL.createObjectURL(p.file)}" style="width:100%;height:100%;object-fit:cover">`}<div style="position:absolute;top:2px;left:2px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;padding:1px 4px;border-radius:2px">${i+1}</div></div>`).join('');
+  if(countEl)countEl.textContent=photos.length+' 张';
+  if(!photos.length){container.innerHTML='<div style="grid-column:1/-1;font-size:11px;color:var(--text3);padding:8px">未选择照片</div>';}
+  else{container.innerHTML=photos.map((p,i)=>`<div style="position:relative;aspect-ratio:1;border-radius:4px;overflow:hidden;background:#f0f0f0;cursor:pointer" onclick="removeSelectPhoto('${p.id}')" title="点击移除">${p.fromFolder?`<img src="/api/image?path=${encodeURIComponent(p.relPath)}" style="width:100%;height:100%;object-fit:cover" loading="lazy">`:`<img src="${URL.createObjectURL(p.file)}" style="width:100%;height:100%;object-fit:cover">`}<div style="position:absolute;top:2px;left:2px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;padding:1px 4px;border-radius:2px">${i+1}</div></div>`).join('');}
+  syncOriginalCount();
+}
+function syncOriginalCount(){
+  const f=document.getElementById('fPO');
+  if(!f||window._fPOManual)return;
+  const n=(window._selectPhotosTmp||[]).length;
+  f.value=n;
+  const hint=document.getElementById('fPOHint');
+  if(hint){hint.style.display=(n>0)?'inline':'none';}
 }
 
 // ========== IMAGE PROCESSING ==========
@@ -1761,6 +2310,86 @@ async function processImage(src,maxEdge){
   });
 }
 
+// ========== 成片画廊 & 平台导出 ==========
+function compressImageFile(file,maxEdge){
+  maxEdge=maxEdge||1000;
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        let w=img.naturalWidth,h=img.naturalHeight;
+        if(w>h){if(w>maxEdge){h=h*maxEdge/w;w=maxEdge;}}else{if(h>maxEdge){w=w*maxEdge/h;h=maxEdge;}}
+        w=Math.round(w);h=Math.round(h);
+        const c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(c.toDataURL('image/jpeg',0.82));
+      };
+      img.onerror=reject;img.src=e.target.result;
+    };
+    reader.onerror=reject;reader.readAsDataURL(file);
+  });
+}
+async function uploadGalleryPhoto(input){
+  const files=Array.from(input.files).filter(f=>f.type.startsWith('image/'));
+  if(!files.length)return;
+  for(const f of files){
+    if(galleryTmp.length>=30){toast('画廊最多 30 张');break;}
+    try{const src=await compressImageFile(f,1000);galleryTmp.push({src});}catch(e){toast('图片处理失败');}
+  }
+  input.value='';
+  renderGallery();
+}
+function removeGalleryPhoto(i){galleryTmp.splice(i,1);renderGallery();}
+function renderGallery(){
+  const grid=document.getElementById('galleryGrid');if(!grid)return;
+  const cnt=document.getElementById('galleryCount');if(cnt)cnt.textContent=galleryTmp.length;
+  if(!galleryTmp.length){grid.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px">尚未上传成片</div>';return;}
+  grid.innerHTML=galleryTmp.map((g,i)=>`<div class="g-cell"><img src="${g.src}" alt=""><button class="g-del" type="button" onclick="removeGalleryPhoto(${i})">×</button></div>`).join('');
+}
+function hashtagsFor(pl,style){
+  const base={xiaohongshu:['#cos摄影','#角色扮演','#外景拍摄','#写真','#摄影日常'],douyin:['#cos','#变装','#摄影','#氛围感'],bilibili:['#cosplay','#摄影','#后期'],instagram:['#cosplay','#photography','#portrait'],twitter:['#cosplay','#photograph']};
+  const arr=(base[pl]||base.xiaohongshu).slice();
+  if(style&&['cosplay','人像','商业','活动','其他'].indexOf(style)>=0&&!arr.some(t=>t.toLowerCase().indexOf(style.toLowerCase())>=0))arr.push('#'+style);
+  return arr.join(' ');
+}
+function buildFinalCaption(pl){
+  const p=getEditingProject()||{};
+  const title=[p.role,p.ip].filter(Boolean).join('·')||'作品';
+  const style=p.styleType||'';
+  const loc=p.location||'';
+  const date=p.shootDate?fmtDate(p.shootDate):'';
+  const lines=[];
+  lines.push('【'+title+'】'+ (style?style+'风格':'') +'拍摄 @彩華');
+  if(loc)lines.push('📍 '+loc);
+  if(date)lines.push('📅 '+date);
+  lines.push('');
+  lines.push('摄影 / 后期：彩華 SAIKA');
+  lines.push(hashtagsFor(pl,style));
+  return lines.join('\n');
+}
+function exportFinalCaption(){
+  const pl=document.getElementById('exportPlatform').value;
+  const cap=buildFinalCaption(pl);
+  const box=document.getElementById('finalCaptionBox');
+  box.classList.remove('hidden');
+  box.innerHTML=`<div style="white-space:pre-wrap;font-size:12px;line-height:1.6">${escHtml(cap)}</div><button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="copyText(${JSON.stringify(cap)},'文案已复制')">📋 复制文案</button>`;
+}
+async function generateFinalPage(){
+  const p=getEditingProject()||{};
+  if(!galleryTmp.length){toast('请先上传成片');return;}
+  const pl=document.getElementById('exportPlatform').value;
+  const caption=buildFinalCaption(pl);
+  const title=[p.role,p.ip].filter(Boolean).join('·')||'作品';
+  const photoHTML=galleryTmp.map(g=>'<div class="ph"><img src="'+g.src+'" loading="lazy" alt=""></div>').join('');
+  const html='<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+escAttr(title)+' · 彩華</title><style>body{margin:0;background:#111;color:#eee;font-family:-apple-system,"PingFang SC",sans-serif}header{padding:26px 16px;text-align:center;background:linear-gradient(135deg,#1a1a2e,#16213e)}h1{margin:0;font-size:20px} .sub{color:#aaa;font-size:13px;margin-top:6px}.gallery{padding:12px;column-count:2;column-gap:8px}.ph{break-inside:avoid;margin:0 0 8px;border-radius:6px;overflow:hidden;background:#222}.ph img{width:100%;display:block}.cap{padding:16px;white-space:pre-wrap;font-size:14px;line-height:1.7;color:#ddd;border-top:1px solid #333}.foot{padding:20px;text-align:center;color:#666;font-size:11px}</style></head><body><header><h1>'+escHtml(title)+'</h1><div class="sub">摄影 / 后期 · 彩華 SAIKA</div></header><div class="gallery">'+photoHTML+'</div><div class="cap">'+escHtml(caption)+'</div><div class="foot">© 彩華 SAIKA · 禁止未授权商用</div></body></html>';
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=(p.clientName||'成片')+'_'+platformLabel(pl)+'_展示页.html';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  toast('成片展示页已导出');
+}
+
 // ========== GENERATE PHOTO SELECT PAGE ==========
 async function generatePhotoSelectPage(){
   const photos=window._selectPhotosTmp||[];
@@ -1781,10 +2410,14 @@ async function generatePhotoSelectPage(){
       processedImages.push({num:i+1,dataUrl,name:p.name||p.file?.name||('照片'+(i+1))});
       if(btn)btn.textContent='⏳ 处理中 '+(i+1)+'/'+photos.length+'...';
     }
-    const html=generateSelectPageHTML(clientName,processedImages);
+    const pageId=(editingId||'page')+'_'+Date.now();
+    const html=generateSelectPageHTML(clientName,processedImages,pageId,API_BASE);
     const filename=clientName+'_选图预览页.html';
+    const isCloud = API_BASE && API_BASE.indexOf('localhost')<0 && API_BASE.indexOf('127.0.0.1')<0;
 
-    // 尝试保存到服务器
+    let shareUrl=null, isCloudShare=false;
+
+    // 1) 本地备份（有本地服务器时）
     if(localServer){
       try{
         const resp=await fetch('/api/save-select-page',{
@@ -1793,20 +2426,35 @@ async function generatePhotoSelectPage(){
           body:JSON.stringify({filename:filename,html:html})
         });
         const result=await resp.json();
-        if(result.ok&&result.url){
-          archiveSelectPage(result.url,clientName);
-          showSelectPageURL(result.url,clientName);
-          return;
-        }
-      }catch(e){console.warn('保存到服务器失败，回退到下载',e);}
+        if(result.ok&&result.url){ shareUrl=result.url; }
+      }catch(e){console.warn('本地备份失败',e);}
     }
 
-    // 回退：下载文件
+    // 2) 云端保存（走云端则让客妹手机可直接开）
+    if(isCloud){
+      try{
+        const resp=await fetch(API_BASE+'/api/save-select-page',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({filename:filename,html:html})
+        });
+        const result=await resp.json();
+        if(result.ok&&result.url){ shareUrl=result.url; isCloudShare=true; }
+      }catch(e){console.warn('云端保存失败',e);}
+    }
+
+    if(shareUrl){
+      archiveSelectPage(shareUrl,clientName);
+      showSelectPageURL(shareUrl,clientName,isCloudShare);
+      return;
+    }
+
+    // 3) 回退：下载文件
     const blob=new Blob([html],{type:'text/html;charset=utf-8'});
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');a.href=url;a.download=filename;a.click();
     URL.revokeObjectURL(url);
-    toast('已下载 HTML 文件（服务器未运行，无法生成链接）');
+    toast('已下载 HTML 文件（无可用服务器，无法生成链接）');
   }catch(e){console.error(e);toast('生成失败：'+e.message);}
   finally{if(btn){btn.disabled=false;btn.textContent='🖼️ 生成选图预览页';}}
 }
@@ -1824,33 +2472,30 @@ function archiveSelectPage(url,clientName){
   }
 }
 
-function showSelectPageURL(url,clientName){
+function showSelectPageURL(url,clientName,isCloud){
   const overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
   const modal=document.createElement('div');
   modal.style.cssText='background:#fff;border-radius:12px;width:100%;max-width:440px;padding:24px;text-align:center';
+  const primaryLabel = isCloud ? '🌐 公网链接（客妹手机直接开）' : '📱 局域网链接（同一WiFi）';
+  const primaryColor = isCloud ? '#F57C00' : '#2563EB';
+  const primaryBg = isCloud ? '#FFF8E1' : '#F0F7FF';
+  const tip = isCloud
+    ? '复制下面链接，微信发给客妹，她在任何网络下点开就能选图、一键回传 ✅'
+    : '复制下面链接，微信发给客妹，需连同一个WiFi才能打开（或改用公网链接）';
   modal.innerHTML=
     '<div style="font-size:18px;font-weight:700;margin-bottom:8px">选图页已生成</div>'+
     '<div style="font-size:13px;color:var(--text2);margin-bottom:16px">'+clientName+' 的选图预览页已保存</div>'+
-
-    '<div style="background:#F0F7FF;border-radius:8px;padding:14px;margin-bottom:12px;text-align:left">'+
-    '<div style="font-size:12px;font-weight:700;color:#2563EB;margin-bottom:6px">📱 方式一：局域网分享（同一WiFi）</div>'+
+    '<div style="background:'+primaryBg+';border-radius:8px;padding:14px;margin-bottom:12px;text-align:left">'+
+    '<div style="font-size:12px;font-weight:700;color:'+primaryColor+';margin-bottom:6px">'+primaryLabel+'</div>'+
     '<div style="font-size:11px;color:var(--text2);word-break:break-all;line-height:1.5">'+url+'</div>'+
     '</div>'+
-
-    '<div style="background:#FFF8E1;border-radius:8px;padding:14px;margin-bottom:16px;text-align:left">'+
-    '<div style="font-size:12px;font-weight:700;color:#F57C00;margin-bottom:6px">🌐 方式二：远程分享（公网链接）</div>'+
-    '<div style="font-size:11px;color:var(--text2);line-height:1.6">'+
-    '客户在任何网络下都能打开。<br>'+
-    '请在 WorkBuddy 中对我说：<br>'+
-    '<b style="color:#1A1A1A">「部署选图页」</b><br>'+
-    '我会生成公网链接给你，复制到微信发给客户即可。</div>'+
-    '</div>';
+    '<div style="font-size:11px;color:var(--text3);line-height:1.6;margin-bottom:4px">'+tip+'</div>';
 
   const btnRow=document.createElement('div');
   btnRow.style.cssText='display:flex;gap:8px;justify-content:center;flex-wrap:wrap';
   const copyBtn=document.createElement('button');
-  copyBtn.textContent='📋 复制局域网链接';
+  copyBtn.textContent= isCloud ? '📋 复制公网链接' : '📋 复制局域网链接';
   copyBtn.className='btn btn-primary btn-sm';
   copyBtn.onclick=()=>{
     navigator.clipboard.writeText(url).then(()=>toast('链接已复制！粘贴到微信发给客户'));
@@ -1872,7 +2517,7 @@ function showSelectPageURL(url,clientName){
   document.body.appendChild(overlay);
 }
 
-function generateSelectPageHTML(clientName,images){
+function generateSelectPageHTML(clientName,images,pageId,apiBase){
   var namesMap = '{' + images.map(function(img){
     var n = (img.name||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"');
     return '"' + img.num + '":"' + n + '"';
@@ -1911,6 +2556,9 @@ function generateSelectPageHTML(clientName,images){
 
   var js = 'var selected=new Set();'
     + 'var photoNames=JSON.parse(\'' + namesMap + '\');'
+    + 'var API_BASE=' + JSON.stringify(apiBase||'') + ';'
+    + 'var PAGE_ID=' + JSON.stringify(pageId||'') + ';'
+    + 'var PAGE_NAME=' + JSON.stringify(clientName+'_选图预览页') + ';'
     + 'function toggleSelect(el){'
     + '  var num=el.dataset.num;'
     + '  if(selected.has(num)){selected.delete(num);el.classList.remove("selected")}'
@@ -1928,7 +2576,30 @@ function generateSelectPageHTML(clientName,images){
     + '  a.href=URL.createObjectURL(blob);'
     + '  a.download="' + clientName + '_\u9009\u56fe\u6e05\u5355.txt";'
     + '  a.click();'
-    + '  alert("\u5df2\u5bfc\u51fa\u9009\u56fe\u6e05\u5355\uff01\u8bf7\u53d1\u7ed9\u6444\u5f71\u5e08\u3002");'
+    + '  alert("\u5df2\u5bfc\u51fa\u9009\u56fe\u6e05\u5355\uff01\u53ef\u4f5c\u4e3a\u5907\u7528\u53d1\u7ed9\u6444\u5f71\u5e08\u3002");'
+    + '}'
+    + 'function submitSelection(){'
+    + '  if(selected.size===0){alert("\u8bf7\u5148\u9009\u62e9\u7167\u7247");return}'
+    + '  var nums=Array.from(selected).sort(function(a,b){return a-b});'
+    + '  var btn=document.getElementById("submitBtn");'
+    + '  if(btn){btn.disabled=true;btn.textContent="\u63d0\u4ea4\u4e2d…";}'
+    + '  var payload={pageId:PAGE_ID,pageName:PAGE_NAME,clientName:' + JSON.stringify(clientName) + ',selected:nums,submittedAt:new Date().toISOString()};'
+    + '  fetch((API_BASE||"")+"/api/select-submit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)})'
+    + '   .then(function(r){return r.json();})'
+    + '   .then(function(res){'
+    + '     if(res&&res.ok){'
+    + '       var w=document.getElementById("submitWrap");'
+    + '       if(w)w.innerHTML="<div style=\\"text-align:center;padding:14px;color:#2563EB;font-weight:700\\">\\u2705 \\u5df2\\u63d0\\u4ea4\\uff0c\\u6444\\u5f71\\u5e08\\u5df2\\u6536\\u5230\\u4f60\\u7684\\u9009\\u56fe\\uff01</div>";'
+    + '       alert("\\u63d0\\u4ea4\\u6210\\u529f\\uff01\\u6444\\u5f71\\u5e08\\u4f1a\\u6536\\u5230\\u4f60\\u7684\\u9009\\u56fe \\ud83c\\udf89");'
+    + '     }else{'
+    + '       alert("\\u63d0\\u4ea4\\u5931\\u8d25\\uff1a"+(res&&res.error||"\\u672a\\u77e5\\u9519\\u8bef")+"\\uff0c\\u53ef\\u6539\\u7528\\u300c\\u5bfc\\u51fa\\u6e05\\u5355\\u300d\\u53d1\\u5fae\\u4fe1");'
+    + '       if(btn){btn.disabled=false;btn.textContent="\\ud83d\\udce4 \\u63d0\\u4ea4\\u9009\\u56fe\\u7ed9\\u6444\\u5f71\\u5e08";}'
+    + '     }'
+    + '   })'
+    + '   .catch(function(e){'
+    + '     alert("\\u7f51\\u7edc\\u5f02\\u5e38\\uff0c\\u8bf7\\u6539\\u7528\\u300c\\u5bfc\\u51fa\\u6e05\\u5355\\u300d\\u628a\\u7f16\\u53f7\\u53d1\\u5fae\\u4fe1\\u7ed9\\u6444\\u5f71\\u5e08");'
+    + '     if(btn){btn.disabled=false;btn.textContent="\\ud83d\\udce4 \\u63d0\\u4ea4\\u9009\\u56fe\\u7ed9\\u6444\\u5f71\\u5e08";}'
+    + '   });'
     + '}';
 
   return '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">'
@@ -1937,14 +2608,215 @@ function generateSelectPageHTML(clientName,images){
     + '<style>' + css + '</style></head><body>'
     + '<div class="header"><h1>\ud83d\udcf7 \u9009\u56fe\u9884\u89c8</h1>'
     + '<p>' + clientName + ' \u00b7 \u70b9\u51fb\u7167\u7247\u9009\u62e9 \u00b7 \u9009\u5b8c\u70b9\u51fb\u300c\u786e\u8ba4\u9009\u56fe\u300d</p></div>'
-    + '<div class="tip">\u26a0\ufe0f \u9884\u89c8\u56fe\u5e26\u6709\u6c34\u5370\uff0c\u4ec5\u4f9b\u9009\u56fe\u4f7f\u7528\u3002\u7167\u7247\u5e95\u90e8\u663e\u793a\u6587\u4ef6\u540d\uff0c\u53ef\u6309\u7f16\u53f7\u6216\u6587\u4ef6\u540d\u544a\u77e5\u6444\u5f71\u5e08\u3002</div>'
+    + '<div class="tip">\u26a0\ufe0f \u9884\u89c8\u56fe\u5e26\u6709\u6c34\u5370\uff0c\u4ec5\u4f9b\u9009\u56fe\u4f7f\u7528\u3002\u7167\u7247\u5e95\u90e8\u663e\u793a\u6587\u4ef6\u540d\uff0c\u53ef\u6309\u7f16\u53f7\u6216\u6587\u4ef6\u540d\u544a\u77e5\u6444\u5f71\u5e08\u3002<br>\u9009\u5b8c\u540e\u70b9\u5e95\u90e8\u300c\ud83d\udce4 \u63d0\u4ea4\u9009\u56fe\u7ed9\u6444\u5f71\u5e08\u300d\u5373\u53ef\u4e00\u952e\u56de\u4f20 \u2705\uff08\u4e5f\u53ef\u300c\u5bfc\u51fa\u6e05\u5355\u300d\u5907\u7528\uff09</div>'
     + '<div class="toolbar"><span class="count">\u5df2\u9009 <b id="selCount">0</b> \u5f20</span>'
-    + '<button onclick="exportSelection()">\ud83d\udccb \u5bfc\u51fa\u5df2\u9009\u6e05\u5355</button></div>'
+    + '<button onclick="exportSelection()">\ud83d\udccb \u5bfc\u51fa\u6e05\u5355(\u5907\u7528)</button></div>'
     + '<div class="gallery" id="gallery">' + photoHTML + '</div>'
-    + '<div class="bottom-bar"><div class="info">\u5df2\u9009 <b id="selCount2">0</b> \u5f20</div>'
-    + '<button onclick="exportSelection()">\u2713 \u786e\u8ba4\u9009\u56fe</button></div>'
+    + '<div class="bottom-bar" id="submitWrap"><div class="info">\u5df2\u9009 <b id="selCount2">0</b> \u5f20</div>'
+    + '<button id="submitBtn" onclick="submitSelection()">\ud83d\udce4 \u63d0\u4ea4\u9009\u56fe\u7ed9\u6444\u5f71\u5e08</button></div>'
     + '<script>' + js + '<\/script>'
     + '</body></html>';
+}
+
+// ========== 导入客户选图结果 ==========
+function getEditingProject(){ if(!editingId)return null; return projects.find(function(p){return p.id===editingId;})||null; }
+
+// 解析客户发回的选图编号：支持 "1,3,5"、"No.001 ..." 格式、整段 .txt
+function parseClientSelection(text){
+  if(!text) return [];
+  const out=new Set();
+  const noMatches=text.match(/No\.0*(\d+)/gi);
+  if(noMatches&&noMatches.length){
+    noMatches.forEach(function(m){ const n=parseInt(m.replace(/No\.0*/i,''),10); if(n>0)out.add(n); });
+    return Array.from(out).sort(function(a,b){return a-b;});
+  }
+  const tokens=text.split(/[\s,，、;；]+/).map(function(t){return t.trim();}).filter(Boolean);
+  tokens.forEach(function(t){ if(/^\d+$/.test(t)){ const n=parseInt(t,10); if(n>0)out.add(n); } });
+  return Array.from(out).sort(function(a,b){return a-b;});
+}
+
+function importClientSelFile(input){
+  const f=input.files&&input.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=function(){ const ta=document.getElementById('clientSelInput'); if(ta)ta.value=r.result; importClientSelection(); };
+  r.readAsText(f);
+}
+
+function importClientSelection(){
+  const ta=document.getElementById('clientSelInput'); if(!ta)return;
+  const nums=parseClientSelection(ta.value);
+  if(!nums.length){ toast('没解析到编号，请检查格式（如 1,3,5 或 No.001）'); return; }
+  const p=getEditingProject(); if(!p)return;
+  p.clientSelected=nums;
+  saveProjects(projects);
+  renderClientSelResult();
+  renderProjects();
+  toast('已导入客户选图 '+nums.length+' 张');
+}
+
+// 渲染已导入结果 + 联动按钮（打开弹窗或导入后调用）
+function renderClientSelResult(){
+  const p=getEditingProject(); if(!p)return;
+  const res=document.getElementById('clientSelResult');
+  const st=document.getElementById('clientSelStatus');
+  if(!res)return;
+  const nums=p.clientSelected||[];
+  if(!nums.length){ res.innerHTML=''; if(st)st.textContent=''; return; }
+  if(st)st.textContent='✅ 已选 '+nums.length+' 张';
+  const isEvent=/图|张|张数|张图/.test(p.duration||'');
+  const base=(p.deliverable.includes('照片')&&!isEvent)?9:4;
+  const extra=Math.max(0,nums.length-base);
+  let html='<div style="margin-bottom:4px">客户已选 <b style="color:var(--green)">'+nums.length+'</b> 张：'+nums.map(function(n){return 'No.'+String(n).padStart(3,'0');}).join('、')+'</div>';
+  if(p.deliverable.includes('照片')){
+    html+='<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">'
+      +'<button class="btn btn-secondary btn-sm" onclick="applyClientSelToSelect()">↪ 同步到筛选张数</button>'
+      +'<button class="btn btn-secondary btn-sm" onclick="applyClientSelToExtra('+base+')">↪ 超基础('+base+'张)计入加单</button>'
+      +'</div>';
+    if(extra>0) html+='<div style="font-size:10px;color:var(--text3);margin-top:4px">预计加单 '+extra+' 张（'+nums.length+'-'+base+'）</div>';
+  }
+  res.innerHTML=html;
+}
+
+function applyClientSelToSelect(){
+  const p=getEditingProject(); if(!p||!p.clientSelected||!p.clientSelected.length)return;
+  const f=document.getElementById('fPS'); if(f){ f.value=p.clientSelected.length; if(typeof updateExtraFee==='function')updateExtraFee(); }
+  toast('已同步到筛选张数：'+p.clientSelected.length+' 张');
+}
+
+function applyClientSelToExtra(base){
+  const p=getEditingProject(); if(!p||!p.clientSelected||!p.clientSelected.length)return;
+  const extra=Math.max(0,p.clientSelected.length-base);
+  const f=document.getElementById('fExtraPhotos'); if(f){ f.value=extra; if(typeof updateExtraFee==='function')updateExtraFee(); }
+  toast('已计入加单：'+extra+' 张');
+}
+
+// ========== 客户一键回传（选图页提交结果） ==========
+function importSelectionFromServer(nums){
+  if(!nums||!nums.length){toast('没有选图数据');return;}
+  const p=getEditingProject(); if(!p){toast('请先打开一个项目');return;}
+  p.clientSelected=nums;
+  saveProjects(projects);
+  renderClientSelResult();
+  renderProjects();
+  toast('已导入客户回传选图 '+nums.length+' 张');
+}
+
+function _selectFeedbackBase(){
+  if(API_BASE) return API_BASE;
+  if(localServer) return '';
+  return '';
+}
+
+async function loadSelectFeedback(){
+  const el=document.getElementById('selectFeedbackList'); if(!el)return;
+  const base=_selectFeedbackBase();
+  if(!base && !localServer){ el.innerHTML='<div style="color:var(--text3)">未连接服务器，无法加载回传</div>'; return; }
+  el.innerHTML='<div style="color:var(--text3)">加载中…</div>';
+  try{
+    const r=await fetch((base||'')+'/api/select-list');
+    const list=await r.json();
+    if(!Array.isArray(list)||!list.length){ el.innerHTML='<div style="color:var(--green)">暂无回传 ✅</div>'; return; }
+    el.innerHTML=list.map(function(rec){
+      const nums=rec.selected||[];
+      const preview=nums.slice(0,12).map(function(n){return 'No.'+String(n).padStart(3,'0');}).join('、')+(nums.length>12?(' …共'+nums.length+'张'):'');
+      const time=rec.mtime||'';
+      return '<div style="border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:6px;background:#F7FBFF">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'+
+          '<b style="color:#1A1A1A">'+escHtml(rec.clientName||'客户')+'</b>'+
+          '<span style="font-size:10px;color:var(--text3)">'+time+'</span>'+
+        '</div>'+
+        '<div style="font-size:10px;color:var(--text2);margin-bottom:6px">已选 '+nums.length+' 张：'+preview+'</div>'+
+        '<div style="display:flex;gap:6px">'+
+          '<button class="btn btn-primary btn-sm" style="padding:3px 10px;font-size:10px" onclick="importSelectionFromServer(['+nums.join(',')+'])">↪ 导入到本项目</button>'+
+          '<button class="btn btn-secondary btn-sm" style="padding:3px 10px;font-size:10px" onclick="deleteSelectFeedback('+JSON.stringify(rec.filename)+')">标记已处理</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }catch(e){ el.innerHTML='<div style="color:#c0392b">加载失败：'+(e&&e.message||e)+'</div>'; }
+}
+
+function deleteSelectFeedback(filename){
+  const base=_selectFeedbackBase();
+  fetch((base||'')+'/api/select-delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename})})
+    .then(function(r){return r.json();})
+    .then(function(res){ if(res&&res.ok){toast('已标记处理');loadSelectFeedback();} else {toast('删除失败');} })
+    .catch(function(e){toast('网络错误');});
+}
+
+// ========== STORYBOARD (分镜脚本) ==========
+function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escAttr(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function copyText(t,msg){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast(msg||'已复制')).catch(()=>toast('复制失败，请手动复制'));}else{toast('当前环境不支持复制');}}
+
+function normalizeStoryboard(sb){
+  if(Array.isArray(sb))return sb.map(r=>({shot:r.shot||'',desc:r.desc||'',img:r.img||'',dur:r.dur||'',vlink:r.vlink||'',note:r.note||''}));
+  if(typeof sb==='string'&&sb.trim()){
+    return sb.split('\n').map(function(line){
+      const parts=line.split('|').map(function(s){return s.trim();});
+      return {shot:parts[0]||'',desc:parts[1]||'',img:'',dur:parts[2]||'',vlink:'',note:parts[3]||''};
+    }).filter(function(r){return r.shot||r.desc||r.dur||r.note;});
+  }
+  return [];
+}
+
+function initStoryboardUI(){renderStoryboardRows();}
+
+function renderStoryboardRows(){
+  const el=document.getElementById('sbTable');if(!el)return;
+  const sb=window._storyboardTmp||[];
+  if(!sb.length){el.innerHTML='<div style="padding:16px;text-align:center;font-size:11px;color:var(--text3)">暂无分镜，点下方「＋ 添加分镜」开始</div>';return;}
+  let html='<div class="sb-row head"><div class="sb-cell">镜号</div><div class="sb-cell">画面描述</div><div class="sb-cell">画面</div><div class="sb-cell">时长</div><div class="sb-cell">参考视频</div><div class="sb-cell">备注</div><div class="sb-cell"></div></div>';
+  sb.forEach(function(r,i){
+    const imgCell=r.img?'<img src="'+r.img+'"><button class="sb-img-x" onclick="event.stopPropagation();removeSBImg('+i+')">×</button>':'📷';
+    html+='<div class="sb-row" data-i="'+i+'">'
+      +'<div class="sb-cell"><input class="sb-input" value="'+escAttr(r.shot)+'" oninput="updateSB('+i+',\'shot\',this.value)" placeholder="镜号"></div>'
+      +'<div class="sb-cell"><textarea class="sb-input" rows="2" oninput="updateSB('+i+',\'desc\',this.value)" placeholder="画面描述">'+escHtml(r.desc)+'</textarea></div>'
+      +'<div class="sb-cell"><div class="sb-img-slot" onclick="document.getElementById(\'sbimg_'+i+'\').click()">'+imgCell+'</div><input type="file" id="sbimg_'+i+'" accept="image/*" style="display:none" onchange="uploadSBImg('+i+',this)"></div>'
+      +'<div class="sb-cell"><input class="sb-input" value="'+escAttr(r.dur)+'" oninput="updateSB('+i+',\'dur\',this.value)" placeholder="0:05"></div>'
+      +'<div class="sb-cell"><input class="sb-input" value="'+escAttr(r.vlink)+'" oninput="updateSB('+i+',\'vlink\',this.value)" placeholder="视频链接"></div>'
+      +'<div class="sb-cell"><input class="sb-input" value="'+escAttr(r.note)+'" oninput="updateSB('+i+',\'note\',this.value)" placeholder="备注"></div>'
+      +'<div class="sb-cell"><button class="sb-del-btn" onclick="removeStoryboardRow('+i+')">×</button></div>'
+      +'</div>';
+  });
+  el.innerHTML=html;
+}
+
+function updateSB(i,field,val){if(window._storyboardTmp[i])window._storyboardTmp[i][field]=val;}
+function addStoryboardRow(){if(!window._storyboardTmp)window._storyboardTmp=[];window._storyboardTmp.push({shot:'',desc:'',img:'',dur:'',vlink:'',note:''});renderStoryboardRows();}
+function removeStoryboardRow(i){window._storyboardTmp.splice(i,1);renderStoryboardRows();}
+function uploadSBImg(i,input){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=function(e){if(window._storyboardTmp[i])window._storyboardTmp[i].img=e.target.result;renderStoryboardRows();};
+  r.readAsDataURL(f);
+}
+function removeSBImg(i){if(window._storyboardTmp[i])window._storyboardTmp[i].img='';renderStoryboardRows();}
+
+function buildStoryboardExportHTML(){
+  const sb=(window._storyboardTmp||[]).filter(function(r){return r&&(r.shot||r.desc||r.img||r.dur||r.vlink||r.note);});
+  if(!sb.length)return '';
+  const rows=sb.map(function(r){
+    const imgCell=r.img?'<img src="'+r.img+'">':'-';
+    const vCell=r.vlink?'<a href="'+escAttr(r.vlink)+'" target="_blank" style="color:#2563EB;text-decoration:none">▶ 观看</a>':'-';
+    return '<tr><td>'+escHtml(r.shot)+'</td><td>'+escHtml(r.desc)+'</td><td>'+imgCell+'</td><td>'+escHtml(r.dur)+'</td><td>'+vCell+'</td><td>'+escHtml(r.note)+'</td></tr>';
+  }).join('');
+  return '<div class="section"><h2>🎬 分镜脚本</h2><style>.sb-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}.sb-tbl th,.sb-tbl td{border:1px solid #EEE;padding:6px 8px;text-align:left;vertical-align:top;word-break:break-word}.sb-tbl th{background:#F7F7F7;font-weight:700;white-space:nowrap}.sb-tbl img{max-width:90px;border-radius:4px}</style><table class="sb-tbl"><tr><th>镜号</th><th>画面描述</th><th>画面</th><th>时长</th><th>参考视频</th><th>备注</th></tr>'+rows+'</table></div>';
+}
+
+function relateSelectPage(){
+  const input=document.getElementById('relateSelectUrl');
+  const url=input&&input.value?input.value.trim():'';
+  if(!url){toast('请输入选图页链接');return;}
+  if(!editingId){toast('请先保存项目');return;}
+  const idx=projects.findIndex(function(p){return p.id===editingId;});
+  if(idx<0)return;
+  const p=projects[idx];
+  p.selectPages=p.selectPages||[];
+  if(p.selectPages.some(function(s){return s.url===url;})){toast('该链接已关联');return;}
+  p.selectPages.push({url:url,clientName:p.clientName,createdAt:new Date().toISOString(),manual:true});
+  saveProjects(projects);
+  toast('已关联到归档 · 重新打开项目可查看');
+  openModal(editingId);
 }
 
 // ========== EXPORT PLANNING PAGE ==========
@@ -1955,7 +2827,7 @@ function exportPlanningPage(){
   const shootTime=v('fShootTime');
   const city=v('fCity');
   const location=v('fLocation');
-  const character=v('fCharacter');
+  const character=v('fRole');
   const ip=v('fIP');
   const shootType=v('fShootType');
   const styleType=v('fStyleType');
@@ -1968,8 +2840,9 @@ function exportPlanningPage(){
   else if(location){mapLink='https://uri.amap.com/search?keyword='+encodeURIComponent((city?city+' ':'')+location);}
 
   const moodBoardHTML=moodImages.length?`<div class="section"><h2>🎨 情绪板</h2><div class="mood-grid">${moodImages.map(m=>'<img src="'+m.url+'" style="width:100%;border-radius:8px">').join('')}</div></div>`:'';
+  const storyboardHTML=buildStoryboardExportHTML();
 
-  const html=`<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>拍摄策划 - ${clientName}</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#FAFAFA;color:#1A1A1A;line-height:1.6}.container{max-width:600px;margin:0 auto;padding:20px}.header{text-align:center;padding:30px 0 20px;border-bottom:2px solid #1A1A1A;margin-bottom:24px}.header .logo{font-size:24px;font-weight:900;letter-spacing:2px}.header .sub{font-size:12px;color:#999;letter-spacing:4px;margin-top:4px}.header .title{font-size:18px;font-weight:700;margin-top:16px}.header .client{font-size:14px;color:#666;margin-top:4px}.section{background:#fff;border-radius:10px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}.section h2{font-size:14px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #EEE}.info-row{display:flex;padding:6px 0;font-size:13px}.info-row .label{width:80px;color:#999;flex-shrink:0}.info-row .value{flex:1;font-weight:500}.tag{display:inline-block;background:#F3F3F3;padding:3px 10px;border-radius:12px;font-size:12px;margin:2px}.map-link{display:inline-block;margin-top:8px;padding:6px 14px;background:#1A1A1A;color:#fff;border-radius:6px;font-size:12px;text-decoration:none}.mood-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.footer{text-align:center;padding:20px 0;font-size:11px;color:#999}</style></head><body><div class="container"><div class="header"><div class="logo">SAIKA · 彩華</div><div class="sub">PHOTOGRAPHY</div><div class="title">拍摄策划方案</div><div class="client">${clientName}${character?' · '+character:''}${ip?' · '+ip:''}</div></div><div class="section"><h2>📅 拍摄安排</h2><div class="info-row"><span class="label">日期</span><span class="value">${shootDate||'待定'}</span></div><div class="info-row"><span class="label">时间</span><span class="value">${shootTime||'待定'}</span></div><div class="info-row"><span class="label">城市</span><span class="value">${city||'待定'}</span></div><div class="info-row"><span class="label">地点</span><span class="value">${location||'待定'}</span></div>${mapLink?'<a href="'+mapLink+'" class="map-link">🗺️ 点击导航</a>':''}</div><div class="section"><h2>🎬 拍摄信息</h2><div class="info-row"><span class="label">角色</span><span class="value">${character||'-'}</span></div><div class="info-row"><span class="label">IP</span><span class="value">${ip||'-'}</span></div><div class="info-row"><span class="label">拍摄类型</span><span class="value">${shootType||'-'}</span></div><div class="info-row"><span class="label">风格</span><span class="value">${styleType||'-'}</span></div></div>${moodKeywords?'<div class="section"><h2>💭 情绪关键词</h2><div>'+moodKeywords.split('、').map(k=>'<span class="tag">'+k+'</span>').join('')+'</div></div>':''}${moodBoardHTML}<div class="footer">SAIKA · 彩華 Photography · 本方案由彩華摄影档案系统生成</div></div></body></html>`;
+  const html=`<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>拍摄策划 - ${clientName}</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#FAFAFA;color:#1A1A1A;line-height:1.6}.container{max-width:600px;margin:0 auto;padding:20px}.header{text-align:center;padding:30px 0 20px;border-bottom:2px solid #1A1A1A;margin-bottom:24px}.header .logo{font-size:24px;font-weight:900;letter-spacing:2px}.header .sub{font-size:12px;color:#999;letter-spacing:4px;margin-top:4px}.header .title{font-size:18px;font-weight:700;margin-top:16px}.header .client{font-size:14px;color:#666;margin-top:4px}.section{background:#fff;border-radius:10px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}.section h2{font-size:14px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #EEE}.info-row{display:flex;padding:6px 0;font-size:13px}.info-row .label{width:80px;color:#999;flex-shrink:0}.info-row .value{flex:1;font-weight:500}.tag{display:inline-block;background:#F3F3F3;padding:3px 10px;border-radius:12px;font-size:12px;margin:2px}.map-link{display:inline-block;margin-top:8px;padding:6px 14px;background:#1A1A1A;color:#fff;border-radius:6px;font-size:12px;text-decoration:none}.mood-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.footer{text-align:center;padding:20px 0;font-size:11px;color:#999}</style></head><body><div class="container"><div class="header"><div class="logo">SAIKA · 彩華</div><div class="sub">PHOTOGRAPHY</div><div class="title">拍摄策划方案</div><div class="client">${clientName}${character?' · '+character:''}${ip?' · '+ip:''}</div></div><div class="section"><h2>📅 拍摄安排</h2><div class="info-row"><span class="label">日期</span><span class="value">${shootDate||'待定'}</span></div><div class="info-row"><span class="label">时间</span><span class="value">${shootTime||'待定'}</span></div><div class="info-row"><span class="label">城市</span><span class="value">${city||'待定'}</span></div><div class="info-row"><span class="label">地点</span><span class="value">${location||'待定'}</span></div>${mapLink?'<a href="'+mapLink+'" class="map-link">🗺️ 点击导航</a>':''}</div><div class="section"><h2>🎬 拍摄信息</h2><div class="info-row"><span class="label">角色</span><span class="value">${character||'-'}</span></div><div class="info-row"><span class="label">IP</span><span class="value">${ip||'-'}</span></div><div class="info-row"><span class="label">拍摄类型</span><span class="value">${shootType||'-'}</span></div><div class="info-row"><span class="label">风格</span><span class="value">${styleType||'-'}</span></div></div>${moodKeywords?'<div class="section"><h2>💭 情绪关键词</h2><div>'+moodKeywords.split('、').map(k=>'<span class="tag">'+k+'</span>').join('')+'</div></div>':''}${moodBoardHTML}${storyboardHTML}<div class="footer">SAIKA · 彩華 Photography · 本方案由彩華摄影档案系统生成</div></div></body></html>`;
 
   const blob=new Blob([html],{type:'text/html;charset=utf-8'});
   const url=URL.createObjectURL(blob);
